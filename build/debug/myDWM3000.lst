@@ -1,0 +1,515 @@
+ARM GAS  /tmp/ccawS0mO.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"myDWM3000.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.DWM3000_Create16bitCommand,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	DWM3000_Create16bitCommand:
+  26              	.LVL0:
+  27              	.LFB137:
+  28              		.file 1 "Core/Src/myDWM3000.c"
+   1:Core/Src/myDWM3000.c **** #include "main.h"
+   2:Core/Src/myDWM3000.c **** #include "myDWM3000.h"
+   3:Core/Src/myDWM3000.c **** #include <string.h>
+   4:Core/Src/myDWM3000.c **** #include <stdio.h>
+   5:Core/Src/myDWM3000.c **** 
+   6:Core/Src/myDWM3000.c **** SPI_HandleTypeDef *DWM_spi;
+   7:Core/Src/myDWM3000.c **** 
+   8:Core/Src/myDWM3000.c **** UART_HandleTypeDef *DWM_uart;
+   9:Core/Src/myDWM3000.c **** 
+  10:Core/Src/myDWM3000.c **** uint8_t *rx_buffer;
+  11:Core/Src/myDWM3000.c **** static uint8_t SendBuffer[2];
+  12:Core/Src/myDWM3000.c **** 
+  13:Core/Src/myDWM3000.c **** void Init(SPI_HandleTypeDef *hspi, uint8_t *rxbuffer)
+  14:Core/Src/myDWM3000.c **** {
+  15:Core/Src/myDWM3000.c **** 	DWM_spi = hspi;
+  16:Core/Src/myDWM3000.c **** 	rx_buffer = rxbuffer;
+  17:Core/Src/myDWM3000.c **** }
+  18:Core/Src/myDWM3000.c **** 
+  19:Core/Src/myDWM3000.c **** static void DWM3000_SendToDWM(uint8_t *Byte, uint32_t Length)
+  20:Core/Src/myDWM3000.c **** {
+  21:Core/Src/myDWM3000.c **** 	HAL_SPI_Transmit(DWM_spi, Byte, Length, DWM_SPI_TIMEOUT);
+  22:Core/Src/myDWM3000.c **** }
+  23:Core/Src/myDWM3000.c **** 
+  24:Core/Src/myDWM3000.c **** static void DWM3000_ReceiveFromDWM(uint8_t *ReceiveByte, uint32_t Length)
+  25:Core/Src/myDWM3000.c **** {
+  26:Core/Src/myDWM3000.c **** 	HAL_SPI_Receive(DWM_spi, ReceiveByte, Length, DWM_SPI_TIMEOUT);
+  27:Core/Src/myDWM3000.c **** }
+  28:Core/Src/myDWM3000.c **** 
+  29:Core/Src/myDWM3000.c **** void UART_Log(char *Data)
+  30:Core/Src/myDWM3000.c **** {
+ARM GAS  /tmp/ccawS0mO.s 			page 2
+
+
+  31:Core/Src/myDWM3000.c **** 	HAL_UART_Transmit(DWM_uart, (uint8_t* ) Data, strlen(Data), 30);
+  32:Core/Src/myDWM3000.c **** }
+  33:Core/Src/myDWM3000.c **** 
+  34:Core/Src/myDWM3000.c **** 
+  35:Core/Src/myDWM3000.c **** static void DWM3000_Create16bitCommand(uint16_t *Command, uint32_t BaseReg, uint32_t ReadOrWrite, u
+  36:Core/Src/myDWM3000.c **** {
+  29              		.loc 1 36 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  37:Core/Src/myDWM3000.c **** 	uint16_t sub_add_temp;
+  34              		.loc 1 37 2 view .LVU1
+  38:Core/Src/myDWM3000.c **** 
+  39:Core/Src/myDWM3000.c **** 	*Command = BaseReg << 9;
+  35              		.loc 1 39 2 view .LVU2
+  36              		.loc 1 39 21 is_stmt 0 view .LVU3
+  37 0000 4902     		lsls	r1, r1, #9
+  38              	.LVL1:
+  39              		.loc 1 39 21 view .LVU4
+  40 0002 89B2     		uxth	r1, r1
+  41              		.loc 1 39 11 view .LVU5
+  42 0004 0180     		strh	r1, [r0]	@ movhi
+  40:Core/Src/myDWM3000.c **** 	*Command = *Command | ReadOrWrite;
+  43              		.loc 1 40 2 is_stmt 1 view .LVU6
+  44              		.loc 1 40 22 is_stmt 0 view .LVU7
+  45 0006 1143     		orrs	r1, r1, r2
+  46 0008 89B2     		uxth	r1, r1
+  47              		.loc 1 40 11 view .LVU8
+  48 000a 0180     		strh	r1, [r0]	@ movhi
+  41:Core/Src/myDWM3000.c **** 	*Command = *Command | DWM_16BIT_MASK;
+  49              		.loc 1 41 2 is_stmt 1 view .LVU9
+  50              		.loc 1 41 11 is_stmt 0 view .LVU10
+  51 000c 41F48041 		orr	r1, r1, #16384
+  52 0010 0180     		strh	r1, [r0]	@ movhi
+  42:Core/Src/myDWM3000.c **** 	sub_add_temp = SubReg << 2;
+  53              		.loc 1 42 2 is_stmt 1 view .LVU11
+  54              		.loc 1 42 24 is_stmt 0 view .LVU12
+  55 0012 9BB2     		uxth	r3, r3
+  56              	.LVL2:
+  57              		.loc 1 42 15 view .LVU13
+  58 0014 9B00     		lsls	r3, r3, #2
+  59 0016 9BB2     		uxth	r3, r3
+  60              	.LVL3:
+  43:Core/Src/myDWM3000.c **** 	*Command = *Command | sub_add_temp;
+  61              		.loc 1 43 2 is_stmt 1 view .LVU14
+  62              		.loc 1 43 11 is_stmt 0 view .LVU15
+  63 0018 1943     		orrs	r1, r1, r3
+  64 001a 0180     		strh	r1, [r0]	@ movhi
+  44:Core/Src/myDWM3000.c **** }
+  65              		.loc 1 44 1 view .LVU16
+  66 001c 7047     		bx	lr
+  67              		.cfi_endproc
+  68              	.LFE137:
+  70              		.section	.text.DWM3000_SendToDWM,"ax",%progbits
+  71              		.align	1
+  72              		.syntax unified
+ARM GAS  /tmp/ccawS0mO.s 			page 3
+
+
+  73              		.thumb
+  74              		.thumb_func
+  75              		.fpu fpv4-sp-d16
+  77              	DWM3000_SendToDWM:
+  78              	.LVL4:
+  79              	.LFB134:
+  20:Core/Src/myDWM3000.c **** 	HAL_SPI_Transmit(DWM_spi, Byte, Length, DWM_SPI_TIMEOUT);
+  80              		.loc 1 20 1 is_stmt 1 view -0
+  81              		.cfi_startproc
+  82              		@ args = 0, pretend = 0, frame = 0
+  83              		@ frame_needed = 0, uses_anonymous_args = 0
+  20:Core/Src/myDWM3000.c **** 	HAL_SPI_Transmit(DWM_spi, Byte, Length, DWM_SPI_TIMEOUT);
+  84              		.loc 1 20 1 is_stmt 0 view .LVU18
+  85 0000 08B5     		push	{r3, lr}
+  86              		.cfi_def_cfa_offset 8
+  87              		.cfi_offset 3, -8
+  88              		.cfi_offset 14, -4
+  21:Core/Src/myDWM3000.c **** }
+  89              		.loc 1 21 2 is_stmt 1 view .LVU19
+  90 0002 4FF47A73 		mov	r3, #1000
+  91 0006 8AB2     		uxth	r2, r1
+  92 0008 0146     		mov	r1, r0
+  93              	.LVL5:
+  21:Core/Src/myDWM3000.c **** }
+  94              		.loc 1 21 2 is_stmt 0 view .LVU20
+  95 000a 0248     		ldr	r0, .L4
+  96              	.LVL6:
+  21:Core/Src/myDWM3000.c **** }
+  97              		.loc 1 21 2 view .LVU21
+  98 000c 0068     		ldr	r0, [r0]
+  99 000e FFF7FEFF 		bl	HAL_SPI_Transmit
+ 100              	.LVL7:
+  22:Core/Src/myDWM3000.c **** 
+ 101              		.loc 1 22 1 view .LVU22
+ 102 0012 08BD     		pop	{r3, pc}
+ 103              	.L5:
+ 104              		.align	2
+ 105              	.L4:
+ 106 0014 00000000 		.word	.LANCHOR0
+ 107              		.cfi_endproc
+ 108              	.LFE134:
+ 110              		.section	.text.DWM3000_ReceiveFromDWM,"ax",%progbits
+ 111              		.align	1
+ 112              		.syntax unified
+ 113              		.thumb
+ 114              		.thumb_func
+ 115              		.fpu fpv4-sp-d16
+ 117              	DWM3000_ReceiveFromDWM:
+ 118              	.LVL8:
+ 119              	.LFB135:
+  25:Core/Src/myDWM3000.c **** 	HAL_SPI_Receive(DWM_spi, ReceiveByte, Length, DWM_SPI_TIMEOUT);
+ 120              		.loc 1 25 1 is_stmt 1 view -0
+ 121              		.cfi_startproc
+ 122              		@ args = 0, pretend = 0, frame = 0
+ 123              		@ frame_needed = 0, uses_anonymous_args = 0
+  25:Core/Src/myDWM3000.c **** 	HAL_SPI_Receive(DWM_spi, ReceiveByte, Length, DWM_SPI_TIMEOUT);
+ 124              		.loc 1 25 1 is_stmt 0 view .LVU24
+ARM GAS  /tmp/ccawS0mO.s 			page 4
+
+
+ 125 0000 08B5     		push	{r3, lr}
+ 126              		.cfi_def_cfa_offset 8
+ 127              		.cfi_offset 3, -8
+ 128              		.cfi_offset 14, -4
+  26:Core/Src/myDWM3000.c **** }
+ 129              		.loc 1 26 2 is_stmt 1 view .LVU25
+ 130 0002 4FF47A73 		mov	r3, #1000
+ 131 0006 8AB2     		uxth	r2, r1
+ 132 0008 0146     		mov	r1, r0
+ 133              	.LVL9:
+  26:Core/Src/myDWM3000.c **** }
+ 134              		.loc 1 26 2 is_stmt 0 view .LVU26
+ 135 000a 0248     		ldr	r0, .L8
+ 136              	.LVL10:
+  26:Core/Src/myDWM3000.c **** }
+ 137              		.loc 1 26 2 view .LVU27
+ 138 000c 0068     		ldr	r0, [r0]
+ 139 000e FFF7FEFF 		bl	HAL_SPI_Receive
+ 140              	.LVL11:
+  27:Core/Src/myDWM3000.c **** 
+ 141              		.loc 1 27 1 view .LVU28
+ 142 0012 08BD     		pop	{r3, pc}
+ 143              	.L9:
+ 144              		.align	2
+ 145              	.L8:
+ 146 0014 00000000 		.word	.LANCHOR0
+ 147              		.cfi_endproc
+ 148              	.LFE135:
+ 150              		.section	.text.DWM3000_GetRXData16,"ax",%progbits
+ 151              		.align	1
+ 152              		.syntax unified
+ 153              		.thumb
+ 154              		.thumb_func
+ 155              		.fpu fpv4-sp-d16
+ 157              	DWM3000_GetRXData16:
+ 158              	.LVL12:
+ 159              	.LFB138:
+  45:Core/Src/myDWM3000.c **** 
+  46:Core/Src/myDWM3000.c **** static void DWM3000_GetRXData16(uint16_t *Command, uint8_t SizeofData)
+  47:Core/Src/myDWM3000.c **** {
+ 160              		.loc 1 47 1 is_stmt 1 view -0
+ 161              		.cfi_startproc
+ 162              		@ args = 0, pretend = 0, frame = 0
+ 163              		@ frame_needed = 0, uses_anonymous_args = 0
+ 164              		.loc 1 47 1 is_stmt 0 view .LVU30
+ 165 0000 38B5     		push	{r3, r4, r5, lr}
+ 166              		.cfi_def_cfa_offset 16
+ 167              		.cfi_offset 3, -16
+ 168              		.cfi_offset 4, -12
+ 169              		.cfi_offset 5, -8
+ 170              		.cfi_offset 14, -4
+ 171 0002 0C46     		mov	r4, r1
+  48:Core/Src/myDWM3000.c **** 	SendBuffer[0] = (*Command >> 8);
+ 172              		.loc 1 48 2 is_stmt 1 view .LVU31
+ 173              		.loc 1 48 19 is_stmt 0 view .LVU32
+ 174 0004 0388     		ldrh	r3, [r0]
+ 175              		.loc 1 48 16 view .LVU33
+ARM GAS  /tmp/ccawS0mO.s 			page 5
+
+
+ 176 0006 0D4D     		ldr	r5, .L12
+ 177 0008 1B0A     		lsrs	r3, r3, #8
+ 178 000a 2B70     		strb	r3, [r5]
+  49:Core/Src/myDWM3000.c **** 	SendBuffer[1] = (*Command & 0xFF);
+ 179              		.loc 1 49 2 is_stmt 1 view .LVU34
+ 180              		.loc 1 49 19 is_stmt 0 view .LVU35
+ 181 000c 0388     		ldrh	r3, [r0]
+ 182              		.loc 1 49 16 view .LVU36
+ 183 000e 6B70     		strb	r3, [r5, #1]
+  50:Core/Src/myDWM3000.c **** 	DWM_CS_LOW;
+ 184              		.loc 1 50 2 is_stmt 1 view .LVU37
+ 185 0010 0022     		movs	r2, #0
+ 186 0012 1021     		movs	r1, #16
+ 187              	.LVL13:
+ 188              		.loc 1 50 2 is_stmt 0 view .LVU38
+ 189 0014 4FF09040 		mov	r0, #1207959552
+ 190              	.LVL14:
+ 191              		.loc 1 50 2 view .LVU39
+ 192 0018 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 193              	.LVL15:
+  51:Core/Src/myDWM3000.c **** 	//HAL_SPI_Transmit(DWM_spi, SendBuffer, 2, DWM_SPI_TIMEOUT);
+  52:Core/Src/myDWM3000.c **** 	DWM3000_SendToDWM(SendBuffer, 2);
+ 194              		.loc 1 52 2 is_stmt 1 view .LVU40
+ 195 001c 0221     		movs	r1, #2
+ 196 001e 2846     		mov	r0, r5
+ 197 0020 FFF7FEFF 		bl	DWM3000_SendToDWM
+ 198              	.LVL16:
+  53:Core/Src/myDWM3000.c **** 	//HAL_SPI_TransmitReceive(DWM_spi, SendBuffer, ReceiveBuffer, SizeofData + 2, DWM_SPI_TIMEOUT);
+  54:Core/Src/myDWM3000.c **** 	DWM3000_ReceiveFromDWM(rx_buffer, SizeofData);
+ 199              		.loc 1 54 2 view .LVU41
+ 200 0024 2146     		mov	r1, r4
+ 201 0026 064B     		ldr	r3, .L12+4
+ 202 0028 1868     		ldr	r0, [r3]
+ 203 002a FFF7FEFF 		bl	DWM3000_ReceiveFromDWM
+ 204              	.LVL17:
+  55:Core/Src/myDWM3000.c **** 	//HAL_SPI_Receive(DWM_spi, ReceiveBuffer, SizeofData, DWM_SPI_TIMEOUT);
+  56:Core/Src/myDWM3000.c **** 	DWM_CS_HIGH;
+ 205              		.loc 1 56 2 view .LVU42
+ 206 002e 0122     		movs	r2, #1
+ 207 0030 1021     		movs	r1, #16
+ 208 0032 4FF09040 		mov	r0, #1207959552
+ 209 0036 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 210              	.LVL18:
+  57:Core/Src/myDWM3000.c **** }
+ 211              		.loc 1 57 1 is_stmt 0 view .LVU43
+ 212 003a 38BD     		pop	{r3, r4, r5, pc}
+ 213              	.L13:
+ 214              		.align	2
+ 215              	.L12:
+ 216 003c 00000000 		.word	.LANCHOR1
+ 217 0040 00000000 		.word	.LANCHOR2
+ 218              		.cfi_endproc
+ 219              	.LFE138:
+ 221              		.section	.text.Init,"ax",%progbits
+ 222              		.align	1
+ 223              		.global	Init
+ 224              		.syntax unified
+ARM GAS  /tmp/ccawS0mO.s 			page 6
+
+
+ 225              		.thumb
+ 226              		.thumb_func
+ 227              		.fpu fpv4-sp-d16
+ 229              	Init:
+ 230              	.LVL19:
+ 231              	.LFB133:
+  14:Core/Src/myDWM3000.c **** 	DWM_spi = hspi;
+ 232              		.loc 1 14 1 is_stmt 1 view -0
+ 233              		.cfi_startproc
+ 234              		@ args = 0, pretend = 0, frame = 0
+ 235              		@ frame_needed = 0, uses_anonymous_args = 0
+ 236              		@ link register save eliminated.
+  15:Core/Src/myDWM3000.c **** 	rx_buffer = rxbuffer;
+ 237              		.loc 1 15 2 view .LVU45
+  15:Core/Src/myDWM3000.c **** 	rx_buffer = rxbuffer;
+ 238              		.loc 1 15 10 is_stmt 0 view .LVU46
+ 239 0000 024B     		ldr	r3, .L15
+ 240 0002 1860     		str	r0, [r3]
+  16:Core/Src/myDWM3000.c **** }
+ 241              		.loc 1 16 2 is_stmt 1 view .LVU47
+  16:Core/Src/myDWM3000.c **** }
+ 242              		.loc 1 16 12 is_stmt 0 view .LVU48
+ 243 0004 024B     		ldr	r3, .L15+4
+ 244 0006 1960     		str	r1, [r3]
+  17:Core/Src/myDWM3000.c **** 
+ 245              		.loc 1 17 1 view .LVU49
+ 246 0008 7047     		bx	lr
+ 247              	.L16:
+ 248 000a 00BF     		.align	2
+ 249              	.L15:
+ 250 000c 00000000 		.word	.LANCHOR0
+ 251 0010 00000000 		.word	.LANCHOR2
+ 252              		.cfi_endproc
+ 253              	.LFE133:
+ 255              		.section	.text.UART_Log,"ax",%progbits
+ 256              		.align	1
+ 257              		.global	UART_Log
+ 258              		.syntax unified
+ 259              		.thumb
+ 260              		.thumb_func
+ 261              		.fpu fpv4-sp-d16
+ 263              	UART_Log:
+ 264              	.LVL20:
+ 265              	.LFB136:
+  30:Core/Src/myDWM3000.c **** 	HAL_UART_Transmit(DWM_uart, (uint8_t* ) Data, strlen(Data), 30);
+ 266              		.loc 1 30 1 is_stmt 1 view -0
+ 267              		.cfi_startproc
+ 268              		@ args = 0, pretend = 0, frame = 0
+ 269              		@ frame_needed = 0, uses_anonymous_args = 0
+  30:Core/Src/myDWM3000.c **** 	HAL_UART_Transmit(DWM_uart, (uint8_t* ) Data, strlen(Data), 30);
+ 270              		.loc 1 30 1 is_stmt 0 view .LVU51
+ 271 0000 10B5     		push	{r4, lr}
+ 272              		.cfi_def_cfa_offset 8
+ 273              		.cfi_offset 4, -8
+ 274              		.cfi_offset 14, -4
+ 275 0002 0446     		mov	r4, r0
+  31:Core/Src/myDWM3000.c **** }
+ARM GAS  /tmp/ccawS0mO.s 			page 7
+
+
+ 276              		.loc 1 31 2 is_stmt 1 view .LVU52
+  31:Core/Src/myDWM3000.c **** }
+ 277              		.loc 1 31 48 is_stmt 0 view .LVU53
+ 278 0004 FFF7FEFF 		bl	strlen
+ 279              	.LVL21:
+  31:Core/Src/myDWM3000.c **** }
+ 280              		.loc 1 31 2 view .LVU54
+ 281 0008 1E23     		movs	r3, #30
+ 282 000a 82B2     		uxth	r2, r0
+ 283 000c 2146     		mov	r1, r4
+ 284 000e 0248     		ldr	r0, .L19
+ 285 0010 0068     		ldr	r0, [r0]
+ 286 0012 FFF7FEFF 		bl	HAL_UART_Transmit
+ 287              	.LVL22:
+  32:Core/Src/myDWM3000.c **** 
+ 288              		.loc 1 32 1 view .LVU55
+ 289 0016 10BD     		pop	{r4, pc}
+ 290              	.LVL23:
+ 291              	.L20:
+  32:Core/Src/myDWM3000.c **** 
+ 292              		.loc 1 32 1 view .LVU56
+ 293              		.align	2
+ 294              	.L19:
+ 295 0018 00000000 		.word	.LANCHOR3
+ 296              		.cfi_endproc
+ 297              	.LFE136:
+ 299              		.section	.text.DWM3000_Read_RX_Data,"ax",%progbits
+ 300              		.align	1
+ 301              		.global	DWM3000_Read_RX_Data
+ 302              		.syntax unified
+ 303              		.thumb
+ 304              		.thumb_func
+ 305              		.fpu fpv4-sp-d16
+ 307              	DWM3000_Read_RX_Data:
+ 308              	.LFB139:
+  58:Core/Src/myDWM3000.c **** 
+  59:Core/Src/myDWM3000.c **** void DWM3000_Read_RX_Data(void)
+  60:Core/Src/myDWM3000.c **** {
+ 309              		.loc 1 60 1 is_stmt 1 view -0
+ 310              		.cfi_startproc
+ 311              		@ args = 0, pretend = 0, frame = 8
+ 312              		@ frame_needed = 0, uses_anonymous_args = 0
+ 313 0000 00B5     		push	{lr}
+ 314              		.cfi_def_cfa_offset 4
+ 315              		.cfi_offset 14, -4
+ 316 0002 83B0     		sub	sp, sp, #12
+ 317              		.cfi_def_cfa_offset 16
+  61:Core/Src/myDWM3000.c **** 	uint16_t Command;
+ 318              		.loc 1 61 2 view .LVU58
+  62:Core/Src/myDWM3000.c **** 	//char RxData[16];
+  63:Core/Src/myDWM3000.c **** 	DWM3000_Create16bitCommand(&Command,DWM_RXDATA_FILE_ID, DWM_READ_MASK, DWM_RX_BUFFER_0);
+ 319              		.loc 1 63 2 view .LVU59
+ 320 0004 0023     		movs	r3, #0
+ 321 0006 1A46     		mov	r2, r3
+ 322 0008 1221     		movs	r1, #18
+ 323 000a 0DF10600 		add	r0, sp, #6
+ 324 000e FFF7FEFF 		bl	DWM3000_Create16bitCommand
+ARM GAS  /tmp/ccawS0mO.s 			page 8
+
+
+ 325              	.LVL24:
+  64:Core/Src/myDWM3000.c **** 	DWM3000_GetRXData16(&Command, 24);
+ 326              		.loc 1 64 2 view .LVU60
+ 327 0012 1821     		movs	r1, #24
+ 328 0014 0DF10600 		add	r0, sp, #6
+ 329 0018 FFF7FEFF 		bl	DWM3000_GetRXData16
+ 330              	.LVL25:
+  65:Core/Src/myDWM3000.c **** 
+  66:Core/Src/myDWM3000.c **** //	for (uint8_t i = 0; i < FRAME_LENGTH - FCS_LEN; i++)
+  67:Core/Src/myDWM3000.c **** //	{
+  68:Core/Src/myDWM3000.c **** //		RxData[i] = DWM_RX_data[i];
+  69:Core/Src/myDWM3000.c **** //	}
+  70:Core/Src/myDWM3000.c **** }
+ 331              		.loc 1 70 1 is_stmt 0 view .LVU61
+ 332 001c 03B0     		add	sp, sp, #12
+ 333              		.cfi_def_cfa_offset 4
+ 334              		@ sp needed
+ 335 001e 5DF804FB 		ldr	pc, [sp], #4
+ 336              		.cfi_endproc
+ 337              	.LFE139:
+ 339              		.global	rx_buffer
+ 340              		.global	DWM_uart
+ 341              		.global	DWM_spi
+ 342              		.section	.bss.DWM_spi,"aw",%nobits
+ 343              		.align	2
+ 344              		.set	.LANCHOR0,. + 0
+ 347              	DWM_spi:
+ 348 0000 00000000 		.space	4
+ 349              		.section	.bss.DWM_uart,"aw",%nobits
+ 350              		.align	2
+ 351              		.set	.LANCHOR3,. + 0
+ 354              	DWM_uart:
+ 355 0000 00000000 		.space	4
+ 356              		.section	.bss.SendBuffer,"aw",%nobits
+ 357              		.align	2
+ 358              		.set	.LANCHOR1,. + 0
+ 361              	SendBuffer:
+ 362 0000 0000     		.space	2
+ 363              		.section	.bss.rx_buffer,"aw",%nobits
+ 364              		.align	2
+ 365              		.set	.LANCHOR2,. + 0
+ 368              	rx_buffer:
+ 369 0000 00000000 		.space	4
+ 370              		.text
+ 371              	.Letext0:
+ 372              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 373              		.file 3 "Drivers/CMSIS/Device/ST/STM32F3xx/Include/stm32f303xc.h"
+ 374              		.file 4 "Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_def.h"
+ 375              		.file 5 "Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_gpio.h"
+ 376              		.file 6 "Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_dma.h"
+ 377              		.file 7 "Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_spi.h"
+ 378              		.file 8 "Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart.h"
+ 379              		.file 9 "/usr/include/newlib/string.h"
+ARM GAS  /tmp/ccawS0mO.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 myDWM3000.c
+     /tmp/ccawS0mO.s:18     .text.DWM3000_Create16bitCommand:0000000000000000 $t
+     /tmp/ccawS0mO.s:25     .text.DWM3000_Create16bitCommand:0000000000000000 DWM3000_Create16bitCommand
+     /tmp/ccawS0mO.s:71     .text.DWM3000_SendToDWM:0000000000000000 $t
+     /tmp/ccawS0mO.s:77     .text.DWM3000_SendToDWM:0000000000000000 DWM3000_SendToDWM
+     /tmp/ccawS0mO.s:106    .text.DWM3000_SendToDWM:0000000000000014 $d
+     /tmp/ccawS0mO.s:111    .text.DWM3000_ReceiveFromDWM:0000000000000000 $t
+     /tmp/ccawS0mO.s:117    .text.DWM3000_ReceiveFromDWM:0000000000000000 DWM3000_ReceiveFromDWM
+     /tmp/ccawS0mO.s:146    .text.DWM3000_ReceiveFromDWM:0000000000000014 $d
+     /tmp/ccawS0mO.s:151    .text.DWM3000_GetRXData16:0000000000000000 $t
+     /tmp/ccawS0mO.s:157    .text.DWM3000_GetRXData16:0000000000000000 DWM3000_GetRXData16
+     /tmp/ccawS0mO.s:216    .text.DWM3000_GetRXData16:000000000000003c $d
+     /tmp/ccawS0mO.s:222    .text.Init:0000000000000000 $t
+     /tmp/ccawS0mO.s:229    .text.Init:0000000000000000 Init
+     /tmp/ccawS0mO.s:250    .text.Init:000000000000000c $d
+     /tmp/ccawS0mO.s:256    .text.UART_Log:0000000000000000 $t
+     /tmp/ccawS0mO.s:263    .text.UART_Log:0000000000000000 UART_Log
+     /tmp/ccawS0mO.s:295    .text.UART_Log:0000000000000018 $d
+     /tmp/ccawS0mO.s:300    .text.DWM3000_Read_RX_Data:0000000000000000 $t
+     /tmp/ccawS0mO.s:307    .text.DWM3000_Read_RX_Data:0000000000000000 DWM3000_Read_RX_Data
+     /tmp/ccawS0mO.s:368    .bss.rx_buffer:0000000000000000 rx_buffer
+     /tmp/ccawS0mO.s:354    .bss.DWM_uart:0000000000000000 DWM_uart
+     /tmp/ccawS0mO.s:347    .bss.DWM_spi:0000000000000000 DWM_spi
+     /tmp/ccawS0mO.s:343    .bss.DWM_spi:0000000000000000 $d
+     /tmp/ccawS0mO.s:350    .bss.DWM_uart:0000000000000000 $d
+     /tmp/ccawS0mO.s:357    .bss.SendBuffer:0000000000000000 $d
+     /tmp/ccawS0mO.s:361    .bss.SendBuffer:0000000000000000 SendBuffer
+     /tmp/ccawS0mO.s:364    .bss.rx_buffer:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+HAL_SPI_Transmit
+HAL_SPI_Receive
+HAL_GPIO_WritePin
+strlen
+HAL_UART_Transmit

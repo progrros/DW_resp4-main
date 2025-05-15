@@ -1,0 +1,835 @@
+ARM GAS  /tmp/ccWtJeWF.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"myFunctions.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.get_msg_toPC,"ax",%progbits
+  18              		.align	1
+  19              		.global	get_msg_toPC
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	get_msg_toPC:
+  27              	.LVL0:
+  28              	.LFB133:
+  29              		.file 1 "Core/Src/myFunctions.c"
+   1:Core/Src/myFunctions.c **** #include "myFunctions.h"
+   2:Core/Src/myFunctions.c **** 
+   3:Core/Src/myFunctions.c **** /*
+   4:Core/Src/myFunctions.c ****  * get_msg_toPC function take from table b (message from anchor with id and distance)
+   5:Core/Src/myFunctions.c ****  * distance while a char is not letter "m"
+   6:Core/Src/myFunctions.c ****  * this function is used only in PC module
+   7:Core/Src/myFunctions.c ****  */
+   8:Core/Src/myFunctions.c **** void get_msg_toPC(char * a, uint8_t* b, uint8_t anchor_idx)
+   9:Core/Src/myFunctions.c **** {
+  30              		.loc 1 9 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  10:Core/Src/myFunctions.c **** 	uint8_t i =0;
+  35              		.loc 1 10 2 view .LVU1
+  11:Core/Src/myFunctions.c **** 	while( (char)b[anchor_idx + i] != 'm' )
+  36              		.loc 1 11 2 view .LVU2
+  10:Core/Src/myFunctions.c **** 	uint8_t i =0;
+  37              		.loc 1 10 10 is_stmt 0 view .LVU3
+  38 0000 0023     		movs	r3, #0
+  39              		.loc 1 11 7 view .LVU4
+  40 0002 03E0     		b	.L2
+  41              	.LVL1:
+  42              	.L3:
+  12:Core/Src/myFunctions.c **** 	{
+  13:Core/Src/myFunctions.c **** 		a[i] = (char)b[anchor_idx + i];
+  43              		.loc 1 13 3 is_stmt 1 view .LVU5
+  44              		.loc 1 13 8 is_stmt 0 view .LVU6
+ARM GAS  /tmp/ccWtJeWF.s 			page 2
+
+
+  45 0004 00F803C0 		strb	ip, [r0, r3]
+  14:Core/Src/myFunctions.c **** 		i++;
+  46              		.loc 1 14 3 is_stmt 1 view .LVU7
+  47              		.loc 1 14 4 is_stmt 0 view .LVU8
+  48 0008 0133     		adds	r3, r3, #1
+  49              	.LVL2:
+  50              		.loc 1 14 4 view .LVU9
+  51 000a DBB2     		uxtb	r3, r3
+  52              	.LVL3:
+  53              	.L2:
+  11:Core/Src/myFunctions.c **** 	while( (char)b[anchor_idx + i] != 'm' )
+  54              		.loc 1 11 7 is_stmt 1 view .LVU10
+  11:Core/Src/myFunctions.c **** 	while( (char)b[anchor_idx + i] != 'm' )
+  55              		.loc 1 11 28 is_stmt 0 view .LVU11
+  56 000c 02EB030C 		add	ip, r2, r3
+  11:Core/Src/myFunctions.c **** 	while( (char)b[anchor_idx + i] != 'm' )
+  57              		.loc 1 11 16 view .LVU12
+  58 0010 11F80CC0 		ldrb	ip, [r1, ip]	@ zero_extendqisi2
+  11:Core/Src/myFunctions.c **** 	while( (char)b[anchor_idx + i] != 'm' )
+  59              		.loc 1 11 7 view .LVU13
+  60 0014 BCF16D0F 		cmp	ip, #109
+  61 0018 F4D1     		bne	.L3
+  15:Core/Src/myFunctions.c **** 	}
+  16:Core/Src/myFunctions.c **** }
+  62              		.loc 1 16 1 view .LVU14
+  63 001a 7047     		bx	lr
+  64              		.cfi_endproc
+  65              	.LFE133:
+  67              		.section	.text.get_msg_toPC_2,"ax",%progbits
+  68              		.align	1
+  69              		.global	get_msg_toPC_2
+  70              		.syntax unified
+  71              		.thumb
+  72              		.thumb_func
+  73              		.fpu fpv4-sp-d16
+  75              	get_msg_toPC_2:
+  76              	.LVL4:
+  77              	.LFB134:
+  17:Core/Src/myFunctions.c **** 
+  18:Core/Src/myFunctions.c **** uint8_t get_msg_toPC_2(char * a, uint8_t* b, uint8_t anchor_idx)
+  19:Core/Src/myFunctions.c **** {
+  78              		.loc 1 19 1 is_stmt 1 view -0
+  79              		.cfi_startproc
+  80              		@ args = 0, pretend = 0, frame = 0
+  81              		@ frame_needed = 0, uses_anonymous_args = 0
+  82              		.loc 1 19 1 is_stmt 0 view .LVU16
+  83 0000 00B5     		push	{lr}
+  84              		.cfi_def_cfa_offset 4
+  85              		.cfi_offset 14, -4
+  86 0002 8646     		mov	lr, r0
+  20:Core/Src/myFunctions.c **** 	uint8_t i =0;
+  87              		.loc 1 20 2 is_stmt 1 view .LVU17
+  88              	.LVL5:
+  21:Core/Src/myFunctions.c **** 	while( (char)b[anchor_idx + i] != 'd' )
+  89              		.loc 1 21 2 view .LVU18
+  20:Core/Src/myFunctions.c **** 	uint8_t i =0;
+  90              		.loc 1 20 10 is_stmt 0 view .LVU19
+ARM GAS  /tmp/ccWtJeWF.s 			page 3
+
+
+  91 0004 0020     		movs	r0, #0
+  92              	.LVL6:
+  93              		.loc 1 21 7 view .LVU20
+  94 0006 03E0     		b	.L5
+  95              	.LVL7:
+  96              	.L6:
+  22:Core/Src/myFunctions.c **** 	{
+  23:Core/Src/myFunctions.c **** 		a[i] = (char)b[anchor_idx + i];
+  97              		.loc 1 23 3 is_stmt 1 view .LVU21
+  98              		.loc 1 23 8 is_stmt 0 view .LVU22
+  99 0008 0EF80030 		strb	r3, [lr, r0]
+  24:Core/Src/myFunctions.c **** 		i++;
+ 100              		.loc 1 24 3 is_stmt 1 view .LVU23
+ 101              		.loc 1 24 4 is_stmt 0 view .LVU24
+ 102 000c 0130     		adds	r0, r0, #1
+ 103              	.LVL8:
+ 104              		.loc 1 24 4 view .LVU25
+ 105 000e C0B2     		uxtb	r0, r0
+ 106              	.LVL9:
+ 107              	.L5:
+  21:Core/Src/myFunctions.c **** 	while( (char)b[anchor_idx + i] != 'd' )
+ 108              		.loc 1 21 7 is_stmt 1 view .LVU26
+  21:Core/Src/myFunctions.c **** 	while( (char)b[anchor_idx + i] != 'd' )
+ 109              		.loc 1 21 28 is_stmt 0 view .LVU27
+ 110 0010 02EB000C 		add	ip, r2, r0
+  21:Core/Src/myFunctions.c **** 	while( (char)b[anchor_idx + i] != 'd' )
+ 111              		.loc 1 21 16 view .LVU28
+ 112 0014 11F80C30 		ldrb	r3, [r1, ip]	@ zero_extendqisi2
+  21:Core/Src/myFunctions.c **** 	while( (char)b[anchor_idx + i] != 'd' )
+ 113              		.loc 1 21 7 view .LVU29
+ 114 0018 642B     		cmp	r3, #100
+ 115 001a F5D1     		bne	.L6
+  25:Core/Src/myFunctions.c **** 	}
+  26:Core/Src/myFunctions.c **** 	a[i] = (char)b[anchor_idx + i + 1];
+ 116              		.loc 1 26 2 is_stmt 1 view .LVU30
+ 117              		.loc 1 26 16 is_stmt 0 view .LVU31
+ 118 001c 0CF1010C 		add	ip, ip, #1
+ 119              		.loc 1 26 9 view .LVU32
+ 120 0020 11F80C30 		ldrb	r3, [r1, ip]	@ zero_extendqisi2
+ 121              		.loc 1 26 7 view .LVU33
+ 122 0024 0EF80030 		strb	r3, [lr, r0]
+  27:Core/Src/myFunctions.c **** 
+  28:Core/Src/myFunctions.c **** 	return i;
+ 123              		.loc 1 28 2 is_stmt 1 view .LVU34
+  29:Core/Src/myFunctions.c **** }
+ 124              		.loc 1 29 1 is_stmt 0 view .LVU35
+ 125 0028 5DF804FB 		ldr	pc, [sp], #4
+ 126              		.cfi_endproc
+ 127              	.LFE134:
+ 129              		.section	.text.add_dist_to_PCmsg,"ax",%progbits
+ 130              		.align	1
+ 131              		.global	add_dist_to_PCmsg
+ 132              		.syntax unified
+ 133              		.thumb
+ 134              		.thumb_func
+ 135              		.fpu fpv4-sp-d16
+ 137              	add_dist_to_PCmsg:
+ARM GAS  /tmp/ccWtJeWF.s 			page 4
+
+
+ 138              	.LVL10:
+ 139              	.LFB135:
+  30:Core/Src/myFunctions.c **** /*
+  31:Core/Src/myFunctions.c ****  * add_dist_to_PCmsg function add distance to message which is send from anchor to PC module
+  32:Core/Src/myFunctions.c ****  * this function is used only in anchors
+  33:Core/Src/myFunctions.c ****  */
+  34:Core/Src/myFunctions.c **** void add_dist_to_PCmsg(uint8_t *a, char* b, uint8_t dist_idx)
+  35:Core/Src/myFunctions.c **** {
+ 140              		.loc 1 35 1 is_stmt 1 view -0
+ 141              		.cfi_startproc
+ 142              		@ args = 0, pretend = 0, frame = 0
+ 143              		@ frame_needed = 0, uses_anonymous_args = 0
+ 144              		.loc 1 35 1 is_stmt 0 view .LVU37
+ 145 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 146              		.cfi_def_cfa_offset 24
+ 147              		.cfi_offset 3, -24
+ 148              		.cfi_offset 4, -20
+ 149              		.cfi_offset 5, -16
+ 150              		.cfi_offset 6, -12
+ 151              		.cfi_offset 7, -8
+ 152              		.cfi_offset 14, -4
+ 153 0002 0746     		mov	r7, r0
+ 154 0004 0D46     		mov	r5, r1
+ 155 0006 1646     		mov	r6, r2
+  36:Core/Src/myFunctions.c **** 	for (uint8_t i = 0; i < strlen(b);  i++)
+ 156              		.loc 1 36 2 is_stmt 1 view .LVU38
+ 157              	.LBB2:
+ 158              		.loc 1 36 7 view .LVU39
+ 159              	.LVL11:
+ 160              		.loc 1 36 15 is_stmt 0 view .LVU40
+ 161 0008 0024     		movs	r4, #0
+ 162              		.loc 1 36 2 view .LVU41
+ 163 000a 04E0     		b	.L9
+ 164              	.LVL12:
+ 165              	.L10:
+  37:Core/Src/myFunctions.c **** 	{
+  38:Core/Src/myFunctions.c **** 		a[dist_idx + i] = b[i];
+ 166              		.loc 1 38 3 is_stmt 1 discriminator 3 view .LVU42
+ 167              		.loc 1 38 14 is_stmt 0 discriminator 3 view .LVU43
+ 168 000c 3319     		adds	r3, r6, r4
+ 169              		.loc 1 38 22 discriminator 3 view .LVU44
+ 170 000e 295D     		ldrb	r1, [r5, r4]	@ zero_extendqisi2
+ 171              		.loc 1 38 19 discriminator 3 view .LVU45
+ 172 0010 F954     		strb	r1, [r7, r3]
+  36:Core/Src/myFunctions.c **** 	for (uint8_t i = 0; i < strlen(b);  i++)
+ 173              		.loc 1 36 38 is_stmt 1 discriminator 3 view .LVU46
+  36:Core/Src/myFunctions.c **** 	for (uint8_t i = 0; i < strlen(b);  i++)
+ 174              		.loc 1 36 39 is_stmt 0 discriminator 3 view .LVU47
+ 175 0012 0134     		adds	r4, r4, #1
+ 176              	.LVL13:
+  36:Core/Src/myFunctions.c **** 	for (uint8_t i = 0; i < strlen(b);  i++)
+ 177              		.loc 1 36 39 discriminator 3 view .LVU48
+ 178 0014 E4B2     		uxtb	r4, r4
+ 179              	.LVL14:
+ 180              	.L9:
+  36:Core/Src/myFunctions.c **** 	for (uint8_t i = 0; i < strlen(b);  i++)
+ 181              		.loc 1 36 22 is_stmt 1 discriminator 1 view .LVU49
+ARM GAS  /tmp/ccWtJeWF.s 			page 5
+
+
+  36:Core/Src/myFunctions.c **** 	for (uint8_t i = 0; i < strlen(b);  i++)
+ 182              		.loc 1 36 26 is_stmt 0 discriminator 1 view .LVU50
+ 183 0016 2846     		mov	r0, r5
+ 184 0018 FFF7FEFF 		bl	strlen
+ 185              	.LVL15:
+  36:Core/Src/myFunctions.c **** 	for (uint8_t i = 0; i < strlen(b);  i++)
+ 186              		.loc 1 36 2 discriminator 1 view .LVU51
+ 187 001c 8442     		cmp	r4, r0
+ 188 001e F5D3     		bcc	.L10
+ 189              	.LBE2:
+  39:Core/Src/myFunctions.c **** 	}
+  40:Core/Src/myFunctions.c **** 
+  41:Core/Src/myFunctions.c **** }
+ 190              		.loc 1 41 1 view .LVU52
+ 191 0020 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 192              		.loc 1 41 1 view .LVU53
+ 193              		.cfi_endproc
+ 194              	.LFE135:
+ 196              		.section	.text.allTrue,"ax",%progbits
+ 197              		.align	1
+ 198              		.global	allTrue
+ 199              		.syntax unified
+ 200              		.thumb
+ 201              		.thumb_func
+ 202              		.fpu fpv4-sp-d16
+ 204              	allTrue:
+ 205              	.LVL16:
+ 206              	.LFB136:
+  42:Core/Src/myFunctions.c **** /*
+  43:Core/Src/myFunctions.c ****  * allTrue function check that in table are only values 1
+  44:Core/Src/myFunctions.c ****  * this function is used only in PC module
+  45:Core/Src/myFunctions.c ****  */
+  46:Core/Src/myFunctions.c **** uint8_t allTrue(uint8_t * table, uint8_t numOfAnchors)
+  47:Core/Src/myFunctions.c **** {
+ 207              		.loc 1 47 1 is_stmt 1 view -0
+ 208              		.cfi_startproc
+ 209              		@ args = 0, pretend = 0, frame = 0
+ 210              		@ frame_needed = 0, uses_anonymous_args = 0
+ 211              		@ link register save eliminated.
+  48:Core/Src/myFunctions.c **** 	if (numOfAnchors == 4)
+ 212              		.loc 1 48 2 view .LVU55
+ 213              		.loc 1 48 5 is_stmt 0 view .LVU56
+ 214 0000 0429     		cmp	r1, #4
+ 215 0002 03D0     		beq	.L26
+  49:Core/Src/myFunctions.c **** 	{
+  50:Core/Src/myFunctions.c **** 		if (table[0] && table[1] && table[2] && table[3])
+  51:Core/Src/myFunctions.c **** 		{
+  52:Core/Src/myFunctions.c **** 			return 1;
+  53:Core/Src/myFunctions.c **** 		}
+  54:Core/Src/myFunctions.c **** 		else
+  55:Core/Src/myFunctions.c **** 		{
+  56:Core/Src/myFunctions.c **** 			return 0;
+  57:Core/Src/myFunctions.c **** 		}
+  58:Core/Src/myFunctions.c **** 	}
+  59:Core/Src/myFunctions.c **** 	else if (numOfAnchors == 6)
+ 216              		.loc 1 59 7 is_stmt 1 view .LVU57
+ 217              		.loc 1 59 10 is_stmt 0 view .LVU58
+ARM GAS  /tmp/ccWtJeWF.s 			page 6
+
+
+ 218 0004 0629     		cmp	r1, #6
+ 219 0006 0BD0     		beq	.L27
+  60:Core/Src/myFunctions.c **** 	{
+  61:Core/Src/myFunctions.c **** 		if (table[0] && table[1] && table[2] && table[3] && table[4] && table[5])
+  62:Core/Src/myFunctions.c **** 		{
+  63:Core/Src/myFunctions.c **** 			return 1;
+  64:Core/Src/myFunctions.c **** 		}
+  65:Core/Src/myFunctions.c **** 		else
+  66:Core/Src/myFunctions.c **** 		{
+  67:Core/Src/myFunctions.c **** 			return 0;
+  68:Core/Src/myFunctions.c **** 		}
+  69:Core/Src/myFunctions.c **** 	}
+  70:Core/Src/myFunctions.c **** 	return 0;
+ 220              		.loc 1 70 9 view .LVU59
+ 221 0008 0020     		movs	r0, #0
+ 222              	.LVL17:
+ 223              		.loc 1 70 9 view .LVU60
+ 224 000a 7047     		bx	lr
+ 225              	.LVL18:
+ 226              	.L26:
+  50:Core/Src/myFunctions.c **** 		{
+ 227              		.loc 1 50 3 is_stmt 1 view .LVU61
+  50:Core/Src/myFunctions.c **** 		{
+ 228              		.loc 1 50 12 is_stmt 0 view .LVU62
+ 229 000c 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+  50:Core/Src/myFunctions.c **** 		{
+ 230              		.loc 1 50 6 view .LVU63
+ 231 000e ABB1     		cbz	r3, .L15
+  50:Core/Src/myFunctions.c **** 		{
+ 232              		.loc 1 50 24 discriminator 1 view .LVU64
+ 233 0010 4378     		ldrb	r3, [r0, #1]	@ zero_extendqisi2
+  50:Core/Src/myFunctions.c **** 		{
+ 234              		.loc 1 50 16 discriminator 1 view .LVU65
+ 235 0012 ABB1     		cbz	r3, .L16
+  50:Core/Src/myFunctions.c **** 		{
+ 236              		.loc 1 50 36 discriminator 2 view .LVU66
+ 237 0014 8378     		ldrb	r3, [r0, #2]	@ zero_extendqisi2
+  50:Core/Src/myFunctions.c **** 		{
+ 238              		.loc 1 50 28 discriminator 2 view .LVU67
+ 239 0016 ABB1     		cbz	r3, .L17
+  50:Core/Src/myFunctions.c **** 		{
+ 240              		.loc 1 50 48 discriminator 3 view .LVU68
+ 241 0018 C378     		ldrb	r3, [r0, #3]	@ zero_extendqisi2
+  50:Core/Src/myFunctions.c **** 		{
+ 242              		.loc 1 50 40 discriminator 3 view .LVU69
+ 243 001a ABB9     		cbnz	r3, .L18
+  56:Core/Src/myFunctions.c **** 		}
+ 244              		.loc 1 56 11 view .LVU70
+ 245 001c 0020     		movs	r0, #0
+ 246              	.LVL19:
+  56:Core/Src/myFunctions.c **** 		}
+ 247              		.loc 1 56 11 view .LVU71
+ 248 001e 7047     		bx	lr
+ 249              	.LVL20:
+ 250              	.L27:
+  61:Core/Src/myFunctions.c **** 		{
+ 251              		.loc 1 61 3 is_stmt 1 view .LVU72
+ARM GAS  /tmp/ccWtJeWF.s 			page 7
+
+
+  61:Core/Src/myFunctions.c **** 		{
+ 252              		.loc 1 61 12 is_stmt 0 view .LVU73
+ 253 0020 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+  61:Core/Src/myFunctions.c **** 		{
+ 254              		.loc 1 61 6 view .LVU74
+ 255 0022 9BB1     		cbz	r3, .L20
+  61:Core/Src/myFunctions.c **** 		{
+ 256              		.loc 1 61 24 discriminator 1 view .LVU75
+ 257 0024 4378     		ldrb	r3, [r0, #1]	@ zero_extendqisi2
+  61:Core/Src/myFunctions.c **** 		{
+ 258              		.loc 1 61 16 discriminator 1 view .LVU76
+ 259 0026 9BB1     		cbz	r3, .L21
+  61:Core/Src/myFunctions.c **** 		{
+ 260              		.loc 1 61 36 discriminator 2 view .LVU77
+ 261 0028 8378     		ldrb	r3, [r0, #2]	@ zero_extendqisi2
+  61:Core/Src/myFunctions.c **** 		{
+ 262              		.loc 1 61 28 discriminator 2 view .LVU78
+ 263 002a 9BB1     		cbz	r3, .L22
+  61:Core/Src/myFunctions.c **** 		{
+ 264              		.loc 1 61 48 discriminator 3 view .LVU79
+ 265 002c C378     		ldrb	r3, [r0, #3]	@ zero_extendqisi2
+  61:Core/Src/myFunctions.c **** 		{
+ 266              		.loc 1 61 40 discriminator 3 view .LVU80
+ 267 002e 9BB1     		cbz	r3, .L23
+  61:Core/Src/myFunctions.c **** 		{
+ 268              		.loc 1 61 60 discriminator 4 view .LVU81
+ 269 0030 0379     		ldrb	r3, [r0, #4]	@ zero_extendqisi2
+  61:Core/Src/myFunctions.c **** 		{
+ 270              		.loc 1 61 52 discriminator 4 view .LVU82
+ 271 0032 9BB1     		cbz	r3, .L24
+  61:Core/Src/myFunctions.c **** 		{
+ 272              		.loc 1 61 72 discriminator 5 view .LVU83
+ 273 0034 4379     		ldrb	r3, [r0, #5]	@ zero_extendqisi2
+  61:Core/Src/myFunctions.c **** 		{
+ 274              		.loc 1 61 64 discriminator 5 view .LVU84
+ 275 0036 9BB9     		cbnz	r3, .L25
+  67:Core/Src/myFunctions.c **** 		}
+ 276              		.loc 1 67 11 view .LVU85
+ 277 0038 0020     		movs	r0, #0
+ 278              	.LVL21:
+  67:Core/Src/myFunctions.c **** 		}
+ 279              		.loc 1 67 11 view .LVU86
+ 280 003a 7047     		bx	lr
+ 281              	.LVL22:
+ 282              	.L15:
+  56:Core/Src/myFunctions.c **** 		}
+ 283              		.loc 1 56 11 view .LVU87
+ 284 003c 0020     		movs	r0, #0
+ 285              	.LVL23:
+  56:Core/Src/myFunctions.c **** 		}
+ 286              		.loc 1 56 11 view .LVU88
+ 287 003e 7047     		bx	lr
+ 288              	.LVL24:
+ 289              	.L16:
+  56:Core/Src/myFunctions.c **** 		}
+ 290              		.loc 1 56 11 view .LVU89
+ 291 0040 0020     		movs	r0, #0
+ARM GAS  /tmp/ccWtJeWF.s 			page 8
+
+
+ 292              	.LVL25:
+  56:Core/Src/myFunctions.c **** 		}
+ 293              		.loc 1 56 11 view .LVU90
+ 294 0042 7047     		bx	lr
+ 295              	.LVL26:
+ 296              	.L17:
+  56:Core/Src/myFunctions.c **** 		}
+ 297              		.loc 1 56 11 view .LVU91
+ 298 0044 0020     		movs	r0, #0
+ 299              	.LVL27:
+  56:Core/Src/myFunctions.c **** 		}
+ 300              		.loc 1 56 11 view .LVU92
+ 301 0046 7047     		bx	lr
+ 302              	.LVL28:
+ 303              	.L18:
+  52:Core/Src/myFunctions.c **** 		}
+ 304              		.loc 1 52 11 view .LVU93
+ 305 0048 0120     		movs	r0, #1
+ 306              	.LVL29:
+  52:Core/Src/myFunctions.c **** 		}
+ 307              		.loc 1 52 11 view .LVU94
+ 308 004a 7047     		bx	lr
+ 309              	.LVL30:
+ 310              	.L20:
+  67:Core/Src/myFunctions.c **** 		}
+ 311              		.loc 1 67 11 view .LVU95
+ 312 004c 0020     		movs	r0, #0
+ 313              	.LVL31:
+  67:Core/Src/myFunctions.c **** 		}
+ 314              		.loc 1 67 11 view .LVU96
+ 315 004e 7047     		bx	lr
+ 316              	.LVL32:
+ 317              	.L21:
+  67:Core/Src/myFunctions.c **** 		}
+ 318              		.loc 1 67 11 view .LVU97
+ 319 0050 0020     		movs	r0, #0
+ 320              	.LVL33:
+  67:Core/Src/myFunctions.c **** 		}
+ 321              		.loc 1 67 11 view .LVU98
+ 322 0052 7047     		bx	lr
+ 323              	.LVL34:
+ 324              	.L22:
+  67:Core/Src/myFunctions.c **** 		}
+ 325              		.loc 1 67 11 view .LVU99
+ 326 0054 0020     		movs	r0, #0
+ 327              	.LVL35:
+  67:Core/Src/myFunctions.c **** 		}
+ 328              		.loc 1 67 11 view .LVU100
+ 329 0056 7047     		bx	lr
+ 330              	.LVL36:
+ 331              	.L23:
+  67:Core/Src/myFunctions.c **** 		}
+ 332              		.loc 1 67 11 view .LVU101
+ 333 0058 0020     		movs	r0, #0
+ 334              	.LVL37:
+  67:Core/Src/myFunctions.c **** 		}
+ 335              		.loc 1 67 11 view .LVU102
+ARM GAS  /tmp/ccWtJeWF.s 			page 9
+
+
+ 336 005a 7047     		bx	lr
+ 337              	.LVL38:
+ 338              	.L24:
+  67:Core/Src/myFunctions.c **** 		}
+ 339              		.loc 1 67 11 view .LVU103
+ 340 005c 0020     		movs	r0, #0
+ 341              	.LVL39:
+  67:Core/Src/myFunctions.c **** 		}
+ 342              		.loc 1 67 11 view .LVU104
+ 343 005e 7047     		bx	lr
+ 344              	.LVL40:
+ 345              	.L25:
+  63:Core/Src/myFunctions.c **** 		}
+ 346              		.loc 1 63 11 view .LVU105
+ 347 0060 0120     		movs	r0, #1
+ 348              	.LVL41:
+  71:Core/Src/myFunctions.c **** }
+ 349              		.loc 1 71 1 view .LVU106
+ 350 0062 7047     		bx	lr
+ 351              		.cfi_endproc
+ 352              	.LFE136:
+ 354              		.global	__aeabi_f2d
+ 355              		.section	.rodata.concatenateDistancesAndRssiToString.str1.4,"aMS",%progbits,1
+ 356              		.align	2
+ 357              	.LC0:
+ 358 0000 25332E32 		.ascii	"%3.2f/\000"
+ 358      662F00
+ 359 0007 00       		.align	2
+ 360              	.LC1:
+ 361 0008 25342E32 		.ascii	"%4.2f:\000"
+ 361      663A00
+ 362              		.section	.text.concatenateDistancesAndRssiToString,"ax",%progbits
+ 363              		.align	1
+ 364              		.global	concatenateDistancesAndRssiToString
+ 365              		.syntax unified
+ 366              		.thumb
+ 367              		.thumb_func
+ 368              		.fpu fpv4-sp-d16
+ 370              	concatenateDistancesAndRssiToString:
+ 371              	.LVL42:
+ 372              	.LFB137:
+  72:Core/Src/myFunctions.c **** 
+  73:Core/Src/myFunctions.c **** /*
+  74:Core/Src/myFunctions.c ****  * concatenateDistancesToString function concatenate all distances in table distances
+  75:Core/Src/myFunctions.c ****  * to one string separate them using ":"
+  76:Core/Src/myFunctions.c ****  * this function is used only in PC module
+  77:Core/Src/myFunctions.c ****  */
+  78:Core/Src/myFunctions.c **** void concatenateDistancesAndRssiToString(float* distances, float* rssi, char* allDistancesToPC, uin
+  79:Core/Src/myFunctions.c **** {
+ 373              		.loc 1 79 1 is_stmt 1 view -0
+ 374              		.cfi_startproc
+ 375              		@ args = 4, pretend = 0, frame = 32
+ 376              		@ frame_needed = 0, uses_anonymous_args = 0
+ 377              		.loc 1 79 1 is_stmt 0 view .LVU108
+ 378 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ 379              		.cfi_def_cfa_offset 28
+ 380              		.cfi_offset 4, -28
+ARM GAS  /tmp/ccWtJeWF.s 			page 10
+
+
+ 381              		.cfi_offset 5, -24
+ 382              		.cfi_offset 6, -20
+ 383              		.cfi_offset 7, -16
+ 384              		.cfi_offset 8, -12
+ 385              		.cfi_offset 9, -8
+ 386              		.cfi_offset 14, -4
+ 387 0004 89B0     		sub	sp, sp, #36
+ 388              		.cfi_def_cfa_offset 64
+ 389 0006 8146     		mov	r9, r0
+ 390 0008 8846     		mov	r8, r1
+ 391 000a 1646     		mov	r6, r2
+ 392 000c 1F46     		mov	r7, r3
+  80:Core/Src/myFunctions.c **** 
+  81:Core/Src/myFunctions.c **** 	char distanceAndRssi[20];
+ 393              		.loc 1 81 2 is_stmt 1 view .LVU109
+  82:Core/Src/myFunctions.c **** 	char rssi_str[10];
+ 394              		.loc 1 82 2 view .LVU110
+  83:Core/Src/myFunctions.c **** 
+  84:Core/Src/myFunctions.c **** 	for (int i = 0; i < numOfAnchors; i++)
+ 395              		.loc 1 84 2 view .LVU111
+ 396              	.LBB3:
+ 397              		.loc 1 84 7 view .LVU112
+ 398              	.LVL43:
+ 399              		.loc 1 84 11 is_stmt 0 view .LVU113
+ 400 000e 0024     		movs	r4, #0
+ 401              		.loc 1 84 2 view .LVU114
+ 402 0010 1EE0     		b	.L29
+ 403              	.LVL44:
+ 404              	.L30:
+  85:Core/Src/myFunctions.c **** 	{
+  86:Core/Src/myFunctions.c **** 		sprintf(distanceAndRssi, "%3.2f/", distances[i]);
+ 405              		.loc 1 86 3 is_stmt 1 discriminator 3 view .LVU115
+ 406              		.loc 1 86 47 is_stmt 0 discriminator 3 view .LVU116
+ 407 0012 A500     		lsls	r5, r4, #2
+ 408 0014 09EB8403 		add	r3, r9, r4, lsl #2
+ 409              		.loc 1 86 3 discriminator 3 view .LVU117
+ 410 0018 1868     		ldr	r0, [r3]	@ float
+ 411 001a FFF7FEFF 		bl	__aeabi_f2d
+ 412              	.LVL45:
+ 413 001e 0246     		mov	r2, r0
+ 414 0020 0B46     		mov	r3, r1
+ 415 0022 1649     		ldr	r1, .L32
+ 416 0024 03A8     		add	r0, sp, #12
+ 417 0026 FFF7FEFF 		bl	sprintf
+ 418              	.LVL46:
+  87:Core/Src/myFunctions.c **** 		sprintf(rssi_str, "%4.2f:", rssi[i]);
+ 419              		.loc 1 87 3 is_stmt 1 discriminator 3 view .LVU118
+ 420              		.loc 1 87 35 is_stmt 0 discriminator 3 view .LVU119
+ 421 002a 4544     		add	r5, r5, r8
+ 422              		.loc 1 87 3 discriminator 3 view .LVU120
+ 423 002c 2868     		ldr	r0, [r5]	@ float
+ 424 002e FFF7FEFF 		bl	__aeabi_f2d
+ 425              	.LVL47:
+ 426 0032 0246     		mov	r2, r0
+ 427 0034 0B46     		mov	r3, r1
+ 428 0036 1249     		ldr	r1, .L32+4
+ 429 0038 6846     		mov	r0, sp
+ARM GAS  /tmp/ccWtJeWF.s 			page 11
+
+
+ 430 003a FFF7FEFF 		bl	sprintf
+ 431              	.LVL48:
+  88:Core/Src/myFunctions.c **** 		strcat(distanceAndRssi, rssi_str);
+ 432              		.loc 1 88 3 is_stmt 1 discriminator 3 view .LVU121
+ 433 003e 6946     		mov	r1, sp
+ 434 0040 03A8     		add	r0, sp, #12
+ 435 0042 FFF7FEFF 		bl	strcat
+ 436              	.LVL49:
+  89:Core/Src/myFunctions.c **** 		strcat(allDistancesToPC, distanceAndRssi);
+ 437              		.loc 1 89 3 discriminator 3 view .LVU122
+ 438 0046 03A9     		add	r1, sp, #12
+ 439 0048 3046     		mov	r0, r6
+ 440 004a FFF7FEFF 		bl	strcat
+ 441              	.LVL50:
+  84:Core/Src/myFunctions.c **** 	{
+ 442              		.loc 1 84 36 discriminator 3 view .LVU123
+  84:Core/Src/myFunctions.c **** 	{
+ 443              		.loc 1 84 37 is_stmt 0 discriminator 3 view .LVU124
+ 444 004e 0134     		adds	r4, r4, #1
+ 445              	.LVL51:
+ 446              	.L29:
+  84:Core/Src/myFunctions.c **** 	{
+ 447              		.loc 1 84 18 is_stmt 1 discriminator 1 view .LVU125
+  84:Core/Src/myFunctions.c **** 	{
+ 448              		.loc 1 84 2 is_stmt 0 discriminator 1 view .LVU126
+ 449 0050 A742     		cmp	r7, r4
+ 450 0052 DEDC     		bgt	.L30
+ 451              	.LBE3:
+  90:Core/Src/myFunctions.c **** 	}
+  91:Core/Src/myFunctions.c **** 	allDistancesToPC[strlen(allDistancesToPC)] = tag[0];
+ 452              		.loc 1 91 2 is_stmt 1 view .LVU127
+ 453              		.loc 1 91 19 is_stmt 0 view .LVU128
+ 454 0054 3046     		mov	r0, r6
+ 455 0056 FFF7FEFF 		bl	strlen
+ 456              	.LVL52:
+ 457              		.loc 1 91 50 view .LVU129
+ 458 005a 109B     		ldr	r3, [sp, #64]
+ 459 005c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 460              		.loc 1 91 45 view .LVU130
+ 461 005e 3354     		strb	r3, [r6, r0]
+  92:Core/Src/myFunctions.c **** 	allDistancesToPC[strlen(allDistancesToPC)] = '\n';
+ 462              		.loc 1 92 2 is_stmt 1 view .LVU131
+ 463              		.loc 1 92 19 is_stmt 0 view .LVU132
+ 464 0060 3046     		mov	r0, r6
+ 465 0062 FFF7FEFF 		bl	strlen
+ 466              	.LVL53:
+ 467              		.loc 1 92 45 view .LVU133
+ 468 0066 0A23     		movs	r3, #10
+ 469 0068 3354     		strb	r3, [r6, r0]
+  93:Core/Src/myFunctions.c **** 	allDistancesToPC[strlen(allDistancesToPC)] = '\r';
+ 470              		.loc 1 93 2 is_stmt 1 view .LVU134
+ 471              		.loc 1 93 19 is_stmt 0 view .LVU135
+ 472 006a 3046     		mov	r0, r6
+ 473 006c FFF7FEFF 		bl	strlen
+ 474              	.LVL54:
+ 475              		.loc 1 93 45 view .LVU136
+ 476 0070 0D23     		movs	r3, #13
+ARM GAS  /tmp/ccWtJeWF.s 			page 12
+
+
+ 477 0072 3354     		strb	r3, [r6, r0]
+  94:Core/Src/myFunctions.c **** 
+  95:Core/Src/myFunctions.c **** }
+ 478              		.loc 1 95 1 view .LVU137
+ 479 0074 09B0     		add	sp, sp, #36
+ 480              		.cfi_def_cfa_offset 28
+ 481              		@ sp needed
+ 482 0076 BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 483              	.LVL55:
+ 484              	.L33:
+ 485              		.loc 1 95 1 view .LVU138
+ 486 007a 00BF     		.align	2
+ 487              	.L32:
+ 488 007c 00000000 		.word	.LC0
+ 489 0080 08000000 		.word	.LC1
+ 490              		.cfi_endproc
+ 491              	.LFE137:
+ 493              		.section	.text.split_dist_rssi,"ax",%progbits
+ 494              		.align	1
+ 495              		.global	split_dist_rssi
+ 496              		.syntax unified
+ 497              		.thumb
+ 498              		.thumb_func
+ 499              		.fpu fpv4-sp-d16
+ 501              	split_dist_rssi:
+ 502              	.LVL56:
+ 503              	.LFB138:
+  96:Core/Src/myFunctions.c **** /*
+  97:Core/Src/myFunctions.c ****  * this function only works for specific string to get rssi and dist split
+  98:Core/Src/myFunctions.c ****  */
+  99:Core/Src/myFunctions.c **** void split_dist_rssi(char* msg_to_PC, char* dist, char* rssi, char tag)
+ 100:Core/Src/myFunctions.c **** {
+ 504              		.loc 1 100 1 is_stmt 1 view -0
+ 505              		.cfi_startproc
+ 506              		@ args = 0, pretend = 0, frame = 0
+ 507              		@ frame_needed = 0, uses_anonymous_args = 0
+ 508              		.loc 1 100 1 is_stmt 0 view .LVU140
+ 509 0000 10B5     		push	{r4, lr}
+ 510              		.cfi_def_cfa_offset 8
+ 511              		.cfi_offset 4, -8
+ 512              		.cfi_offset 14, -4
+ 101:Core/Src/myFunctions.c **** 	uint8_t i = 1;
+ 513              		.loc 1 101 2 is_stmt 1 view .LVU141
+ 514              	.LVL57:
+ 102:Core/Src/myFunctions.c **** 	uint8_t j = 0;
+ 515              		.loc 1 102 2 view .LVU142
+ 103:Core/Src/myFunctions.c **** 	while(msg_to_PC[i] != 'm')
+ 516              		.loc 1 103 2 view .LVU143
+ 101:Core/Src/myFunctions.c **** 	uint8_t i = 1;
+ 517              		.loc 1 101 10 is_stmt 0 view .LVU144
+ 518 0002 4FF0010C 		mov	ip, #1
+ 519              		.loc 1 103 7 view .LVU145
+ 520 0006 07E0     		b	.L35
+ 521              	.LVL58:
+ 522              	.L36:
+ 104:Core/Src/myFunctions.c **** 	{
+ 105:Core/Src/myFunctions.c **** 		dist[i-1] = msg_to_PC[i];
+ARM GAS  /tmp/ccWtJeWF.s 			page 13
+
+
+ 523              		.loc 1 105 3 is_stmt 1 view .LVU146
+ 524              		.loc 1 105 7 is_stmt 0 view .LVU147
+ 525 0008 0CF1FF34 		add	r4, ip, #-1
+ 526              		.loc 1 105 13 view .LVU148
+ 527 000c 01F804E0 		strb	lr, [r1, r4]
+ 106:Core/Src/myFunctions.c **** 		i++;
+ 528              		.loc 1 106 3 is_stmt 1 view .LVU149
+ 529              		.loc 1 106 4 is_stmt 0 view .LVU150
+ 530 0010 0CF1010C 		add	ip, ip, #1
+ 531              	.LVL59:
+ 532              		.loc 1 106 4 view .LVU151
+ 533 0014 5FFA8CFC 		uxtb	ip, ip
+ 534              	.LVL60:
+ 535              	.L35:
+ 103:Core/Src/myFunctions.c **** 	while(msg_to_PC[i] != 'm')
+ 536              		.loc 1 103 7 is_stmt 1 view .LVU152
+ 103:Core/Src/myFunctions.c **** 	while(msg_to_PC[i] != 'm')
+ 537              		.loc 1 103 17 is_stmt 0 view .LVU153
+ 538 0018 10F80CE0 		ldrb	lr, [r0, ip]	@ zero_extendqisi2
+ 103:Core/Src/myFunctions.c **** 	while(msg_to_PC[i] != 'm')
+ 539              		.loc 1 103 7 view .LVU154
+ 540 001c BEF16D0F 		cmp	lr, #109
+ 541 0020 F2D1     		bne	.L36
+ 107:Core/Src/myFunctions.c **** 	}
+ 108:Core/Src/myFunctions.c **** 	i++;
+ 542              		.loc 1 108 2 is_stmt 1 view .LVU155
+ 543              		.loc 1 108 3 is_stmt 0 view .LVU156
+ 544 0022 0CF1010C 		add	ip, ip, #1
+ 545              	.LVL61:
+ 546              		.loc 1 108 3 view .LVU157
+ 547 0026 5FFA8CFC 		uxtb	ip, ip
+ 548              	.LVL62:
+ 109:Core/Src/myFunctions.c **** 	while(msg_to_PC[i] != tag)
+ 549              		.loc 1 109 2 is_stmt 1 view .LVU158
+ 102:Core/Src/myFunctions.c **** 	while(msg_to_PC[i] != 'm')
+ 550              		.loc 1 102 10 is_stmt 0 view .LVU159
+ 551 002a 0021     		movs	r1, #0
+ 552              	.LVL63:
+ 553              		.loc 1 109 7 view .LVU160
+ 554 002c 07E0     		b	.L37
+ 555              	.LVL64:
+ 556              	.L38:
+ 110:Core/Src/myFunctions.c **** 	{
+ 111:Core/Src/myFunctions.c **** 		rssi[j] = msg_to_PC[i];
+ 557              		.loc 1 111 3 is_stmt 1 view .LVU161
+ 558              		.loc 1 111 11 is_stmt 0 view .LVU162
+ 559 002e 02F801E0 		strb	lr, [r2, r1]
+ 112:Core/Src/myFunctions.c **** 		i++;
+ 560              		.loc 1 112 3 is_stmt 1 view .LVU163
+ 561              		.loc 1 112 4 is_stmt 0 view .LVU164
+ 562 0032 0CF1010C 		add	ip, ip, #1
+ 563              	.LVL65:
+ 564              		.loc 1 112 4 view .LVU165
+ 565 0036 5FFA8CFC 		uxtb	ip, ip
+ 566              	.LVL66:
+ 113:Core/Src/myFunctions.c **** 		j++;
+ 567              		.loc 1 113 3 is_stmt 1 view .LVU166
+ARM GAS  /tmp/ccWtJeWF.s 			page 14
+
+
+ 568              		.loc 1 113 4 is_stmt 0 view .LVU167
+ 569 003a 0131     		adds	r1, r1, #1
+ 570              	.LVL67:
+ 571              		.loc 1 113 4 view .LVU168
+ 572 003c C9B2     		uxtb	r1, r1
+ 573              	.LVL68:
+ 574              	.L37:
+ 109:Core/Src/myFunctions.c **** 	{
+ 575              		.loc 1 109 7 is_stmt 1 view .LVU169
+ 109:Core/Src/myFunctions.c **** 	{
+ 576              		.loc 1 109 17 is_stmt 0 view .LVU170
+ 577 003e 10F80CE0 		ldrb	lr, [r0, ip]	@ zero_extendqisi2
+ 109:Core/Src/myFunctions.c **** 	{
+ 578              		.loc 1 109 7 view .LVU171
+ 579 0042 9E45     		cmp	lr, r3
+ 580 0044 F3D1     		bne	.L38
+ 114:Core/Src/myFunctions.c **** 	}
+ 115:Core/Src/myFunctions.c **** }
+ 581              		.loc 1 115 1 view .LVU172
+ 582 0046 10BD     		pop	{r4, pc}
+ 583              		.cfi_endproc
+ 584              	.LFE138:
+ 586              		.text
+ 587              	.Letext0:
+ 588              		.file 2 "/usr/include/newlib/stdio.h"
+ 589              		.file 3 "/usr/include/newlib/string.h"
+ 590              		.file 4 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ARM GAS  /tmp/ccWtJeWF.s 			page 15
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 myFunctions.c
+     /tmp/ccWtJeWF.s:18     .text.get_msg_toPC:0000000000000000 $t
+     /tmp/ccWtJeWF.s:26     .text.get_msg_toPC:0000000000000000 get_msg_toPC
+     /tmp/ccWtJeWF.s:68     .text.get_msg_toPC_2:0000000000000000 $t
+     /tmp/ccWtJeWF.s:75     .text.get_msg_toPC_2:0000000000000000 get_msg_toPC_2
+     /tmp/ccWtJeWF.s:130    .text.add_dist_to_PCmsg:0000000000000000 $t
+     /tmp/ccWtJeWF.s:137    .text.add_dist_to_PCmsg:0000000000000000 add_dist_to_PCmsg
+     /tmp/ccWtJeWF.s:197    .text.allTrue:0000000000000000 $t
+     /tmp/ccWtJeWF.s:204    .text.allTrue:0000000000000000 allTrue
+     /tmp/ccWtJeWF.s:356    .rodata.concatenateDistancesAndRssiToString.str1.4:0000000000000000 $d
+     /tmp/ccWtJeWF.s:363    .text.concatenateDistancesAndRssiToString:0000000000000000 $t
+     /tmp/ccWtJeWF.s:370    .text.concatenateDistancesAndRssiToString:0000000000000000 concatenateDistancesAndRssiToString
+     /tmp/ccWtJeWF.s:488    .text.concatenateDistancesAndRssiToString:000000000000007c $d
+     /tmp/ccWtJeWF.s:494    .text.split_dist_rssi:0000000000000000 $t
+     /tmp/ccWtJeWF.s:501    .text.split_dist_rssi:0000000000000000 split_dist_rssi
+
+UNDEFINED SYMBOLS
+strlen
+__aeabi_f2d
+sprintf
+strcat

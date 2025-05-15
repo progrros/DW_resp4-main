@@ -1,0 +1,88 @@
+ARM GAS  /tmp/ccnKbpve.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"config_options.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.global	config_options
+  18              		.global	txconfig_options_ch9
+  19              		.global	txconfig_options
+  20              		.global	dist_str
+  21              		.section	.bss.dist_str,"aw",%nobits
+  22              		.align	2
+  25              	dist_str:
+  26 0000 00000000 		.space	16
+  26      00000000 
+  26      00000000 
+  26      00000000 
+  27              		.section	.data.config_options,"aw"
+  28              		.align	2
+  31              	config_options:
+  32 0000 09       		.byte	9
+  33 0001 02       		.byte	2
+  34 0002 02       		.byte	2
+  35 0003 09       		.byte	9
+  36 0004 09       		.byte	9
+  37 0005 03       		.byte	3
+  38 0006 00       		.byte	0
+  39 0007 00       		.byte	0
+  40 0008 00       		.byte	0
+  41 0009 00       		.space	1
+  42 000a 0104     		.short	1025
+  43 000c 01       		.byte	1
+  44 000d 02       		.byte	2
+  45 000e 00       		.byte	0
+  46 000f 00       		.space	1
+  47              		.section	.data.txconfig_options,"aw"
+  48              		.align	2
+  51              	txconfig_options:
+  52 0000 AC       		.byte	-84
+  53 0001 000000   		.space	3
+  54 0004 FDFDFDFD 		.word	-33686019
+  55 0008 0000     		.short	0
+  56 000a 0000     		.space	2
+  57              		.section	.data.txconfig_options_ch9,"aw"
+  58              		.align	2
+  61              	txconfig_options_ch9:
+  62 0000 34       		.byte	52
+ARM GAS  /tmp/ccnKbpve.s 			page 2
+
+
+  63 0001 000000   		.space	3
+  64 0004 FEFEFEFE 		.word	-16843010
+  65 0008 0000     		.short	0
+  66 000a 0000     		.space	2
+  67              		.text
+  68              	.Letext0:
+  69              		.file 1 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+  70              		.file 2 "Core/Inc/deca_device_api.h"
+  71              		.file 3 "Core/Inc/config_options.h"
+  72              		.file 4 "Core/Src/config_options.c"
+ARM GAS  /tmp/ccnKbpve.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 config_options.c
+     /tmp/ccnKbpve.s:31     .data.config_options:0000000000000000 config_options
+     /tmp/ccnKbpve.s:61     .data.txconfig_options_ch9:0000000000000000 txconfig_options_ch9
+     /tmp/ccnKbpve.s:51     .data.txconfig_options:0000000000000000 txconfig_options
+     /tmp/ccnKbpve.s:25     .bss.dist_str:0000000000000000 dist_str
+     /tmp/ccnKbpve.s:22     .bss.dist_str:0000000000000000 $d
+     /tmp/ccnKbpve.s:28     .data.config_options:0000000000000000 $d
+     /tmp/ccnKbpve.s:48     .data.txconfig_options:0000000000000000 $d
+     /tmp/ccnKbpve.s:58     .data.txconfig_options_ch9:0000000000000000 $d
+
+NO UNDEFINED SYMBOLS

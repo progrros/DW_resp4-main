@@ -1,0 +1,107 @@
+ARM GAS  /tmp/cc5emnpH.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"deca_sleep.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.deca_sleep,"ax",%progbits
+  18              		.align	1
+  19              		.global	deca_sleep
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	deca_sleep:
+  27              	.LVL0:
+  28              	.LFB0:
+  29              		.file 1 "Core/Src/deca_sleep.c"
+   1:Core/Src/deca_sleep.c **** #include <port.h>
+   2:Core/Src/deca_sleep.c **** #include "deca_device_api.h"
+   3:Core/Src/deca_sleep.c **** 
+   4:Core/Src/deca_sleep.c **** /* Wrapper function to be used by decadriver. Declared in deca_device_api.h */
+   5:Core/Src/deca_sleep.c **** void deca_sleep(unsigned int time_ms)
+   6:Core/Src/deca_sleep.c **** {
+  30              		.loc 1 6 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 6 1 is_stmt 0 view .LVU1
+  35 0000 08B5     		push	{r3, lr}
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 3, -8
+  38              		.cfi_offset 14, -4
+   7:Core/Src/deca_sleep.c ****     Sleep(time_ms);
+  39              		.loc 1 7 5 is_stmt 1 view .LVU2
+  40 0002 FFF7FEFF 		bl	Sleep
+  41              	.LVL1:
+   8:Core/Src/deca_sleep.c **** }
+  42              		.loc 1 8 1 is_stmt 0 view .LVU3
+  43 0006 08BD     		pop	{r3, pc}
+  44              		.cfi_endproc
+  45              	.LFE0:
+  47              		.section	.text.deca_usleep,"ax",%progbits
+  48              		.align	1
+  49              		.global	deca_usleep
+  50              		.syntax unified
+  51              		.thumb
+ARM GAS  /tmp/cc5emnpH.s 			page 2
+
+
+  52              		.thumb_func
+  53              		.fpu fpv4-sp-d16
+  55              	deca_usleep:
+  56              	.LVL2:
+  57              	.LFB1:
+   9:Core/Src/deca_sleep.c **** 
+  10:Core/Src/deca_sleep.c **** 
+  11:Core/Src/deca_sleep.c **** /* Wrapper function to be used by decadriver. Declared in deca_device_api.h */
+  12:Core/Src/deca_sleep.c **** void deca_usleep(unsigned long time_us)
+  13:Core/Src/deca_sleep.c **** {
+  58              		.loc 1 13 1 is_stmt 1 view -0
+  59              		.cfi_startproc
+  60              		@ args = 0, pretend = 0, frame = 0
+  61              		@ frame_needed = 0, uses_anonymous_args = 0
+  62              		.loc 1 13 1 is_stmt 0 view .LVU5
+  63 0000 08B5     		push	{r3, lr}
+  64              		.cfi_def_cfa_offset 8
+  65              		.cfi_offset 3, -8
+  66              		.cfi_offset 14, -4
+  14:Core/Src/deca_sleep.c ****     usleep(time_us);
+  67              		.loc 1 14 5 is_stmt 1 view .LVU6
+  68 0002 FFF7FEFF 		bl	usleep
+  69              	.LVL3:
+  15:Core/Src/deca_sleep.c **** }
+  70              		.loc 1 15 1 is_stmt 0 view .LVU7
+  71 0006 08BD     		pop	{r3, pc}
+  72              		.cfi_endproc
+  73              	.LFE1:
+  75              		.text
+  76              	.Letext0:
+  77              		.file 2 "Core/Inc/port.h"
+ARM GAS  /tmp/cc5emnpH.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 deca_sleep.c
+     /tmp/cc5emnpH.s:18     .text.deca_sleep:0000000000000000 $t
+     /tmp/cc5emnpH.s:26     .text.deca_sleep:0000000000000000 deca_sleep
+     /tmp/cc5emnpH.s:48     .text.deca_usleep:0000000000000000 $t
+     /tmp/cc5emnpH.s:55     .text.deca_usleep:0000000000000000 deca_usleep
+
+UNDEFINED SYMBOLS
+Sleep
+usleep

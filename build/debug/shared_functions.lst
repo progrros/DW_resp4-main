@@ -1,0 +1,1692 @@
+ARM GAS  /tmp/ccuIUH4j.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"shared_functions.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.check_for_status_errors,"ax",%progbits
+  18              		.align	1
+  19              		.global	check_for_status_errors
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	check_for_status_errors:
+  27              	.LVL0:
+  28              	.LFB0:
+  29              		.file 1 "Core/Src/shared_functions.c"
+   1:Core/Src/shared_functions.c **** #include <deca_types.h>
+   2:Core/Src/shared_functions.c **** #include <deca_regs.h>
+   3:Core/Src/shared_functions.c **** #include <deca_device_api.h>
+   4:Core/Src/shared_functions.c **** #include <shared_defines.h>
+   5:Core/Src/shared_functions.c **** #include <shared_functions.h>
+   6:Core/Src/shared_functions.c **** #include <port.h>
+   7:Core/Src/shared_functions.c **** #include <config_options.h>
+   8:Core/Src/shared_functions.c **** 
+   9:Core/Src/shared_functions.c **** extern dwt_config_t config_options;
+  10:Core/Src/shared_functions.c **** 
+  11:Core/Src/shared_functions.c **** /*! -----------------------------------------------------------------------------------------------
+  12:Core/Src/shared_functions.c ****  * @fn check_for_status_errors()
+  13:Core/Src/shared_functions.c ****  *
+  14:Core/Src/shared_functions.c ****  * @brief This function is used to get a value to increase the delay timer by dependent on the curr
+  15:Core/Src/shared_functions.c ****  *
+  16:Core/Src/shared_functions.c ****  * @param reg: uint32_t value representing the current status register value.
+  17:Core/Src/shared_functions.c ****  * @param errors: pointer to a uint32_t buffer that contains the sum of different errors logged dur
+  18:Core/Src/shared_functions.c ****  *
+  19:Core/Src/shared_functions.c ****  * @return none
+  20:Core/Src/shared_functions.c ****  */
+  21:Core/Src/shared_functions.c **** void check_for_status_errors(uint32_t reg, uint32_t * errors)
+  22:Core/Src/shared_functions.c **** {
+  30              		.loc 1 22 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 8
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 22 1 is_stmt 0 view .LVU1
+  35 0000 10B5     		push	{r4, lr}
+  36              		.cfi_def_cfa_offset 8
+ARM GAS  /tmp/ccuIUH4j.s 			page 2
+
+
+  37              		.cfi_offset 4, -8
+  38              		.cfi_offset 14, -4
+  39 0002 82B0     		sub	sp, sp, #8
+  40              		.cfi_def_cfa_offset 16
+  41 0004 0C46     		mov	r4, r1
+  23:Core/Src/shared_functions.c ****     uint16_t stsStatus = 0;
+  42              		.loc 1 23 5 is_stmt 1 view .LVU2
+  43              		.loc 1 23 14 is_stmt 0 view .LVU3
+  44 0006 0023     		movs	r3, #0
+  45 0008 ADF80630 		strh	r3, [sp, #6]	@ movhi
+  24:Core/Src/shared_functions.c **** 
+  25:Core/Src/shared_functions.c ****     if (!(reg & SYS_STATUS_RXFCG_BIT_MASK))
+  46              		.loc 1 25 5 is_stmt 1 view .LVU4
+  47              		.loc 1 25 8 is_stmt 0 view .LVU5
+  48 000c 10F4804F 		tst	r0, #16384
+  49 0010 02D1     		bne	.L2
+  26:Core/Src/shared_functions.c ****     {
+  27:Core/Src/shared_functions.c ****         errors[BAD_FRAME_ERR_IDX] += 1;
+  50              		.loc 1 27 9 is_stmt 1 view .LVU6
+  51              		.loc 1 27 35 is_stmt 0 view .LVU7
+  52 0012 8B6A     		ldr	r3, [r1, #40]
+  53 0014 0133     		adds	r3, r3, #1
+  54 0016 8B62     		str	r3, [r1, #40]
+  55              	.L2:
+  28:Core/Src/shared_functions.c ****     }
+  29:Core/Src/shared_functions.c **** 
+  30:Core/Src/shared_functions.c ****     if (reg & SYS_STATUS_RXFSL_BIT_MASK)
+  56              		.loc 1 30 5 is_stmt 1 view .LVU8
+  57              		.loc 1 30 8 is_stmt 0 view .LVU9
+  58 0018 10F4803F 		tst	r0, #65536
+  59 001c 02D0     		beq	.L3
+  31:Core/Src/shared_functions.c ****     {
+  32:Core/Src/shared_functions.c ****         errors[RSE_ERR_IDX] += 1;
+  60              		.loc 1 32 9 is_stmt 1 view .LVU10
+  61              		.loc 1 32 29 is_stmt 0 view .LVU11
+  62 001e 6368     		ldr	r3, [r4, #4]
+  63 0020 0133     		adds	r3, r3, #1
+  64 0022 6360     		str	r3, [r4, #4]
+  65              	.L3:
+  33:Core/Src/shared_functions.c ****     }
+  34:Core/Src/shared_functions.c **** 
+  35:Core/Src/shared_functions.c ****     if (reg & SYS_STATUS_RXPHE_BIT_MASK)
+  66              		.loc 1 35 5 is_stmt 1 view .LVU12
+  67              		.loc 1 35 8 is_stmt 0 view .LVU13
+  68 0024 10F4805F 		tst	r0, #4096
+  69 0028 02D0     		beq	.L4
+  36:Core/Src/shared_functions.c ****     {
+  37:Core/Src/shared_functions.c ****         errors[PHE_ERR_IDX] += 1;
+  70              		.loc 1 37 9 is_stmt 1 view .LVU14
+  71              		.loc 1 37 29 is_stmt 0 view .LVU15
+  72 002a A368     		ldr	r3, [r4, #8]
+  73 002c 0133     		adds	r3, r3, #1
+  74 002e A360     		str	r3, [r4, #8]
+  75              	.L4:
+  38:Core/Src/shared_functions.c ****     }
+  39:Core/Src/shared_functions.c **** 
+  40:Core/Src/shared_functions.c ****     if (reg & SYS_STATUS_RXPTO_BIT_MASK)
+ARM GAS  /tmp/ccuIUH4j.s 			page 3
+
+
+  76              		.loc 1 40 5 is_stmt 1 view .LVU16
+  77              		.loc 1 40 8 is_stmt 0 view .LVU17
+  78 0030 10F4001F 		tst	r0, #2097152
+  79 0034 02D0     		beq	.L5
+  41:Core/Src/shared_functions.c ****     {
+  42:Core/Src/shared_functions.c ****         errors[PTO_ERR_IDX] += 1;
+  80              		.loc 1 42 9 is_stmt 1 view .LVU18
+  81              		.loc 1 42 29 is_stmt 0 view .LVU19
+  82 0036 2369     		ldr	r3, [r4, #16]
+  83 0038 0133     		adds	r3, r3, #1
+  84 003a 2361     		str	r3, [r4, #16]
+  85              	.L5:
+  43:Core/Src/shared_functions.c ****     }
+  44:Core/Src/shared_functions.c **** 
+  45:Core/Src/shared_functions.c ****     if (reg & SYS_STATUS_ARFE_BIT_MASK)
+  86              		.loc 1 45 5 is_stmt 1 view .LVU20
+  87              		.loc 1 45 8 is_stmt 0 view .LVU21
+  88 003c 10F0005F 		tst	r0, #536870912
+  89 0040 02D0     		beq	.L6
+  46:Core/Src/shared_functions.c ****     {
+  47:Core/Src/shared_functions.c ****         errors[ARFE_ERR_IDX] += 1;
+  90              		.loc 1 47 9 is_stmt 1 view .LVU22
+  91              		.loc 1 47 30 is_stmt 0 view .LVU23
+  92 0042 236A     		ldr	r3, [r4, #32]
+  93 0044 0133     		adds	r3, r3, #1
+  94 0046 2362     		str	r3, [r4, #32]
+  95              	.L6:
+  48:Core/Src/shared_functions.c ****     }
+  49:Core/Src/shared_functions.c **** 
+  50:Core/Src/shared_functions.c ****     if ((reg & SYS_STATUS_RXFR_BIT_MASK) && !(reg & SYS_STATUS_RXFCG_BIT_MASK))
+  96              		.loc 1 50 5 is_stmt 1 view .LVU24
+  97              		.loc 1 50 42 is_stmt 0 view .LVU25
+  98 0048 00F4C043 		and	r3, r0, #24576
+  99              		.loc 1 50 8 view .LVU26
+ 100 004c B3F5005F 		cmp	r3, #8192
+ 101 0050 10D0     		beq	.L20
+ 102              	.L7:
+  51:Core/Src/shared_functions.c ****     {
+  52:Core/Src/shared_functions.c ****         errors[CRC_ERR_IDX] += 1;
+  53:Core/Src/shared_functions.c ****     }
+  54:Core/Src/shared_functions.c **** 
+  55:Core/Src/shared_functions.c ****     if ((reg & SYS_STATUS_RXFTO_BIT_MASK) || (reg & SYS_STATUS_ALL_RX_TO))
+ 103              		.loc 1 55 5 is_stmt 1 view .LVU27
+ 104              		.loc 1 55 8 is_stmt 0 view .LVU28
+ 105 0052 10F4081F 		tst	r0, #2228224
+ 106 0056 02D0     		beq	.L8
+  56:Core/Src/shared_functions.c ****     {
+  57:Core/Src/shared_functions.c ****         errors[RTO_ERR_IDX] += 1;
+ 107              		.loc 1 57 9 is_stmt 1 view .LVU29
+ 108              		.loc 1 57 29 is_stmt 0 view .LVU30
+ 109 0058 6369     		ldr	r3, [r4, #20]
+ 110 005a 0133     		adds	r3, r3, #1
+ 111 005c 6361     		str	r3, [r4, #20]
+ 112              	.L8:
+  58:Core/Src/shared_functions.c ****     }
+  59:Core/Src/shared_functions.c **** 
+  60:Core/Src/shared_functions.c ****     if (reg & SYS_STATUS_RXSTO_BIT_MASK)
+ARM GAS  /tmp/ccuIUH4j.s 			page 4
+
+
+ 113              		.loc 1 60 5 is_stmt 1 view .LVU31
+ 114              		.loc 1 60 8 is_stmt 0 view .LVU32
+ 115 005e 10F0806F 		tst	r0, #67108864
+ 116 0062 02D0     		beq	.L9
+  61:Core/Src/shared_functions.c ****     {
+  62:Core/Src/shared_functions.c ****         errors[SFDTO_ERR_IDX] += 1;
+ 117              		.loc 1 62 9 is_stmt 1 view .LVU33
+ 118              		.loc 1 62 31 is_stmt 0 view .LVU34
+ 119 0064 E368     		ldr	r3, [r4, #12]
+ 120 0066 0133     		adds	r3, r3, #1
+ 121 0068 E360     		str	r3, [r4, #12]
+ 122              	.L9:
+  63:Core/Src/shared_functions.c ****     }
+  64:Core/Src/shared_functions.c **** 
+  65:Core/Src/shared_functions.c ****     if (reg & SYS_STATUS_CPERR_BIT_MASK)
+ 123              		.loc 1 65 5 is_stmt 1 view .LVU35
+ 124              		.loc 1 65 8 is_stmt 0 view .LVU36
+ 125 006a 10F0805F 		tst	r0, #268435456
+ 126 006e 05D1     		bne	.L21
+ 127              	.LVL1:
+ 128              	.L1:
+  66:Core/Src/shared_functions.c ****     {
+  67:Core/Src/shared_functions.c ****         // There is a general STS error
+  68:Core/Src/shared_functions.c ****         errors[STS_PREAMBLE_ERR] += 1;
+  69:Core/Src/shared_functions.c **** 
+  70:Core/Src/shared_functions.c ****         // Get the status for a more detailed error reading of what went wrong with the STS
+  71:Core/Src/shared_functions.c ****         dwt_readstsstatus(&stsStatus, 0);
+  72:Core/Src/shared_functions.c ****         if (stsStatus & 0x100)
+  73:Core/Src/shared_functions.c ****         {
+  74:Core/Src/shared_functions.c ****             // Peak growth rate warning
+  75:Core/Src/shared_functions.c ****             errors[STS_PEAK_GROWTH_RATE_ERR] += 1;
+  76:Core/Src/shared_functions.c ****         }
+  77:Core/Src/shared_functions.c ****         if (stsStatus & 0x080)
+  78:Core/Src/shared_functions.c ****         {
+  79:Core/Src/shared_functions.c ****             // ADC count warning
+  80:Core/Src/shared_functions.c ****             errors[STS_ADC_COUNT_ERR] += 1;
+  81:Core/Src/shared_functions.c ****         }
+  82:Core/Src/shared_functions.c ****         if (stsStatus & 0x040)
+  83:Core/Src/shared_functions.c ****         {
+  84:Core/Src/shared_functions.c ****             // SFD count warning
+  85:Core/Src/shared_functions.c ****             errors[STS_SFD_COUNT_ERR] += 1;
+  86:Core/Src/shared_functions.c ****         }
+  87:Core/Src/shared_functions.c ****         if (stsStatus & 0x020)
+  88:Core/Src/shared_functions.c ****         {
+  89:Core/Src/shared_functions.c ****             // Late first path estimation
+  90:Core/Src/shared_functions.c ****             errors[STS_LATE_FIRST_PATH_ERR] += 1;
+  91:Core/Src/shared_functions.c ****         }
+  92:Core/Src/shared_functions.c ****         if (stsStatus & 0x010)
+  93:Core/Src/shared_functions.c ****         {
+  94:Core/Src/shared_functions.c ****             // Late coarse estimation
+  95:Core/Src/shared_functions.c ****             errors[STS_LATE_COARSE_EST_ERR] += 1;
+  96:Core/Src/shared_functions.c ****         }
+  97:Core/Src/shared_functions.c ****         if (stsStatus & 0x008)
+  98:Core/Src/shared_functions.c ****         {
+  99:Core/Src/shared_functions.c ****             // Coarse estimation empty
+ 100:Core/Src/shared_functions.c ****             errors[STS_COARSE_EST_EMPTY_ERR] += 1;
+ 101:Core/Src/shared_functions.c ****         }
+ARM GAS  /tmp/ccuIUH4j.s 			page 5
+
+
+ 102:Core/Src/shared_functions.c ****         if (stsStatus & 0x004)
+ 103:Core/Src/shared_functions.c ****         {
+ 104:Core/Src/shared_functions.c ****             // High noise threshold
+ 105:Core/Src/shared_functions.c ****             errors[STS_HIGH_NOISE_THREASH_ERR] += 1;
+ 106:Core/Src/shared_functions.c ****         }
+ 107:Core/Src/shared_functions.c ****         if (stsStatus & 0x002)
+ 108:Core/Src/shared_functions.c ****         {
+ 109:Core/Src/shared_functions.c ****             // Non-triangle
+ 110:Core/Src/shared_functions.c ****             errors[STS_NON_TRIANGLE_ERR] += 1;
+ 111:Core/Src/shared_functions.c ****         }
+ 112:Core/Src/shared_functions.c ****         if (stsStatus & 0x001)
+ 113:Core/Src/shared_functions.c ****         {
+ 114:Core/Src/shared_functions.c ****             // Logistic regression failed
+ 115:Core/Src/shared_functions.c ****             errors[STS_LOG_REG_FAILED_ERR] += 1;
+ 116:Core/Src/shared_functions.c ****         }
+ 117:Core/Src/shared_functions.c ****     }
+ 118:Core/Src/shared_functions.c **** }
+ 129              		.loc 1 118 1 view .LVU37
+ 130 0070 02B0     		add	sp, sp, #8
+ 131              		.cfi_remember_state
+ 132              		.cfi_def_cfa_offset 8
+ 133              		@ sp needed
+ 134 0072 10BD     		pop	{r4, pc}
+ 135              	.LVL2:
+ 136              	.L20:
+ 137              		.cfi_restore_state
+  52:Core/Src/shared_functions.c ****     }
+ 138              		.loc 1 52 9 is_stmt 1 view .LVU38
+  52:Core/Src/shared_functions.c ****     }
+ 139              		.loc 1 52 29 is_stmt 0 view .LVU39
+ 140 0074 2368     		ldr	r3, [r4]
+ 141 0076 0133     		adds	r3, r3, #1
+ 142 0078 2360     		str	r3, [r4]
+ 143 007a EAE7     		b	.L7
+ 144              	.L21:
+  68:Core/Src/shared_functions.c **** 
+ 145              		.loc 1 68 9 is_stmt 1 view .LVU40
+  68:Core/Src/shared_functions.c **** 
+ 146              		.loc 1 68 34 is_stmt 0 view .LVU41
+ 147 007c 636B     		ldr	r3, [r4, #52]
+ 148 007e 0133     		adds	r3, r3, #1
+ 149 0080 6363     		str	r3, [r4, #52]
+  71:Core/Src/shared_functions.c ****         if (stsStatus & 0x100)
+ 150              		.loc 1 71 9 is_stmt 1 view .LVU42
+ 151 0082 0021     		movs	r1, #0
+ 152              	.LVL3:
+  71:Core/Src/shared_functions.c ****         if (stsStatus & 0x100)
+ 153              		.loc 1 71 9 is_stmt 0 view .LVU43
+ 154 0084 0DF10600 		add	r0, sp, #6
+ 155              	.LVL4:
+  71:Core/Src/shared_functions.c ****         if (stsStatus & 0x100)
+ 156              		.loc 1 71 9 view .LVU44
+ 157 0088 FFF7FEFF 		bl	dwt_readstsstatus
+ 158              	.LVL5:
+  72:Core/Src/shared_functions.c ****         {
+ 159              		.loc 1 72 9 is_stmt 1 view .LVU45
+  72:Core/Src/shared_functions.c ****         {
+ARM GAS  /tmp/ccuIUH4j.s 			page 6
+
+
+ 160              		.loc 1 72 23 is_stmt 0 view .LVU46
+ 161 008c BDF80630 		ldrh	r3, [sp, #6]
+  72:Core/Src/shared_functions.c ****         {
+ 162              		.loc 1 72 12 view .LVU47
+ 163 0090 13F4807F 		tst	r3, #256
+ 164 0094 02D0     		beq	.L11
+  75:Core/Src/shared_functions.c ****         }
+ 165              		.loc 1 75 13 is_stmt 1 view .LVU48
+  75:Core/Src/shared_functions.c ****         }
+ 166              		.loc 1 75 46 is_stmt 0 view .LVU49
+ 167 0096 A26B     		ldr	r2, [r4, #56]
+ 168 0098 0132     		adds	r2, r2, #1
+ 169 009a A263     		str	r2, [r4, #56]
+ 170              	.L11:
+  77:Core/Src/shared_functions.c ****         {
+ 171              		.loc 1 77 9 is_stmt 1 view .LVU50
+  77:Core/Src/shared_functions.c ****         {
+ 172              		.loc 1 77 12 is_stmt 0 view .LVU51
+ 173 009c 13F0800F 		tst	r3, #128
+ 174 00a0 02D0     		beq	.L12
+  80:Core/Src/shared_functions.c ****         }
+ 175              		.loc 1 80 13 is_stmt 1 view .LVU52
+  80:Core/Src/shared_functions.c ****         }
+ 176              		.loc 1 80 39 is_stmt 0 view .LVU53
+ 177 00a2 E26B     		ldr	r2, [r4, #60]
+ 178 00a4 0132     		adds	r2, r2, #1
+ 179 00a6 E263     		str	r2, [r4, #60]
+ 180              	.L12:
+  82:Core/Src/shared_functions.c ****         {
+ 181              		.loc 1 82 9 is_stmt 1 view .LVU54
+  82:Core/Src/shared_functions.c ****         {
+ 182              		.loc 1 82 12 is_stmt 0 view .LVU55
+ 183 00a8 13F0400F 		tst	r3, #64
+ 184 00ac 02D0     		beq	.L13
+  85:Core/Src/shared_functions.c ****         }
+ 185              		.loc 1 85 13 is_stmt 1 view .LVU56
+  85:Core/Src/shared_functions.c ****         }
+ 186              		.loc 1 85 39 is_stmt 0 view .LVU57
+ 187 00ae 226C     		ldr	r2, [r4, #64]
+ 188 00b0 0132     		adds	r2, r2, #1
+ 189 00b2 2264     		str	r2, [r4, #64]
+ 190              	.L13:
+  87:Core/Src/shared_functions.c ****         {
+ 191              		.loc 1 87 9 is_stmt 1 view .LVU58
+  87:Core/Src/shared_functions.c ****         {
+ 192              		.loc 1 87 12 is_stmt 0 view .LVU59
+ 193 00b4 13F0200F 		tst	r3, #32
+ 194 00b8 02D0     		beq	.L14
+  90:Core/Src/shared_functions.c ****         }
+ 195              		.loc 1 90 13 is_stmt 1 view .LVU60
+  90:Core/Src/shared_functions.c ****         }
+ 196              		.loc 1 90 45 is_stmt 0 view .LVU61
+ 197 00ba 626C     		ldr	r2, [r4, #68]
+ 198 00bc 0132     		adds	r2, r2, #1
+ 199 00be 6264     		str	r2, [r4, #68]
+ 200              	.L14:
+  92:Core/Src/shared_functions.c ****         {
+ARM GAS  /tmp/ccuIUH4j.s 			page 7
+
+
+ 201              		.loc 1 92 9 is_stmt 1 view .LVU62
+  92:Core/Src/shared_functions.c ****         {
+ 202              		.loc 1 92 12 is_stmt 0 view .LVU63
+ 203 00c0 13F0100F 		tst	r3, #16
+ 204 00c4 02D0     		beq	.L15
+  95:Core/Src/shared_functions.c ****         }
+ 205              		.loc 1 95 13 is_stmt 1 view .LVU64
+  95:Core/Src/shared_functions.c ****         }
+ 206              		.loc 1 95 45 is_stmt 0 view .LVU65
+ 207 00c6 A26C     		ldr	r2, [r4, #72]
+ 208 00c8 0132     		adds	r2, r2, #1
+ 209 00ca A264     		str	r2, [r4, #72]
+ 210              	.L15:
+  97:Core/Src/shared_functions.c ****         {
+ 211              		.loc 1 97 9 is_stmt 1 view .LVU66
+  97:Core/Src/shared_functions.c ****         {
+ 212              		.loc 1 97 12 is_stmt 0 view .LVU67
+ 213 00cc 13F0080F 		tst	r3, #8
+ 214 00d0 02D0     		beq	.L16
+ 100:Core/Src/shared_functions.c ****         }
+ 215              		.loc 1 100 13 is_stmt 1 view .LVU68
+ 100:Core/Src/shared_functions.c ****         }
+ 216              		.loc 1 100 46 is_stmt 0 view .LVU69
+ 217 00d2 E26C     		ldr	r2, [r4, #76]
+ 218 00d4 0132     		adds	r2, r2, #1
+ 219 00d6 E264     		str	r2, [r4, #76]
+ 220              	.L16:
+ 102:Core/Src/shared_functions.c ****         {
+ 221              		.loc 1 102 9 is_stmt 1 view .LVU70
+ 102:Core/Src/shared_functions.c ****         {
+ 222              		.loc 1 102 12 is_stmt 0 view .LVU71
+ 223 00d8 13F0040F 		tst	r3, #4
+ 224 00dc 02D0     		beq	.L17
+ 105:Core/Src/shared_functions.c ****         }
+ 225              		.loc 1 105 13 is_stmt 1 view .LVU72
+ 105:Core/Src/shared_functions.c ****         }
+ 226              		.loc 1 105 48 is_stmt 0 view .LVU73
+ 227 00de 226D     		ldr	r2, [r4, #80]
+ 228 00e0 0132     		adds	r2, r2, #1
+ 229 00e2 2265     		str	r2, [r4, #80]
+ 230              	.L17:
+ 107:Core/Src/shared_functions.c ****         {
+ 231              		.loc 1 107 9 is_stmt 1 view .LVU74
+ 107:Core/Src/shared_functions.c ****         {
+ 232              		.loc 1 107 12 is_stmt 0 view .LVU75
+ 233 00e4 13F0020F 		tst	r3, #2
+ 234 00e8 02D0     		beq	.L18
+ 110:Core/Src/shared_functions.c ****         }
+ 235              		.loc 1 110 13 is_stmt 1 view .LVU76
+ 110:Core/Src/shared_functions.c ****         }
+ 236              		.loc 1 110 42 is_stmt 0 view .LVU77
+ 237 00ea 626D     		ldr	r2, [r4, #84]
+ 238 00ec 0132     		adds	r2, r2, #1
+ 239 00ee 6265     		str	r2, [r4, #84]
+ 240              	.L18:
+ 112:Core/Src/shared_functions.c ****         {
+ 241              		.loc 1 112 9 is_stmt 1 view .LVU78
+ARM GAS  /tmp/ccuIUH4j.s 			page 8
+
+
+ 112:Core/Src/shared_functions.c ****         {
+ 242              		.loc 1 112 12 is_stmt 0 view .LVU79
+ 243 00f0 13F0010F 		tst	r3, #1
+ 244 00f4 BCD0     		beq	.L1
+ 115:Core/Src/shared_functions.c ****         }
+ 245              		.loc 1 115 13 is_stmt 1 view .LVU80
+ 115:Core/Src/shared_functions.c ****         }
+ 246              		.loc 1 115 44 is_stmt 0 view .LVU81
+ 247 00f6 A36D     		ldr	r3, [r4, #88]
+ 248 00f8 0133     		adds	r3, r3, #1
+ 249 00fa A365     		str	r3, [r4, #88]
+ 250              		.loc 1 118 1 view .LVU82
+ 251 00fc B8E7     		b	.L1
+ 252              		.cfi_endproc
+ 253              	.LFE0:
+ 255              		.section	.text.get_rx_delay_time_txpreamble,"ax",%progbits
+ 256              		.align	1
+ 257              		.global	get_rx_delay_time_txpreamble
+ 258              		.syntax unified
+ 259              		.thumb
+ 260              		.thumb_func
+ 261              		.fpu fpv4-sp-d16
+ 263              	get_rx_delay_time_txpreamble:
+ 264              	.LFB1:
+ 119:Core/Src/shared_functions.c **** 
+ 120:Core/Src/shared_functions.c **** /*! -----------------------------------------------------------------------------------------------
+ 121:Core/Src/shared_functions.c ****  * @fn get_rx_delay_time_txpreamble()
+ 122:Core/Src/shared_functions.c ****  *
+ 123:Core/Src/shared_functions.c ****  * @brief This function is used to get a value to increase the delay timer by dependent on the curr
+ 124:Core/Src/shared_functions.c ****  *
+ 125:Core/Src/shared_functions.c ****  * @param None
+ 126:Core/Src/shared_functions.c ****  *
+ 127:Core/Src/shared_functions.c ****  * @return delay_time - a uint32_t value indicating the required increase needed to delay the time 
+ 128:Core/Src/shared_functions.c ****  */
+ 129:Core/Src/shared_functions.c **** uint32_t get_rx_delay_time_txpreamble(void)
+ 130:Core/Src/shared_functions.c **** {
+ 265              		.loc 1 130 1 is_stmt 1 view -0
+ 266              		.cfi_startproc
+ 267              		@ args = 0, pretend = 0, frame = 0
+ 268              		@ frame_needed = 0, uses_anonymous_args = 0
+ 269              		@ link register save eliminated.
+ 131:Core/Src/shared_functions.c ****     uint32_t delay_time = 0;
+ 270              		.loc 1 131 5 view .LVU84
+ 271              	.LVL6:
+ 132:Core/Src/shared_functions.c ****     /* Standard delay values for preamble lengths of 32, 64, 72 & 128 should be adequate.
+ 133:Core/Src/shared_functions.c ****      * Additional time delay will be needed for larger preamble lengths.
+ 134:Core/Src/shared_functions.c ****      * Delay required is dependent on the preamble length as it increases the frame length. */
+ 135:Core/Src/shared_functions.c ****     switch (config_options.txPreambLength)
+ 272              		.loc 1 135 5 view .LVU85
+ 273              		.loc 1 135 27 is_stmt 0 view .LVU86
+ 274 0000 0F4B     		ldr	r3, .L32
+ 275 0002 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 276              		.loc 1 135 5 view .LVU87
+ 277 0004 023B     		subs	r3, r3, #2
+ 278 0006 0B2B     		cmp	r3, #11
+ 279 0008 07D8     		bhi	.L23
+ 280 000a DFE803F0 		tbb	[pc, r3]
+ARM GAS  /tmp/ccuIUH4j.s 			page 9
+
+
+ 281              	.L25:
+ 282 000e 0B       		.byte	(.L30-.L25)/2
+ 283 000f 14       		.byte	(.L29-.L25)/2
+ 284 0010 06       		.byte	(.L23-.L25)/2
+ 285 0011 06       		.byte	(.L23-.L25)/2
+ 286 0012 0E       		.byte	(.L28-.L25)/2
+ 287 0013 06       		.byte	(.L23-.L25)/2
+ 288 0014 06       		.byte	(.L23-.L25)/2
+ 289 0015 17       		.byte	(.L31-.L25)/2
+ 290 0016 11       		.byte	(.L26-.L25)/2
+ 291 0017 06       		.byte	(.L23-.L25)/2
+ 292 0018 06       		.byte	(.L23-.L25)/2
+ 293 0019 08       		.byte	(.L24-.L25)/2
+ 294              		.p2align 1
+ 295              	.L23:
+ 296 001a 0020     		movs	r0, #0
+ 297 001c 7047     		bx	lr
+ 298              	.L24:
+ 136:Core/Src/shared_functions.c ****     {
+ 137:Core/Src/shared_functions.c ****     case DWT_PLEN_256:
+ 138:Core/Src/shared_functions.c ****         delay_time += 128; /* 256 - 128 */
+ 139:Core/Src/shared_functions.c ****         break;
+ 140:Core/Src/shared_functions.c ****     case DWT_PLEN_512:
+ 141:Core/Src/shared_functions.c ****         delay_time += 384; /* 512 - 128 */
+ 299              		.loc 1 141 9 is_stmt 1 view .LVU88
+ 300              	.LVL7:
+ 142:Core/Src/shared_functions.c ****         break;
+ 301              		.loc 1 142 9 view .LVU89
+ 141:Core/Src/shared_functions.c ****         break;
+ 302              		.loc 1 141 20 is_stmt 0 view .LVU90
+ 303 001e 4FF4C070 		mov	r0, #384
+ 304              		.loc 1 142 9 view .LVU91
+ 305 0022 7047     		bx	lr
+ 306              	.LVL8:
+ 307              	.L30:
+ 143:Core/Src/shared_functions.c ****     case DWT_PLEN_1024:
+ 144:Core/Src/shared_functions.c ****         delay_time += 896; /* 1024 - 128 */
+ 308              		.loc 1 144 9 is_stmt 1 view .LVU92
+ 145:Core/Src/shared_functions.c ****         break;
+ 309              		.loc 1 145 9 view .LVU93
+ 144:Core/Src/shared_functions.c ****         break;
+ 310              		.loc 1 144 20 is_stmt 0 view .LVU94
+ 311 0024 4FF46070 		mov	r0, #896
+ 312              		.loc 1 145 9 view .LVU95
+ 313 0028 7047     		bx	lr
+ 314              	.LVL9:
+ 315              	.L28:
+ 146:Core/Src/shared_functions.c ****     case DWT_PLEN_1536:
+ 147:Core/Src/shared_functions.c ****         delay_time += 1408; /* 1536 - 128 */
+ 316              		.loc 1 147 9 is_stmt 1 view .LVU96
+ 148:Core/Src/shared_functions.c ****         break;
+ 317              		.loc 1 148 9 view .LVU97
+ 147:Core/Src/shared_functions.c ****         break;
+ 318              		.loc 1 147 20 is_stmt 0 view .LVU98
+ 319 002a 4FF4B060 		mov	r0, #1408
+ 320              		.loc 1 148 9 view .LVU99
+ 321 002e 7047     		bx	lr
+ARM GAS  /tmp/ccuIUH4j.s 			page 10
+
+
+ 322              	.LVL10:
+ 323              	.L26:
+ 149:Core/Src/shared_functions.c ****     case DWT_PLEN_2048:
+ 150:Core/Src/shared_functions.c ****         delay_time += 1920; /* 2048 - 128 */
+ 324              		.loc 1 150 9 is_stmt 1 view .LVU100
+ 151:Core/Src/shared_functions.c ****         break;
+ 325              		.loc 1 151 9 view .LVU101
+ 150:Core/Src/shared_functions.c ****         break;
+ 326              		.loc 1 150 20 is_stmt 0 view .LVU102
+ 327 0030 4FF4F060 		mov	r0, #1920
+ 328              		.loc 1 151 9 view .LVU103
+ 329 0034 7047     		bx	lr
+ 330              	.LVL11:
+ 331              	.L29:
+ 152:Core/Src/shared_functions.c ****     case DWT_PLEN_4096:
+ 153:Core/Src/shared_functions.c ****         delay_time += 3968; /* 4096 - 128 */
+ 332              		.loc 1 153 9 is_stmt 1 view .LVU104
+ 154:Core/Src/shared_functions.c ****         break;
+ 333              		.loc 1 154 9 view .LVU105
+ 153:Core/Src/shared_functions.c ****         break;
+ 334              		.loc 1 153 20 is_stmt 0 view .LVU106
+ 335 0036 4FF47860 		mov	r0, #3968
+ 336              		.loc 1 154 9 view .LVU107
+ 337 003a 7047     		bx	lr
+ 338              	.LVL12:
+ 339              	.L31:
+ 138:Core/Src/shared_functions.c ****         break;
+ 340              		.loc 1 138 20 view .LVU108
+ 341 003c 8020     		movs	r0, #128
+ 342              	.LVL13:
+ 155:Core/Src/shared_functions.c ****     case DWT_PLEN_32:
+ 156:Core/Src/shared_functions.c ****     case DWT_PLEN_64:
+ 157:Core/Src/shared_functions.c ****     case DWT_PLEN_72:
+ 158:Core/Src/shared_functions.c ****     case DWT_PLEN_128:
+ 159:Core/Src/shared_functions.c ****     default:
+ 160:Core/Src/shared_functions.c ****         break;
+ 161:Core/Src/shared_functions.c ****     }
+ 162:Core/Src/shared_functions.c **** 
+ 163:Core/Src/shared_functions.c ****     return delay_time;
+ 343              		.loc 1 163 5 is_stmt 1 view .LVU109
+ 164:Core/Src/shared_functions.c **** }
+ 344              		.loc 1 164 1 is_stmt 0 view .LVU110
+ 345 003e 7047     		bx	lr
+ 346              	.L33:
+ 347              		.align	2
+ 348              	.L32:
+ 349 0040 00000000 		.word	config_options
+ 350              		.cfi_endproc
+ 351              	.LFE1:
+ 353              		.section	.text.get_rx_delay_time_data_rate,"ax",%progbits
+ 354              		.align	1
+ 355              		.global	get_rx_delay_time_data_rate
+ 356              		.syntax unified
+ 357              		.thumb
+ 358              		.thumb_func
+ 359              		.fpu fpv4-sp-d16
+ 361              	get_rx_delay_time_data_rate:
+ARM GAS  /tmp/ccuIUH4j.s 			page 11
+
+
+ 362              	.LFB2:
+ 165:Core/Src/shared_functions.c **** /*! -----------------------------------------------------------------------------------------------
+ 166:Core/Src/shared_functions.c ****  * @fn get_rx_delay_time_data_rate()
+ 167:Core/Src/shared_functions.c ****  *
+ 168:Core/Src/shared_functions.c ****  * @brief This function is used to get a value to increase the delay timer by dependent on the curr
+ 169:Core/Src/shared_functions.c ****  *
+ 170:Core/Src/shared_functions.c ****  * @param None
+ 171:Core/Src/shared_functions.c ****  *
+ 172:Core/Src/shared_functions.c ****  * @return delay_time - a uint32_t value indicating the required increase needed to delay the time 
+ 173:Core/Src/shared_functions.c ****  */
+ 174:Core/Src/shared_functions.c **** uint32_t get_rx_delay_time_data_rate(void)
+ 175:Core/Src/shared_functions.c **** {
+ 363              		.loc 1 175 1 is_stmt 1 view -0
+ 364              		.cfi_startproc
+ 365              		@ args = 0, pretend = 0, frame = 0
+ 366              		@ frame_needed = 0, uses_anonymous_args = 0
+ 367              		@ link register save eliminated.
+ 176:Core/Src/shared_functions.c ****     uint32_t delay_time = 0;
+ 368              		.loc 1 176 5 view .LVU112
+ 369              	.LVL14:
+ 177:Core/Src/shared_functions.c ****     /*
+ 178:Core/Src/shared_functions.c ****      * If data rate is set to 850k (slower rate),
+ 179:Core/Src/shared_functions.c ****      * increase the delay time
+ 180:Core/Src/shared_functions.c ****      */
+ 181:Core/Src/shared_functions.c ****     switch (config_options.dataRate)
+ 370              		.loc 1 181 5 view .LVU113
+ 371              		.loc 1 181 27 is_stmt 0 view .LVU114
+ 372 0000 034B     		ldr	r3, .L37
+ 373 0002 9B79     		ldrb	r3, [r3, #6]	@ zero_extendqisi2
+ 374              		.loc 1 181 5 view .LVU115
+ 375 0004 0BB1     		cbz	r3, .L36
+ 176:Core/Src/shared_functions.c ****     uint32_t delay_time = 0;
+ 376              		.loc 1 176 14 view .LVU116
+ 377 0006 0020     		movs	r0, #0
+ 378 0008 7047     		bx	lr
+ 379              	.L36:
+ 182:Core/Src/shared_functions.c ****     {
+ 183:Core/Src/shared_functions.c ****     case DWT_BR_850K:
+ 184:Core/Src/shared_functions.c ****         delay_time += 200;
+ 380              		.loc 1 184 20 view .LVU117
+ 381 000a C820     		movs	r0, #200
+ 382              	.LVL15:
+ 185:Core/Src/shared_functions.c ****         break;
+ 186:Core/Src/shared_functions.c ****     case DWT_BR_6M8:
+ 187:Core/Src/shared_functions.c ****     default:
+ 188:Core/Src/shared_functions.c ****         break;
+ 189:Core/Src/shared_functions.c ****     }
+ 190:Core/Src/shared_functions.c **** 
+ 191:Core/Src/shared_functions.c ****     return delay_time;
+ 383              		.loc 1 191 5 is_stmt 1 view .LVU118
+ 192:Core/Src/shared_functions.c **** }
+ 384              		.loc 1 192 1 is_stmt 0 view .LVU119
+ 385 000c 7047     		bx	lr
+ 386              	.L38:
+ 387 000e 00BF     		.align	2
+ 388              	.L37:
+ 389 0010 00000000 		.word	config_options
+ARM GAS  /tmp/ccuIUH4j.s 			page 12
+
+
+ 390              		.cfi_endproc
+ 391              	.LFE2:
+ 393              		.section	.text.set_delayed_rx_time,"ax",%progbits
+ 394              		.align	1
+ 395              		.global	set_delayed_rx_time
+ 396              		.syntax unified
+ 397              		.thumb
+ 398              		.thumb_func
+ 399              		.fpu fpv4-sp-d16
+ 401              	set_delayed_rx_time:
+ 402              	.LVL16:
+ 403              	.LFB3:
+ 193:Core/Src/shared_functions.c **** 
+ 194:Core/Src/shared_functions.c **** /*! -----------------------------------------------------------------------------------------------
+ 195:Core/Src/shared_functions.c ****  * @fn set_delayed_rx_time()
+ 196:Core/Src/shared_functions.c ****  *
+ 197:Core/Src/shared_functions.c ****  * @brief This function is used to set the delayed RX time before running dwt_rxenable()
+ 198:Core/Src/shared_functions.c ****  *
+ 199:Core/Src/shared_functions.c ****  * @param delay - This is a defined delay value (usually POLL_TX_TO_RESP_RX_DLY_UUS)
+ 200:Core/Src/shared_functions.c ****  * @param config_options - pointer to dwt_config_t configuration structure that is in use at the ti
+ 201:Core/Src/shared_functions.c ****  *                         is called.
+ 202:Core/Src/shared_functions.c ****  *
+ 203:Core/Src/shared_functions.c ****  * @return None
+ 204:Core/Src/shared_functions.c ****  */
+ 205:Core/Src/shared_functions.c **** void set_delayed_rx_time(uint32_t delay, dwt_config_t *config_options)
+ 206:Core/Src/shared_functions.c **** {
+ 404              		.loc 1 206 1 is_stmt 1 view -0
+ 405              		.cfi_startproc
+ 406              		@ args = 0, pretend = 0, frame = 0
+ 407              		@ frame_needed = 0, uses_anonymous_args = 0
+ 408              		.loc 1 206 1 is_stmt 0 view .LVU121
+ 409 0000 08B5     		push	{r3, lr}
+ 410              		.cfi_def_cfa_offset 8
+ 411              		.cfi_offset 3, -8
+ 412              		.cfi_offset 14, -4
+ 207:Core/Src/shared_functions.c ****     uint32_t delay_time = delay;
+ 413              		.loc 1 207 5 is_stmt 1 view .LVU122
+ 414              	.LVL17:
+ 208:Core/Src/shared_functions.c **** 
+ 209:Core/Src/shared_functions.c ****     switch (config_options->txPreambLength)
+ 415              		.loc 1 209 5 view .LVU123
+ 416              		.loc 1 209 27 is_stmt 0 view .LVU124
+ 417 0002 4B78     		ldrb	r3, [r1, #1]	@ zero_extendqisi2
+ 418              		.loc 1 209 5 view .LVU125
+ 419 0004 013B     		subs	r3, r3, #1
+ 420 0006 0C2B     		cmp	r3, #12
+ 421 0008 09D8     		bhi	.L40
+ 422 000a DFE803F0 		tbb	[pc, r3]
+ 423              	.L42:
+ 424 000e 15       		.byte	(.L50-.L42)/2
+ 425 000f 21       		.byte	(.L49-.L42)/2
+ 426 0010 27       		.byte	(.L43-.L42)/2
+ 427 0011 07       		.byte	(.L48-.L42)/2
+ 428 0012 19       		.byte	(.L47-.L42)/2
+ 429 0013 24       		.byte	(.L46-.L42)/2
+ 430 0014 17       		.byte	(.L45-.L42)/2
+ 431 0015 08       		.byte	(.L40-.L42)/2
+ARM GAS  /tmp/ccuIUH4j.s 			page 13
+
+
+ 432 0016 1B       		.byte	(.L44-.L42)/2
+ 433 0017 27       		.byte	(.L43-.L42)/2
+ 434 0018 08       		.byte	(.L40-.L42)/2
+ 435 0019 08       		.byte	(.L40-.L42)/2
+ 436 001a 1E       		.byte	(.L41-.L42)/2
+ 437 001b 00       		.p2align 1
+ 438              	.L48:
+ 210:Core/Src/shared_functions.c ****     {
+ 211:Core/Src/shared_functions.c ****     case DWT_PLEN_32:
+ 212:Core/Src/shared_functions.c ****         delay_time -= 32;
+ 439              		.loc 1 212 9 is_stmt 1 view .LVU126
+ 440              		.loc 1 212 20 is_stmt 0 view .LVU127
+ 441 001c 2038     		subs	r0, r0, #32
+ 442              	.LVL18:
+ 213:Core/Src/shared_functions.c ****         break;
+ 443              		.loc 1 213 9 is_stmt 1 view .LVU128
+ 444              	.L40:
+ 214:Core/Src/shared_functions.c ****     case DWT_PLEN_64:
+ 215:Core/Src/shared_functions.c ****         delay_time -= 64;
+ 216:Core/Src/shared_functions.c ****         break;
+ 217:Core/Src/shared_functions.c ****     case DWT_PLEN_72:
+ 218:Core/Src/shared_functions.c ****         delay_time -= 72;
+ 219:Core/Src/shared_functions.c ****         break;
+ 220:Core/Src/shared_functions.c ****     case DWT_PLEN_128:
+ 221:Core/Src/shared_functions.c ****         delay_time -= 128;
+ 222:Core/Src/shared_functions.c ****         break;
+ 223:Core/Src/shared_functions.c ****     case DWT_PLEN_256:
+ 224:Core/Src/shared_functions.c ****         delay_time -= 256;
+ 225:Core/Src/shared_functions.c ****         break;
+ 226:Core/Src/shared_functions.c ****     case DWT_PLEN_512:
+ 227:Core/Src/shared_functions.c ****         delay_time -= 512;
+ 228:Core/Src/shared_functions.c ****         break;
+ 229:Core/Src/shared_functions.c ****     case DWT_PLEN_1024:
+ 230:Core/Src/shared_functions.c ****         delay_time -= 1024;
+ 231:Core/Src/shared_functions.c ****         break;
+ 232:Core/Src/shared_functions.c ****     case DWT_PLEN_1536:
+ 233:Core/Src/shared_functions.c ****         delay_time -= 1536;
+ 234:Core/Src/shared_functions.c ****         break;
+ 235:Core/Src/shared_functions.c ****     case DWT_PLEN_2048:
+ 236:Core/Src/shared_functions.c ****     case DWT_PLEN_4096:
+ 237:Core/Src/shared_functions.c ****         delay_time -= 2048;
+ 238:Core/Src/shared_functions.c ****         break;
+ 239:Core/Src/shared_functions.c ****     default:
+ 240:Core/Src/shared_functions.c ****         break;
+ 241:Core/Src/shared_functions.c ****     }
+ 242:Core/Src/shared_functions.c **** 
+ 243:Core/Src/shared_functions.c ****     /* Length of the STS effects the size of the frame also.
+ 244:Core/Src/shared_functions.c ****      * This means the delay required is greater for larger STS lengths. */
+ 245:Core/Src/shared_functions.c ****     delay_time += ((1<<(config_options->stsLength+2))*8);
+ 445              		.loc 1 245 5 view .LVU129
+ 446              		.loc 1 245 39 is_stmt 0 view .LVU130
+ 447 001e 4B7B     		ldrb	r3, [r1, #13]	@ zero_extendqisi2
+ 448              		.loc 1 245 50 view .LVU131
+ 449 0020 9A1C     		adds	r2, r3, #2
+ 450              		.loc 1 245 54 view .LVU132
+ 451 0022 0823     		movs	r3, #8
+ 452 0024 9340     		lsls	r3, r3, r2
+ARM GAS  /tmp/ccuIUH4j.s 			page 14
+
+
+ 453              		.loc 1 245 16 view .LVU133
+ 454 0026 1844     		add	r0, r0, r3
+ 455              	.LVL19:
+ 246:Core/Src/shared_functions.c **** 
+ 247:Core/Src/shared_functions.c ****     dwt_setdelayedtrxtime((uint32_t)((delay_time * UUS_TO_DWT_TIME) >> 8));
+ 456              		.loc 1 247 5 is_stmt 1 view .LVU134
+ 457              		.loc 1 247 50 is_stmt 0 view .LVU135
+ 458 0028 4FF69A13 		movw	r3, #63898
+ 459 002c 03FB00F0 		mul	r0, r3, r0
+ 460              	.LVL20:
+ 461              		.loc 1 247 5 view .LVU136
+ 462 0030 000A     		lsrs	r0, r0, #8
+ 463 0032 FFF7FEFF 		bl	dwt_setdelayedtrxtime
+ 464              	.LVL21:
+ 248:Core/Src/shared_functions.c **** }
+ 465              		.loc 1 248 1 view .LVU137
+ 466 0036 08BD     		pop	{r3, pc}
+ 467              	.LVL22:
+ 468              	.L50:
+ 215:Core/Src/shared_functions.c ****         break;
+ 469              		.loc 1 215 9 is_stmt 1 view .LVU138
+ 215:Core/Src/shared_functions.c ****         break;
+ 470              		.loc 1 215 20 is_stmt 0 view .LVU139
+ 471 0038 4038     		subs	r0, r0, #64
+ 472              	.LVL23:
+ 216:Core/Src/shared_functions.c ****     case DWT_PLEN_72:
+ 473              		.loc 1 216 9 is_stmt 1 view .LVU140
+ 474 003a F0E7     		b	.L40
+ 475              	.LVL24:
+ 476              	.L45:
+ 218:Core/Src/shared_functions.c ****         break;
+ 477              		.loc 1 218 9 view .LVU141
+ 218:Core/Src/shared_functions.c ****         break;
+ 478              		.loc 1 218 20 is_stmt 0 view .LVU142
+ 479 003c 4838     		subs	r0, r0, #72
+ 480              	.LVL25:
+ 219:Core/Src/shared_functions.c ****     case DWT_PLEN_128:
+ 481              		.loc 1 219 9 is_stmt 1 view .LVU143
+ 482 003e EEE7     		b	.L40
+ 483              	.LVL26:
+ 484              	.L47:
+ 221:Core/Src/shared_functions.c ****         break;
+ 485              		.loc 1 221 9 view .LVU144
+ 221:Core/Src/shared_functions.c ****         break;
+ 486              		.loc 1 221 20 is_stmt 0 view .LVU145
+ 487 0040 8038     		subs	r0, r0, #128
+ 488              	.LVL27:
+ 222:Core/Src/shared_functions.c ****     case DWT_PLEN_256:
+ 489              		.loc 1 222 9 is_stmt 1 view .LVU146
+ 490 0042 ECE7     		b	.L40
+ 491              	.LVL28:
+ 492              	.L44:
+ 224:Core/Src/shared_functions.c ****         break;
+ 493              		.loc 1 224 9 view .LVU147
+ 224:Core/Src/shared_functions.c ****         break;
+ 494              		.loc 1 224 20 is_stmt 0 view .LVU148
+ 495 0044 A0F58070 		sub	r0, r0, #256
+ARM GAS  /tmp/ccuIUH4j.s 			page 15
+
+
+ 496              	.LVL29:
+ 225:Core/Src/shared_functions.c ****     case DWT_PLEN_512:
+ 497              		.loc 1 225 9 is_stmt 1 view .LVU149
+ 498 0048 E9E7     		b	.L40
+ 499              	.LVL30:
+ 500              	.L41:
+ 227:Core/Src/shared_functions.c ****         break;
+ 501              		.loc 1 227 9 view .LVU150
+ 227:Core/Src/shared_functions.c ****         break;
+ 502              		.loc 1 227 20 is_stmt 0 view .LVU151
+ 503 004a A0F50070 		sub	r0, r0, #512
+ 504              	.LVL31:
+ 228:Core/Src/shared_functions.c ****     case DWT_PLEN_1024:
+ 505              		.loc 1 228 9 is_stmt 1 view .LVU152
+ 506 004e E6E7     		b	.L40
+ 507              	.LVL32:
+ 508              	.L49:
+ 230:Core/Src/shared_functions.c ****         break;
+ 509              		.loc 1 230 9 view .LVU153
+ 230:Core/Src/shared_functions.c ****         break;
+ 510              		.loc 1 230 20 is_stmt 0 view .LVU154
+ 511 0050 A0F58060 		sub	r0, r0, #1024
+ 512              	.LVL33:
+ 231:Core/Src/shared_functions.c ****     case DWT_PLEN_1536:
+ 513              		.loc 1 231 9 is_stmt 1 view .LVU155
+ 514 0054 E3E7     		b	.L40
+ 515              	.LVL34:
+ 516              	.L46:
+ 233:Core/Src/shared_functions.c ****         break;
+ 517              		.loc 1 233 9 view .LVU156
+ 233:Core/Src/shared_functions.c ****         break;
+ 518              		.loc 1 233 20 is_stmt 0 view .LVU157
+ 519 0056 A0F5C060 		sub	r0, r0, #1536
+ 520              	.LVL35:
+ 234:Core/Src/shared_functions.c ****     case DWT_PLEN_2048:
+ 521              		.loc 1 234 9 is_stmt 1 view .LVU158
+ 522 005a E0E7     		b	.L40
+ 523              	.LVL36:
+ 524              	.L43:
+ 237:Core/Src/shared_functions.c ****         break;
+ 525              		.loc 1 237 9 view .LVU159
+ 237:Core/Src/shared_functions.c ****         break;
+ 526              		.loc 1 237 20 is_stmt 0 view .LVU160
+ 527 005c A0F50060 		sub	r0, r0, #2048
+ 528              	.LVL37:
+ 238:Core/Src/shared_functions.c ****     default:
+ 529              		.loc 1 238 9 is_stmt 1 view .LVU161
+ 530 0060 DDE7     		b	.L40
+ 531              		.cfi_endproc
+ 532              	.LFE3:
+ 534              		.section	.text.set_resp_rx_timeout,"ax",%progbits
+ 535              		.align	1
+ 536              		.global	set_resp_rx_timeout
+ 537              		.syntax unified
+ 538              		.thumb
+ 539              		.thumb_func
+ 540              		.fpu fpv4-sp-d16
+ARM GAS  /tmp/ccuIUH4j.s 			page 16
+
+
+ 542              	set_resp_rx_timeout:
+ 543              	.LVL38:
+ 544              	.LFB4:
+ 249:Core/Src/shared_functions.c **** 
+ 250:Core/Src/shared_functions.c **** /*! -----------------------------------------------------------------------------------------------
+ 251:Core/Src/shared_functions.c ****  * @fn set_resp_rx_timeout()
+ 252:Core/Src/shared_functions.c ****  *
+ 253:Core/Src/shared_functions.c ****  * @brief This function is used to set the RX timeout value
+ 254:Core/Src/shared_functions.c ****  *
+ 255:Core/Src/shared_functions.c ****  * @param delay - This is a defined delay value (usually RESP_RX_TIMEOUT_UUS)
+ 256:Core/Src/shared_functions.c ****  * @param config_options - pointer to dwt_config_t configuration structure that is in use at the ti
+ 257:Core/Src/shared_functions.c ****  *                         is called.
+ 258:Core/Src/shared_functions.c ****  *
+ 259:Core/Src/shared_functions.c ****  * @return None
+ 260:Core/Src/shared_functions.c ****  */
+ 261:Core/Src/shared_functions.c **** void set_resp_rx_timeout(uint32_t delay, dwt_config_t *config_options)
+ 262:Core/Src/shared_functions.c **** {
+ 545              		.loc 1 262 1 view -0
+ 546              		.cfi_startproc
+ 547              		@ args = 0, pretend = 0, frame = 0
+ 548              		@ frame_needed = 0, uses_anonymous_args = 0
+ 549              		.loc 1 262 1 is_stmt 0 view .LVU163
+ 550 0000 38B5     		push	{r3, r4, r5, lr}
+ 551              		.cfi_def_cfa_offset 16
+ 552              		.cfi_offset 3, -16
+ 553              		.cfi_offset 4, -12
+ 554              		.cfi_offset 5, -8
+ 555              		.cfi_offset 14, -4
+ 556 0002 0446     		mov	r4, r0
+ 557 0004 0D46     		mov	r5, r1
+ 263:Core/Src/shared_functions.c ****     /*
+ 264:Core/Src/shared_functions.c ****      * The program will need to adjust the timeout value depending on the size of the frame
+ 265:Core/Src/shared_functions.c ****      * Different sized frames require different time delays.
+ 266:Core/Src/shared_functions.c ****      */
+ 267:Core/Src/shared_functions.c ****     uint32_t delay_time = delay + get_rx_delay_time_data_rate() + get_rx_delay_time_txpreamble() + 
+ 558              		.loc 1 267 5 is_stmt 1 view .LVU164
+ 559              		.loc 1 267 35 is_stmt 0 view .LVU165
+ 560 0006 FFF7FEFF 		bl	get_rx_delay_time_data_rate
+ 561              	.LVL39:
+ 562              		.loc 1 267 33 view .LVU166
+ 563 000a 0444     		add	r4, r4, r0
+ 564              	.LVL40:
+ 565              		.loc 1 267 67 view .LVU167
+ 566 000c FFF7FEFF 		bl	get_rx_delay_time_txpreamble
+ 567              	.LVL41:
+ 568              		.loc 1 267 65 view .LVU168
+ 569 0010 2044     		add	r0, r0, r4
+ 570              		.loc 1 267 14 view .LVU169
+ 571 0012 00F5FA70 		add	r0, r0, #500
+ 572              	.LVL42:
+ 268:Core/Src/shared_functions.c **** 
+ 269:Core/Src/shared_functions.c ****     /* Length of the STS effects the size of the frame also.
+ 270:Core/Src/shared_functions.c ****      * This means the delay required is greater for larger STS lengths. */
+ 271:Core/Src/shared_functions.c ****     switch (config_options->stsLength)
+ 573              		.loc 1 271 5 is_stmt 1 view .LVU170
+ 574              		.loc 1 271 27 is_stmt 0 view .LVU171
+ 575 0016 6B7B     		ldrb	r3, [r5, #13]	@ zero_extendqisi2
+ARM GAS  /tmp/ccuIUH4j.s 			page 17
+
+
+ 576              		.loc 1 271 5 view .LVU172
+ 577 0018 DA1E     		subs	r2, r3, #3
+ 578 001a 032A     		cmp	r2, #3
+ 579 001c 04D8     		bhi	.L53
+ 272:Core/Src/shared_functions.c ****     {
+ 273:Core/Src/shared_functions.c ****     case DWT_STS_LEN_256:
+ 274:Core/Src/shared_functions.c ****     case DWT_STS_LEN_512:
+ 275:Core/Src/shared_functions.c ****     case DWT_STS_LEN_1024:
+ 276:Core/Src/shared_functions.c ****     case DWT_STS_LEN_2048:
+ 277:Core/Src/shared_functions.c ****         delay_time += ((1<<(config_options->stsLength+2))*8);
+ 580              		.loc 1 277 9 is_stmt 1 view .LVU173
+ 581              		.loc 1 277 54 is_stmt 0 view .LVU174
+ 582 001e 0233     		adds	r3, r3, #2
+ 583              		.loc 1 277 58 view .LVU175
+ 584 0020 0822     		movs	r2, #8
+ 585 0022 02FA03F3 		lsl	r3, r2, r3
+ 586              		.loc 1 277 20 view .LVU176
+ 587 0026 1844     		add	r0, r0, r3
+ 588              	.LVL43:
+ 278:Core/Src/shared_functions.c ****         break;
+ 589              		.loc 1 278 9 is_stmt 1 view .LVU177
+ 590              	.L53:
+ 279:Core/Src/shared_functions.c ****     case DWT_STS_LEN_32:
+ 280:Core/Src/shared_functions.c ****     case DWT_STS_LEN_64:
+ 281:Core/Src/shared_functions.c ****     case DWT_STS_LEN_128:
+ 282:Core/Src/shared_functions.c ****     default:
+ 283:Core/Src/shared_functions.c ****         break;
+ 284:Core/Src/shared_functions.c ****     }
+ 285:Core/Src/shared_functions.c **** 
+ 286:Core/Src/shared_functions.c ****     dwt_setrxtimeout(delay_time);
+ 591              		.loc 1 286 5 view .LVU178
+ 592 0028 FFF7FEFF 		bl	dwt_setrxtimeout
+ 593              	.LVL44:
+ 287:Core/Src/shared_functions.c **** }
+ 594              		.loc 1 287 1 is_stmt 0 view .LVU179
+ 595 002c 38BD     		pop	{r3, r4, r5, pc}
+ 596              		.loc 1 287 1 view .LVU180
+ 597              		.cfi_endproc
+ 598              	.LFE4:
+ 600              		.section	.text.resync_sts,"ax",%progbits
+ 601              		.align	1
+ 602              		.global	resync_sts
+ 603              		.syntax unified
+ 604              		.thumb
+ 605              		.thumb_func
+ 606              		.fpu fpv4-sp-d16
+ 608              	resync_sts:
+ 609              	.LVL45:
+ 610              	.LFB5:
+ 288:Core/Src/shared_functions.c **** 
+ 289:Core/Src/shared_functions.c **** /*! -----------------------------------------------------------------------------------------------
+ 290:Core/Src/shared_functions.c ****  * @fn resync_sts()
+ 291:Core/Src/shared_functions.c ****  *
+ 292:Core/Src/shared_functions.c ****  * @brief This function is used to resync the counter values used by the STS.
+ 293:Core/Src/shared_functions.c ****  *        The counter value is sent over via the TX device during a "poll" message.
+ 294:Core/Src/shared_functions.c ****  *        This counter value is used to make the RX device align with the same counter value
+ 295:Core/Src/shared_functions.c ****  *        so that the STS aligns again.
+ARM GAS  /tmp/ccuIUH4j.s 			page 18
+
+
+ 296:Core/Src/shared_functions.c ****  *
+ 297:Core/Src/shared_functions.c ****  * @param newCount - The 32 bit value to set the STS to.
+ 298:Core/Src/shared_functions.c ****  *
+ 299:Core/Src/shared_functions.c ****  * @return None
+ 300:Core/Src/shared_functions.c ****  */
+ 301:Core/Src/shared_functions.c **** void resync_sts(uint32_t newCount)
+ 302:Core/Src/shared_functions.c **** {
+ 611              		.loc 1 302 1 is_stmt 1 view -0
+ 612              		.cfi_startproc
+ 613              		@ args = 0, pretend = 0, frame = 0
+ 614              		@ frame_needed = 0, uses_anonymous_args = 0
+ 615              		.loc 1 302 1 is_stmt 0 view .LVU182
+ 616 0000 08B5     		push	{r3, lr}
+ 617              		.cfi_def_cfa_offset 8
+ 618              		.cfi_offset 3, -8
+ 619              		.cfi_offset 14, -4
+ 303:Core/Src/shared_functions.c ****     // New IV value to use is the original IV0 value plus the count value sent over from the RX,
+ 304:Core/Src/shared_functions.c ****     // plus half the STS length. This is because the TX device would have read it's current
+ 305:Core/Src/shared_functions.c ****     // STS count value and then transmitted it. By transmitting, it would have increased it's
+ 306:Core/Src/shared_functions.c ****     // STS count value by half of the configured STS length.
+ 307:Core/Src/shared_functions.c ****     // It is important to note that the STS counter will increment by 32 whenever there is a
+ 308:Core/Src/shared_functions.c ****     // receiver or SFD timeout. This value is consistent regardless of the STS preamble length
+ 309:Core/Src/shared_functions.c ****     // that is set.
+ 310:Core/Src/shared_functions.c ****     uint32_t iv_value = newCount;
+ 620              		.loc 1 310 5 is_stmt 1 view .LVU183
+ 621              	.LVL46:
+ 311:Core/Src/shared_functions.c **** 
+ 312:Core/Src/shared_functions.c ****     iv_value += ((1<<(config_options.stsLength+2))*8)/2;
+ 622              		.loc 1 312 5 view .LVU184
+ 623              		.loc 1 312 37 is_stmt 0 view .LVU185
+ 624 0002 084B     		ldr	r3, .L57
+ 625 0004 5B7B     		ldrb	r3, [r3, #13]	@ zero_extendqisi2
+ 626              		.loc 1 312 47 view .LVU186
+ 627 0006 991C     		adds	r1, r3, #2
+ 628              		.loc 1 312 51 view .LVU187
+ 629 0008 0823     		movs	r3, #8
+ 630 000a 8B40     		lsls	r3, r3, r1
+ 631              		.loc 1 312 54 view .LVU188
+ 632 000c 03EBD373 		add	r3, r3, r3, lsr #31
+ 633              	.LVL47:
+ 313:Core/Src/shared_functions.c **** 
+ 314:Core/Src/shared_functions.c ****     /* Write the new STS count value to the appropriate register and reload the value into the coun
+ 315:Core/Src/shared_functions.c ****     dwt_write32bitreg(STS_IV0_ID, iv_value);
+ 634              		.loc 1 315 5 is_stmt 1 view .LVU189
+ 635 0010 00EB6302 		add	r2, r0, r3, asr #1
+ 636              	.LVL48:
+ 637              		.loc 1 315 5 is_stmt 0 view .LVU190
+ 638 0014 0021     		movs	r1, #0
+ 639 0016 0448     		ldr	r0, .L57+4
+ 640              	.LVL49:
+ 641              		.loc 1 315 5 view .LVU191
+ 642 0018 FFF7FEFF 		bl	dwt_write32bitoffsetreg
+ 643              	.LVL50:
+ 316:Core/Src/shared_functions.c ****     dwt_configurestsloadiv();
+ 644              		.loc 1 316 5 is_stmt 1 view .LVU192
+ 645 001c FFF7FEFF 		bl	dwt_configurestsloadiv
+ 646              	.LVL51:
+ARM GAS  /tmp/ccuIUH4j.s 			page 19
+
+
+ 317:Core/Src/shared_functions.c **** }
+ 647              		.loc 1 317 1 is_stmt 0 view .LVU193
+ 648 0020 08BD     		pop	{r3, pc}
+ 649              	.L58:
+ 650 0022 00BF     		.align	2
+ 651              	.L57:
+ 652 0024 00000000 		.word	config_options
+ 653 0028 1C000200 		.word	131100
+ 654              		.cfi_endproc
+ 655              	.LFE5:
+ 657              		.section	.text.resp_msg_get_ts,"ax",%progbits
+ 658              		.align	1
+ 659              		.global	resp_msg_get_ts
+ 660              		.syntax unified
+ 661              		.thumb
+ 662              		.thumb_func
+ 663              		.fpu fpv4-sp-d16
+ 665              	resp_msg_get_ts:
+ 666              	.LVL52:
+ 667              	.LFB6:
+ 318:Core/Src/shared_functions.c **** 
+ 319:Core/Src/shared_functions.c **** /*! -----------------------------------------------------------------------------------------------
+ 320:Core/Src/shared_functions.c ****  * @fn resp_msg_get_ts()
+ 321:Core/Src/shared_functions.c ****  *
+ 322:Core/Src/shared_functions.c ****  * @brief Read a given timestamp value from the response message. In the timestamp fields of the re
+ 323:Core/Src/shared_functions.c ****  *        least significant byte is at the lower address.
+ 324:Core/Src/shared_functions.c ****  *
+ 325:Core/Src/shared_functions.c ****  * @param  ts_field  pointer on the first byte of the timestamp field to get
+ 326:Core/Src/shared_functions.c ****  *         ts  timestamp value
+ 327:Core/Src/shared_functions.c ****  *
+ 328:Core/Src/shared_functions.c ****  * @return none
+ 329:Core/Src/shared_functions.c ****  */
+ 330:Core/Src/shared_functions.c **** void resp_msg_get_ts(uint8_t *ts_field, uint32_t *ts)
+ 331:Core/Src/shared_functions.c **** {
+ 668              		.loc 1 331 1 is_stmt 1 view -0
+ 669              		.cfi_startproc
+ 670              		@ args = 0, pretend = 0, frame = 0
+ 671              		@ frame_needed = 0, uses_anonymous_args = 0
+ 672              		@ link register save eliminated.
+ 332:Core/Src/shared_functions.c ****     int i;
+ 673              		.loc 1 332 5 view .LVU195
+ 333:Core/Src/shared_functions.c ****     *ts = 0;
+ 674              		.loc 1 333 5 view .LVU196
+ 675              		.loc 1 333 9 is_stmt 0 view .LVU197
+ 676 0000 0023     		movs	r3, #0
+ 677 0002 0B60     		str	r3, [r1]
+ 334:Core/Src/shared_functions.c ****     for (i = 0; i < RESP_MSG_TS_LEN; i++)
+ 678              		.loc 1 334 5 is_stmt 1 view .LVU198
+ 679              	.LVL53:
+ 680              		.loc 1 334 5 is_stmt 0 view .LVU199
+ 681 0004 08E0     		b	.L60
+ 682              	.LVL54:
+ 683              	.L61:
+ 335:Core/Src/shared_functions.c ****     {
+ 336:Core/Src/shared_functions.c ****         *ts += (uint32_t)ts_field[i] << (i * 8);
+ 684              		.loc 1 336 9 is_stmt 1 discriminator 3 view .LVU200
+ 685              		.loc 1 336 34 is_stmt 0 discriminator 3 view .LVU201
+ARM GAS  /tmp/ccuIUH4j.s 			page 20
+
+
+ 686 0006 C25C     		ldrb	r2, [r0, r3]	@ zero_extendqisi2
+ 687              		.loc 1 336 44 discriminator 3 view .LVU202
+ 688 0008 4FEAC30C 		lsl	ip, r3, #3
+ 689              		.loc 1 336 38 discriminator 3 view .LVU203
+ 690 000c 02FA0CFC 		lsl	ip, r2, ip
+ 691              		.loc 1 336 13 discriminator 3 view .LVU204
+ 692 0010 0A68     		ldr	r2, [r1]
+ 693 0012 6244     		add	r2, r2, ip
+ 694 0014 0A60     		str	r2, [r1]
+ 334:Core/Src/shared_functions.c ****     for (i = 0; i < RESP_MSG_TS_LEN; i++)
+ 695              		.loc 1 334 38 is_stmt 1 discriminator 3 view .LVU205
+ 334:Core/Src/shared_functions.c ****     for (i = 0; i < RESP_MSG_TS_LEN; i++)
+ 696              		.loc 1 334 39 is_stmt 0 discriminator 3 view .LVU206
+ 697 0016 0133     		adds	r3, r3, #1
+ 698              	.LVL55:
+ 699              	.L60:
+ 334:Core/Src/shared_functions.c ****     for (i = 0; i < RESP_MSG_TS_LEN; i++)
+ 700              		.loc 1 334 17 is_stmt 1 discriminator 1 view .LVU207
+ 334:Core/Src/shared_functions.c ****     for (i = 0; i < RESP_MSG_TS_LEN; i++)
+ 701              		.loc 1 334 5 is_stmt 0 discriminator 1 view .LVU208
+ 702 0018 032B     		cmp	r3, #3
+ 703 001a F4DD     		ble	.L61
+ 337:Core/Src/shared_functions.c ****     }
+ 338:Core/Src/shared_functions.c **** }
+ 704              		.loc 1 338 1 view .LVU209
+ 705 001c 7047     		bx	lr
+ 706              		.cfi_endproc
+ 707              	.LFE6:
+ 709              		.section	.text.get_tx_timestamp_u64,"ax",%progbits
+ 710              		.align	1
+ 711              		.global	get_tx_timestamp_u64
+ 712              		.syntax unified
+ 713              		.thumb
+ 714              		.thumb_func
+ 715              		.fpu fpv4-sp-d16
+ 717              	get_tx_timestamp_u64:
+ 718              	.LFB7:
+ 339:Core/Src/shared_functions.c **** 
+ 340:Core/Src/shared_functions.c **** /*! -----------------------------------------------------------------------------------------------
+ 341:Core/Src/shared_functions.c ****  * @fn get_tx_timestamp_u64()
+ 342:Core/Src/shared_functions.c ****  *
+ 343:Core/Src/shared_functions.c ****  * @brief Get the TX time-stamp in a 64-bit variable.
+ 344:Core/Src/shared_functions.c ****  *        /!\ This function assumes that length of time-stamps is 40 bits, for both TX and RX!
+ 345:Core/Src/shared_functions.c ****  *
+ 346:Core/Src/shared_functions.c ****  * @param  none
+ 347:Core/Src/shared_functions.c ****  *
+ 348:Core/Src/shared_functions.c ****  * @return  64-bit value of the read time-stamp.
+ 349:Core/Src/shared_functions.c ****  */
+ 350:Core/Src/shared_functions.c **** uint64_t get_tx_timestamp_u64(void)
+ 351:Core/Src/shared_functions.c **** {
+ 719              		.loc 1 351 1 is_stmt 1 view -0
+ 720              		.cfi_startproc
+ 721              		@ args = 0, pretend = 0, frame = 8
+ 722              		@ frame_needed = 0, uses_anonymous_args = 0
+ 723 0000 00B5     		push	{lr}
+ 724              		.cfi_def_cfa_offset 4
+ 725              		.cfi_offset 14, -4
+ARM GAS  /tmp/ccuIUH4j.s 			page 21
+
+
+ 726 0002 83B0     		sub	sp, sp, #12
+ 727              		.cfi_def_cfa_offset 16
+ 352:Core/Src/shared_functions.c ****     uint8_t ts_tab[5];
+ 728              		.loc 1 352 5 view .LVU211
+ 353:Core/Src/shared_functions.c ****     uint64_t ts = 0;
+ 729              		.loc 1 353 5 view .LVU212
+ 730              	.LVL56:
+ 354:Core/Src/shared_functions.c ****     int8_t i;
+ 731              		.loc 1 354 5 view .LVU213
+ 355:Core/Src/shared_functions.c ****     dwt_readtxtimestamp(ts_tab);
+ 732              		.loc 1 355 5 view .LVU214
+ 733 0004 6846     		mov	r0, sp
+ 734 0006 FFF7FEFF 		bl	dwt_readtxtimestamp
+ 735              	.LVL57:
+ 356:Core/Src/shared_functions.c ****     for (i = 4; i >= 0; i--)
+ 736              		.loc 1 356 5 view .LVU215
+ 737              		.loc 1 356 12 is_stmt 0 view .LVU216
+ 738 000a 0423     		movs	r3, #4
+ 353:Core/Src/shared_functions.c ****     int8_t i;
+ 739              		.loc 1 353 14 view .LVU217
+ 740 000c 0020     		movs	r0, #0
+ 741 000e 0146     		mov	r1, r0
+ 742              		.loc 1 356 5 view .LVU218
+ 743 0010 0BE0     		b	.L63
+ 744              	.LVL58:
+ 745              	.L64:
+ 357:Core/Src/shared_functions.c ****     {
+ 358:Core/Src/shared_functions.c ****         ts <<= 8;
+ 746              		.loc 1 358 9 is_stmt 1 discriminator 3 view .LVU219
+ 747              		.loc 1 358 12 is_stmt 0 discriminator 3 view .LVU220
+ 748 0012 0902     		lsls	r1, r1, #8
+ 749              	.LVL59:
+ 750              		.loc 1 358 12 discriminator 3 view .LVU221
+ 751 0014 41EA1061 		orr	r1, r1, r0, lsr #24
+ 752              	.LVL60:
+ 359:Core/Src/shared_functions.c ****         ts |= ts_tab[i];
+ 753              		.loc 1 359 9 is_stmt 1 discriminator 3 view .LVU222
+ 754              		.loc 1 359 21 is_stmt 0 discriminator 3 view .LVU223
+ 755 0018 03F10802 		add	r2, r3, #8
+ 756 001c 6A44     		add	r2, sp, r2
+ 757 001e 12F8082C 		ldrb	r2, [r2, #-8]	@ zero_extendqisi2
+ 758              		.loc 1 359 12 discriminator 3 view .LVU224
+ 759 0022 42EA0020 		orr	r0, r2, r0, lsl #8
+ 760              	.LVL61:
+ 356:Core/Src/shared_functions.c ****     {
+ 761              		.loc 1 356 25 is_stmt 1 discriminator 3 view .LVU225
+ 356:Core/Src/shared_functions.c ****     {
+ 762              		.loc 1 356 26 is_stmt 0 discriminator 3 view .LVU226
+ 763 0026 013B     		subs	r3, r3, #1
+ 764              	.LVL62:
+ 356:Core/Src/shared_functions.c ****     {
+ 765              		.loc 1 356 26 discriminator 3 view .LVU227
+ 766 0028 5BB2     		sxtb	r3, r3
+ 767              	.LVL63:
+ 768              	.L63:
+ 356:Core/Src/shared_functions.c ****     {
+ 769              		.loc 1 356 17 is_stmt 1 discriminator 1 view .LVU228
+ARM GAS  /tmp/ccuIUH4j.s 			page 22
+
+
+ 356:Core/Src/shared_functions.c ****     {
+ 770              		.loc 1 356 5 is_stmt 0 discriminator 1 view .LVU229
+ 771 002a 002B     		cmp	r3, #0
+ 772 002c F1DA     		bge	.L64
+ 360:Core/Src/shared_functions.c ****     }
+ 361:Core/Src/shared_functions.c ****     return ts;
+ 773              		.loc 1 361 5 is_stmt 1 view .LVU230
+ 362:Core/Src/shared_functions.c **** }
+ 774              		.loc 1 362 1 is_stmt 0 view .LVU231
+ 775 002e 03B0     		add	sp, sp, #12
+ 776              		.cfi_def_cfa_offset 4
+ 777              		@ sp needed
+ 778 0030 5DF804FB 		ldr	pc, [sp], #4
+ 779              		.cfi_endproc
+ 780              	.LFE7:
+ 782              		.section	.text.get_rx_timestamp_u64,"ax",%progbits
+ 783              		.align	1
+ 784              		.global	get_rx_timestamp_u64
+ 785              		.syntax unified
+ 786              		.thumb
+ 787              		.thumb_func
+ 788              		.fpu fpv4-sp-d16
+ 790              	get_rx_timestamp_u64:
+ 791              	.LFB8:
+ 363:Core/Src/shared_functions.c **** 
+ 364:Core/Src/shared_functions.c **** /*! -----------------------------------------------------------------------------------------------
+ 365:Core/Src/shared_functions.c ****  * @fn get_rx_timestamp_u64()
+ 366:Core/Src/shared_functions.c ****  *
+ 367:Core/Src/shared_functions.c ****  * @brief Get the RX time-stamp in a 64-bit variable.
+ 368:Core/Src/shared_functions.c ****  *        /!\ This function assumes that length of time-stamps is 40 bits, for both TX and RX!
+ 369:Core/Src/shared_functions.c ****  *
+ 370:Core/Src/shared_functions.c ****  * @param  none
+ 371:Core/Src/shared_functions.c ****  *
+ 372:Core/Src/shared_functions.c ****  * @return  64-bit value of the read time-stamp.
+ 373:Core/Src/shared_functions.c ****  */
+ 374:Core/Src/shared_functions.c **** uint64_t get_rx_timestamp_u64(void)
+ 375:Core/Src/shared_functions.c **** {
+ 792              		.loc 1 375 1 is_stmt 1 view -0
+ 793              		.cfi_startproc
+ 794              		@ args = 0, pretend = 0, frame = 8
+ 795              		@ frame_needed = 0, uses_anonymous_args = 0
+ 796 0000 00B5     		push	{lr}
+ 797              		.cfi_def_cfa_offset 4
+ 798              		.cfi_offset 14, -4
+ 799 0002 83B0     		sub	sp, sp, #12
+ 800              		.cfi_def_cfa_offset 16
+ 376:Core/Src/shared_functions.c ****     uint8_t ts_tab[5];
+ 801              		.loc 1 376 5 view .LVU233
+ 377:Core/Src/shared_functions.c ****     uint64_t ts = 0;
+ 802              		.loc 1 377 5 view .LVU234
+ 803              	.LVL64:
+ 378:Core/Src/shared_functions.c ****     int8_t i;
+ 804              		.loc 1 378 5 view .LVU235
+ 379:Core/Src/shared_functions.c ****     dwt_readrxtimestamp(ts_tab);
+ 805              		.loc 1 379 5 view .LVU236
+ 806 0004 6846     		mov	r0, sp
+ 807 0006 FFF7FEFF 		bl	dwt_readrxtimestamp
+ARM GAS  /tmp/ccuIUH4j.s 			page 23
+
+
+ 808              	.LVL65:
+ 380:Core/Src/shared_functions.c ****     for (i = 4; i >= 0; i--)
+ 809              		.loc 1 380 5 view .LVU237
+ 810              		.loc 1 380 12 is_stmt 0 view .LVU238
+ 811 000a 0423     		movs	r3, #4
+ 377:Core/Src/shared_functions.c ****     int8_t i;
+ 812              		.loc 1 377 14 view .LVU239
+ 813 000c 0020     		movs	r0, #0
+ 814 000e 0146     		mov	r1, r0
+ 815              		.loc 1 380 5 view .LVU240
+ 816 0010 0BE0     		b	.L67
+ 817              	.LVL66:
+ 818              	.L68:
+ 381:Core/Src/shared_functions.c ****     {
+ 382:Core/Src/shared_functions.c ****         ts <<= 8;
+ 819              		.loc 1 382 9 is_stmt 1 discriminator 3 view .LVU241
+ 820              		.loc 1 382 12 is_stmt 0 discriminator 3 view .LVU242
+ 821 0012 0902     		lsls	r1, r1, #8
+ 822              	.LVL67:
+ 823              		.loc 1 382 12 discriminator 3 view .LVU243
+ 824 0014 41EA1061 		orr	r1, r1, r0, lsr #24
+ 825              	.LVL68:
+ 383:Core/Src/shared_functions.c ****         ts |= ts_tab[i];
+ 826              		.loc 1 383 9 is_stmt 1 discriminator 3 view .LVU244
+ 827              		.loc 1 383 21 is_stmt 0 discriminator 3 view .LVU245
+ 828 0018 03F10802 		add	r2, r3, #8
+ 829 001c 6A44     		add	r2, sp, r2
+ 830 001e 12F8082C 		ldrb	r2, [r2, #-8]	@ zero_extendqisi2
+ 831              		.loc 1 383 12 discriminator 3 view .LVU246
+ 832 0022 42EA0020 		orr	r0, r2, r0, lsl #8
+ 833              	.LVL69:
+ 380:Core/Src/shared_functions.c ****     {
+ 834              		.loc 1 380 25 is_stmt 1 discriminator 3 view .LVU247
+ 380:Core/Src/shared_functions.c ****     {
+ 835              		.loc 1 380 26 is_stmt 0 discriminator 3 view .LVU248
+ 836 0026 013B     		subs	r3, r3, #1
+ 837              	.LVL70:
+ 380:Core/Src/shared_functions.c ****     {
+ 838              		.loc 1 380 26 discriminator 3 view .LVU249
+ 839 0028 5BB2     		sxtb	r3, r3
+ 840              	.LVL71:
+ 841              	.L67:
+ 380:Core/Src/shared_functions.c ****     {
+ 842              		.loc 1 380 17 is_stmt 1 discriminator 1 view .LVU250
+ 380:Core/Src/shared_functions.c ****     {
+ 843              		.loc 1 380 5 is_stmt 0 discriminator 1 view .LVU251
+ 844 002a 002B     		cmp	r3, #0
+ 845 002c F1DA     		bge	.L68
+ 384:Core/Src/shared_functions.c ****     }
+ 385:Core/Src/shared_functions.c ****     return ts;
+ 846              		.loc 1 385 5 is_stmt 1 view .LVU252
+ 386:Core/Src/shared_functions.c **** }
+ 847              		.loc 1 386 1 is_stmt 0 view .LVU253
+ 848 002e 03B0     		add	sp, sp, #12
+ 849              		.cfi_def_cfa_offset 4
+ 850              		@ sp needed
+ 851 0030 5DF804FB 		ldr	pc, [sp], #4
+ARM GAS  /tmp/ccuIUH4j.s 			page 24
+
+
+ 852              		.cfi_endproc
+ 853              	.LFE8:
+ 855              		.section	.text.final_msg_get_ts,"ax",%progbits
+ 856              		.align	1
+ 857              		.global	final_msg_get_ts
+ 858              		.syntax unified
+ 859              		.thumb
+ 860              		.thumb_func
+ 861              		.fpu fpv4-sp-d16
+ 863              	final_msg_get_ts:
+ 864              	.LVL72:
+ 865              	.LFB9:
+ 387:Core/Src/shared_functions.c **** 
+ 388:Core/Src/shared_functions.c **** /*! -----------------------------------------------------------------------------------------------
+ 389:Core/Src/shared_functions.c ****  * @fn final_msg_get_ts()
+ 390:Core/Src/shared_functions.c ****  *
+ 391:Core/Src/shared_functions.c ****  * @brief Read a given timestamp value from the final message. In the timestamp fields of the final
+ 392:Core/Src/shared_functions.c ****  *        significant byte is at the lower address.
+ 393:Core/Src/shared_functions.c ****  *
+ 394:Core/Src/shared_functions.c ****  * @param  ts_field  pointer on the first byte of the timestamp field to read
+ 395:Core/Src/shared_functions.c ****  *         ts  timestamp value
+ 396:Core/Src/shared_functions.c ****  *
+ 397:Core/Src/shared_functions.c ****  * @return none
+ 398:Core/Src/shared_functions.c ****  */
+ 399:Core/Src/shared_functions.c **** void final_msg_get_ts(const uint8_t *ts_field, uint32_t *ts)
+ 400:Core/Src/shared_functions.c **** {
+ 866              		.loc 1 400 1 is_stmt 1 view -0
+ 867              		.cfi_startproc
+ 868              		@ args = 0, pretend = 0, frame = 0
+ 869              		@ frame_needed = 0, uses_anonymous_args = 0
+ 870              		@ link register save eliminated.
+ 401:Core/Src/shared_functions.c ****     uint8_t i;
+ 871              		.loc 1 401 5 view .LVU255
+ 402:Core/Src/shared_functions.c ****     *ts = 0;
+ 872              		.loc 1 402 5 view .LVU256
+ 873              		.loc 1 402 9 is_stmt 0 view .LVU257
+ 874 0000 0023     		movs	r3, #0
+ 875 0002 0B60     		str	r3, [r1]
+ 403:Core/Src/shared_functions.c ****     for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+ 876              		.loc 1 403 5 is_stmt 1 view .LVU258
+ 877              	.LVL73:
+ 878              		.loc 1 403 5 is_stmt 0 view .LVU259
+ 879 0004 09E0     		b	.L71
+ 880              	.LVL74:
+ 881              	.L72:
+ 404:Core/Src/shared_functions.c ****     {
+ 405:Core/Src/shared_functions.c ****         *ts += ((uint32_t)ts_field[i] << (i * 8));
+ 882              		.loc 1 405 9 is_stmt 1 discriminator 3 view .LVU260
+ 883              		.loc 1 405 35 is_stmt 0 discriminator 3 view .LVU261
+ 884 0006 C25C     		ldrb	r2, [r0, r3]	@ zero_extendqisi2
+ 885              		.loc 1 405 45 discriminator 3 view .LVU262
+ 886 0008 4FEAC30C 		lsl	ip, r3, #3
+ 887              		.loc 1 405 39 discriminator 3 view .LVU263
+ 888 000c 02FA0CFC 		lsl	ip, r2, ip
+ 889              		.loc 1 405 13 discriminator 3 view .LVU264
+ 890 0010 0A68     		ldr	r2, [r1]
+ 891 0012 6244     		add	r2, r2, ip
+ARM GAS  /tmp/ccuIUH4j.s 			page 25
+
+
+ 892 0014 0A60     		str	r2, [r1]
+ 403:Core/Src/shared_functions.c ****     for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+ 893              		.loc 1 403 39 is_stmt 1 discriminator 3 view .LVU265
+ 403:Core/Src/shared_functions.c ****     for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+ 894              		.loc 1 403 40 is_stmt 0 discriminator 3 view .LVU266
+ 895 0016 0133     		adds	r3, r3, #1
+ 896              	.LVL75:
+ 403:Core/Src/shared_functions.c ****     for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+ 897              		.loc 1 403 40 discriminator 3 view .LVU267
+ 898 0018 DBB2     		uxtb	r3, r3
+ 899              	.LVL76:
+ 900              	.L71:
+ 403:Core/Src/shared_functions.c ****     for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+ 901              		.loc 1 403 17 is_stmt 1 discriminator 1 view .LVU268
+ 403:Core/Src/shared_functions.c ****     for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+ 902              		.loc 1 403 5 is_stmt 0 discriminator 1 view .LVU269
+ 903 001a 032B     		cmp	r3, #3
+ 904 001c F3D9     		bls	.L72
+ 406:Core/Src/shared_functions.c ****     }
+ 407:Core/Src/shared_functions.c **** }
+ 905              		.loc 1 407 1 view .LVU270
+ 906 001e 7047     		bx	lr
+ 907              		.cfi_endproc
+ 908              	.LFE9:
+ 910              		.section	.text.final_msg_set_ts,"ax",%progbits
+ 911              		.align	1
+ 912              		.global	final_msg_set_ts
+ 913              		.syntax unified
+ 914              		.thumb
+ 915              		.thumb_func
+ 916              		.fpu fpv4-sp-d16
+ 918              	final_msg_set_ts:
+ 919              	.LVL77:
+ 920              	.LFB10:
+ 408:Core/Src/shared_functions.c **** 
+ 409:Core/Src/shared_functions.c **** /*! -----------------------------------------------------------------------------------------------
+ 410:Core/Src/shared_functions.c ****  * @fn final_msg_set_ts()
+ 411:Core/Src/shared_functions.c ****  *
+ 412:Core/Src/shared_functions.c ****  * @brief Fill a given timestamp field in the final message with the given value. In the timestamp 
+ 413:Core/Src/shared_functions.c ****  *        message, the least significant byte is at the lower address.
+ 414:Core/Src/shared_functions.c ****  *
+ 415:Core/Src/shared_functions.c ****  * @param  ts_field  pointer on the first byte of the timestamp field to fill
+ 416:Core/Src/shared_functions.c ****  *         ts  timestamp value
+ 417:Core/Src/shared_functions.c ****  *
+ 418:Core/Src/shared_functions.c ****  * @return none
+ 419:Core/Src/shared_functions.c ****  */
+ 420:Core/Src/shared_functions.c **** void final_msg_set_ts(uint8_t *ts_field, uint64_t ts)
+ 421:Core/Src/shared_functions.c **** {
+ 921              		.loc 1 421 1 is_stmt 1 view -0
+ 922              		.cfi_startproc
+ 923              		@ args = 0, pretend = 0, frame = 0
+ 924              		@ frame_needed = 0, uses_anonymous_args = 0
+ 925              		@ link register save eliminated.
+ 422:Core/Src/shared_functions.c ****     uint8_t i;
+ 926              		.loc 1 422 5 view .LVU272
+ 423:Core/Src/shared_functions.c ****     for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+ 927              		.loc 1 423 5 view .LVU273
+ARM GAS  /tmp/ccuIUH4j.s 			page 26
+
+
+ 928              		.loc 1 423 12 is_stmt 0 view .LVU274
+ 929 0000 0021     		movs	r1, #0
+ 930              		.loc 1 423 5 view .LVU275
+ 931 0002 06E0     		b	.L74
+ 932              	.LVL78:
+ 933              	.L75:
+ 424:Core/Src/shared_functions.c ****     {
+ 425:Core/Src/shared_functions.c ****         ts_field[i] = (uint8_t)ts;
+ 934              		.loc 1 425 9 is_stmt 1 discriminator 3 view .LVU276
+ 935              		.loc 1 425 21 is_stmt 0 discriminator 3 view .LVU277
+ 936 0004 4254     		strb	r2, [r0, r1]
+ 426:Core/Src/shared_functions.c ****         ts >>= 8;
+ 937              		.loc 1 426 9 is_stmt 1 discriminator 3 view .LVU278
+ 938              		.loc 1 426 12 is_stmt 0 discriminator 3 view .LVU279
+ 939 0006 120A     		lsrs	r2, r2, #8
+ 940              	.LVL79:
+ 941              		.loc 1 426 12 discriminator 3 view .LVU280
+ 942 0008 42EA0362 		orr	r2, r2, r3, lsl #24
+ 943 000c 1B0A     		lsrs	r3, r3, #8
+ 944              	.LVL80:
+ 423:Core/Src/shared_functions.c ****     for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+ 945              		.loc 1 423 39 is_stmt 1 discriminator 3 view .LVU281
+ 423:Core/Src/shared_functions.c ****     for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+ 946              		.loc 1 423 40 is_stmt 0 discriminator 3 view .LVU282
+ 947 000e 0131     		adds	r1, r1, #1
+ 948              	.LVL81:
+ 423:Core/Src/shared_functions.c ****     for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+ 949              		.loc 1 423 40 discriminator 3 view .LVU283
+ 950 0010 C9B2     		uxtb	r1, r1
+ 951              	.LVL82:
+ 952              	.L74:
+ 423:Core/Src/shared_functions.c ****     for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+ 953              		.loc 1 423 17 is_stmt 1 discriminator 1 view .LVU284
+ 423:Core/Src/shared_functions.c ****     for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+ 954              		.loc 1 423 5 is_stmt 0 discriminator 1 view .LVU285
+ 955 0012 0329     		cmp	r1, #3
+ 956 0014 F6D9     		bls	.L75
+ 427:Core/Src/shared_functions.c ****     }
+ 428:Core/Src/shared_functions.c **** }
+ 957              		.loc 1 428 1 view .LVU286
+ 958 0016 7047     		bx	lr
+ 959              		.cfi_endproc
+ 960              	.LFE10:
+ 962              		.section	.text.resp_msg_set_ts,"ax",%progbits
+ 963              		.align	1
+ 964              		.global	resp_msg_set_ts
+ 965              		.syntax unified
+ 966              		.thumb
+ 967              		.thumb_func
+ 968              		.fpu fpv4-sp-d16
+ 970              	resp_msg_set_ts:
+ 971              	.LVL83:
+ 972              	.LFB11:
+ 429:Core/Src/shared_functions.c **** 
+ 430:Core/Src/shared_functions.c **** /*! -----------------------------------------------------------------------------------------------
+ 431:Core/Src/shared_functions.c ****  * @fn resp_msg_set_ts()
+ 432:Core/Src/shared_functions.c ****  *
+ARM GAS  /tmp/ccuIUH4j.s 			page 27
+
+
+ 433:Core/Src/shared_functions.c ****  * @brief Fill a given timestamp field in the response message with the given value. In the timesta
+ 434:Core/Src/shared_functions.c ****  *        response message, the least significant byte is at the lower address.
+ 435:Core/Src/shared_functions.c ****  *
+ 436:Core/Src/shared_functions.c ****  * @param  ts_field  pointer on the first byte of the timestamp field to fill
+ 437:Core/Src/shared_functions.c ****  *         ts  timestamp value
+ 438:Core/Src/shared_functions.c ****  *
+ 439:Core/Src/shared_functions.c ****  * @return none
+ 440:Core/Src/shared_functions.c ****  */
+ 441:Core/Src/shared_functions.c **** void resp_msg_set_ts(uint8_t *ts_field, const uint64_t ts)
+ 442:Core/Src/shared_functions.c **** {
+ 973              		.loc 1 442 1 is_stmt 1 view -0
+ 974              		.cfi_startproc
+ 975              		@ args = 0, pretend = 0, frame = 0
+ 976              		@ frame_needed = 0, uses_anonymous_args = 0
+ 443:Core/Src/shared_functions.c ****     uint8_t i;
+ 977              		.loc 1 443 5 view .LVU288
+ 444:Core/Src/shared_functions.c ****     for (i = 0; i < RESP_MSG_TS_LEN; i++)
+ 978              		.loc 1 444 5 view .LVU289
+ 979              		.loc 1 444 12 is_stmt 0 view .LVU290
+ 980 0000 4FF0000C 		mov	ip, #0
+ 981              	.LVL84:
+ 982              		.loc 1 444 17 is_stmt 1 view .LVU291
+ 983              		.loc 1 444 5 is_stmt 0 view .LVU292
+ 984 0004 BCF1030F 		cmp	ip, #3
+ 985 0008 19D8     		bhi	.L82
+ 442:Core/Src/shared_functions.c ****     uint8_t i;
+ 986              		.loc 1 442 1 view .LVU293
+ 987 000a 10B5     		push	{r4, lr}
+ 988              		.cfi_def_cfa_offset 8
+ 989              		.cfi_offset 4, -8
+ 990              		.cfi_offset 14, -4
+ 991              	.L78:
+ 445:Core/Src/shared_functions.c ****     {
+ 446:Core/Src/shared_functions.c ****         ts_field[i] = (uint8_t)(ts >> (i * 8));
+ 992              		.loc 1 446 9 is_stmt 1 discriminator 3 view .LVU294
+ 993              		.loc 1 446 42 is_stmt 0 discriminator 3 view .LVU295
+ 994 000c 4FEACC01 		lsl	r1, ip, #3
+ 995              		.loc 1 446 36 discriminator 3 view .LVU296
+ 996 0010 C1F12004 		rsb	r4, r1, #32
+ 997 0014 A1F1200E 		sub	lr, r1, #32
+ 998 0018 22FA01F1 		lsr	r1, r2, r1
+ 999 001c 03FA04F4 		lsl	r4, r3, r4
+ 1000 0020 2143     		orrs	r1, r1, r4
+ 1001 0022 23FA0EFE 		lsr	lr, r3, lr
+ 1002 0026 41EA0E01 		orr	r1, r1, lr
+ 1003              		.loc 1 446 21 discriminator 3 view .LVU297
+ 1004 002a 00F80C10 		strb	r1, [r0, ip]
+ 444:Core/Src/shared_functions.c ****     {
+ 1005              		.loc 1 444 38 is_stmt 1 discriminator 3 view .LVU298
+ 444:Core/Src/shared_functions.c ****     {
+ 1006              		.loc 1 444 39 is_stmt 0 discriminator 3 view .LVU299
+ 1007 002e 0CF1010C 		add	ip, ip, #1
+ 1008              	.LVL85:
+ 444:Core/Src/shared_functions.c ****     {
+ 1009              		.loc 1 444 39 discriminator 3 view .LVU300
+ 1010 0032 5FFA8CFC 		uxtb	ip, ip
+ 1011              	.LVL86:
+ARM GAS  /tmp/ccuIUH4j.s 			page 28
+
+
+ 444:Core/Src/shared_functions.c ****     {
+ 1012              		.loc 1 444 17 is_stmt 1 discriminator 3 view .LVU301
+ 444:Core/Src/shared_functions.c ****     {
+ 1013              		.loc 1 444 5 is_stmt 0 discriminator 3 view .LVU302
+ 1014 0036 BCF1030F 		cmp	ip, #3
+ 1015 003a E7D9     		bls	.L78
+ 447:Core/Src/shared_functions.c ****     }
+ 448:Core/Src/shared_functions.c **** }
+ 1016              		.loc 1 448 1 view .LVU303
+ 1017 003c 10BD     		pop	{r4, pc}
+ 1018              	.L82:
+ 1019              		.cfi_def_cfa_offset 0
+ 1020              		.cfi_restore 4
+ 1021              		.cfi_restore 14
+ 1022              		.loc 1 448 1 view .LVU304
+ 1023 003e 7047     		bx	lr
+ 1024              		.cfi_endproc
+ 1025              	.LFE11:
+ 1027              		.text
+ 1028              	.Letext0:
+ 1029              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 1030              		.file 3 "Core/Inc/deca_device_api.h"
+ARM GAS  /tmp/ccuIUH4j.s 			page 29
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 shared_functions.c
+     /tmp/ccuIUH4j.s:18     .text.check_for_status_errors:0000000000000000 $t
+     /tmp/ccuIUH4j.s:26     .text.check_for_status_errors:0000000000000000 check_for_status_errors
+     /tmp/ccuIUH4j.s:256    .text.get_rx_delay_time_txpreamble:0000000000000000 $t
+     /tmp/ccuIUH4j.s:263    .text.get_rx_delay_time_txpreamble:0000000000000000 get_rx_delay_time_txpreamble
+     /tmp/ccuIUH4j.s:282    .text.get_rx_delay_time_txpreamble:000000000000000e $d
+     /tmp/ccuIUH4j.s:294    .text.get_rx_delay_time_txpreamble:000000000000001a $t
+     /tmp/ccuIUH4j.s:349    .text.get_rx_delay_time_txpreamble:0000000000000040 $d
+     /tmp/ccuIUH4j.s:354    .text.get_rx_delay_time_data_rate:0000000000000000 $t
+     /tmp/ccuIUH4j.s:361    .text.get_rx_delay_time_data_rate:0000000000000000 get_rx_delay_time_data_rate
+     /tmp/ccuIUH4j.s:389    .text.get_rx_delay_time_data_rate:0000000000000010 $d
+     /tmp/ccuIUH4j.s:394    .text.set_delayed_rx_time:0000000000000000 $t
+     /tmp/ccuIUH4j.s:401    .text.set_delayed_rx_time:0000000000000000 set_delayed_rx_time
+     /tmp/ccuIUH4j.s:424    .text.set_delayed_rx_time:000000000000000e $d
+     /tmp/ccuIUH4j.s:535    .text.set_resp_rx_timeout:0000000000000000 $t
+     /tmp/ccuIUH4j.s:542    .text.set_resp_rx_timeout:0000000000000000 set_resp_rx_timeout
+     /tmp/ccuIUH4j.s:601    .text.resync_sts:0000000000000000 $t
+     /tmp/ccuIUH4j.s:608    .text.resync_sts:0000000000000000 resync_sts
+     /tmp/ccuIUH4j.s:652    .text.resync_sts:0000000000000024 $d
+     /tmp/ccuIUH4j.s:658    .text.resp_msg_get_ts:0000000000000000 $t
+     /tmp/ccuIUH4j.s:665    .text.resp_msg_get_ts:0000000000000000 resp_msg_get_ts
+     /tmp/ccuIUH4j.s:710    .text.get_tx_timestamp_u64:0000000000000000 $t
+     /tmp/ccuIUH4j.s:717    .text.get_tx_timestamp_u64:0000000000000000 get_tx_timestamp_u64
+     /tmp/ccuIUH4j.s:783    .text.get_rx_timestamp_u64:0000000000000000 $t
+     /tmp/ccuIUH4j.s:790    .text.get_rx_timestamp_u64:0000000000000000 get_rx_timestamp_u64
+     /tmp/ccuIUH4j.s:856    .text.final_msg_get_ts:0000000000000000 $t
+     /tmp/ccuIUH4j.s:863    .text.final_msg_get_ts:0000000000000000 final_msg_get_ts
+     /tmp/ccuIUH4j.s:911    .text.final_msg_set_ts:0000000000000000 $t
+     /tmp/ccuIUH4j.s:918    .text.final_msg_set_ts:0000000000000000 final_msg_set_ts
+     /tmp/ccuIUH4j.s:963    .text.resp_msg_set_ts:0000000000000000 $t
+     /tmp/ccuIUH4j.s:970    .text.resp_msg_set_ts:0000000000000000 resp_msg_set_ts
+     /tmp/ccuIUH4j.s:437    .text.set_delayed_rx_time:000000000000001b $d
+     /tmp/ccuIUH4j.s:437    .text.set_delayed_rx_time:000000000000001c $t
+
+UNDEFINED SYMBOLS
+dwt_readstsstatus
+config_options
+dwt_setdelayedtrxtime
+dwt_setrxtimeout
+dwt_write32bitoffsetreg
+dwt_configurestsloadiv
+dwt_readtxtimestamp
+dwt_readrxtimestamp

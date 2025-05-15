@@ -1,0 +1,1565 @@
+ARM GAS  /tmp/cctQSOtj.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"ds_twr_responder_sts.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.compute_resp_tx_frame_times,"ax",%progbits
+  18              		.align	1
+  19              		.global	compute_resp_tx_frame_times
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	compute_resp_tx_frame_times:
+  27              	.LFB133:
+  28              		.file 1 "Core/Src/ds_twr_responder_sts.c"
+   1:Core/Src/ds_twr_responder_sts.c **** #include "main.h"
+   2:Core/Src/ds_twr_responder_sts.c **** #include "tim.h"
+   3:Core/Src/ds_twr_responder_sts.c **** #include <stdlib.h>
+   4:Core/Src/ds_twr_responder_sts.c **** #include <deca_device_api.h>
+   5:Core/Src/ds_twr_responder_sts.c **** #include <deca_regs.h>
+   6:Core/Src/ds_twr_responder_sts.c **** #include <deca_spi.h>
+   7:Core/Src/ds_twr_responder_sts.c **** #include <port.h>
+   8:Core/Src/ds_twr_responder_sts.c **** #include <shared_defines.h>
+   9:Core/Src/ds_twr_responder_sts.c **** #include <shared_functions.h>
+  10:Core/Src/ds_twr_responder_sts.c **** #include <example_selection.h>
+  11:Core/Src/ds_twr_responder_sts.c **** #include <config_options.h>
+  12:Core/Src/ds_twr_responder_sts.c **** #include "string.h"
+  13:Core/Src/ds_twr_responder_sts.c **** #include "stdio.h"
+  14:Core/Src/ds_twr_responder_sts.c **** #include "myFunctions.h"
+  15:Core/Src/ds_twr_responder_sts.c **** #include "math.h" 
+  16:Core/Src/ds_twr_responder_sts.c **** 
+  17:Core/Src/ds_twr_responder_sts.c **** 
+  18:Core/Src/ds_twr_responder_sts.c **** #if defined(TEST_DS_TWR_RESPONDER_STS)
+  19:Core/Src/ds_twr_responder_sts.c **** 
+  20:Core/Src/ds_twr_responder_sts.c **** extern void Send_Distance_Over_UART(double tof, float *received_floats);
+  21:Core/Src/ds_twr_responder_sts.c **** 
+  22:Core/Src/ds_twr_responder_sts.c **** extern UART_HandleTypeDef huart1;
+  23:Core/Src/ds_twr_responder_sts.c **** 
+  24:Core/Src/ds_twr_responder_sts.c **** /* Example application name */
+  25:Core/Src/ds_twr_responder_sts.c **** #define APP_NAME "DS TWR RESP v1.0"
+  26:Core/Src/ds_twr_responder_sts.c **** 
+  27:Core/Src/ds_twr_responder_sts.c **** #define RNG_DELAY_MS 30
+  28:Core/Src/ds_twr_responder_sts.c **** 
+  29:Core/Src/ds_twr_responder_sts.c **** #define ANT_DELAY 16490//16550
+  30:Core/Src/ds_twr_responder_sts.c **** 
+ARM GAS  /tmp/cctQSOtj.s 			page 2
+
+
+  31:Core/Src/ds_twr_responder_sts.c **** /* Default antenna delay values for 64 MHz PRF. See NOTE 2 below. */
+  32:Core/Src/ds_twr_responder_sts.c **** #define TX_ANT_DLY  ANT_DELAY  //16535//16525
+  33:Core/Src/ds_twr_responder_sts.c **** #define RX_ANT_DLY  ANT_DELAY //16535//16525
+  34:Core/Src/ds_twr_responder_sts.c **** 
+  35:Core/Src/ds_twr_responder_sts.c **** /* Frames used in the ranging process. See NOTE 3 below. */
+  36:Core/Src/ds_twr_responder_sts.c **** /* ==== This is responder C ====*/
+  37:Core/Src/ds_twr_responder_sts.c **** static uint8_t rx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'B', 2, 'V', 'F', 0xE0, 0, 0};
+  38:Core/Src/ds_twr_responder_sts.c **** static uint8_t tx_resp_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'V', 'F', 'B', 2, 0xE1, 0, 0};
+  39:Core/Src/ds_twr_responder_sts.c **** static uint8_t rx_final_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'B', 2, 'V', 'F', 0xE2, 0, 0, 0, 0, 0, 
+  40:Core/Src/ds_twr_responder_sts.c ****             // Extra 24 bytes initialized to zero
+  41:Core/Src/ds_twr_responder_sts.c ****             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  42:Core/Src/ds_twr_responder_sts.c ****             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  43:Core/Src/ds_twr_responder_sts.c **** 
+  44:Core/Src/ds_twr_responder_sts.c **** /* Length of the common part of the message (up to and including the function code, see NOTE 3 belo
+  45:Core/Src/ds_twr_responder_sts.c **** #define ALL_MSG_COMMON_LEN 10
+  46:Core/Src/ds_twr_responder_sts.c **** /* Index to access some of the fields in the frames involved in the process. */
+  47:Core/Src/ds_twr_responder_sts.c **** #define ALL_MSG_SN_IDX 2
+  48:Core/Src/ds_twr_responder_sts.c **** #define FINAL_MSG_POLL_TX_TS_IDX 10
+  49:Core/Src/ds_twr_responder_sts.c **** #define FINAL_MSG_RESP_RX_TS_IDX 14
+  50:Core/Src/ds_twr_responder_sts.c **** #define FINAL_MSG_FINAL_TX_TS_IDX 18
+  51:Core/Src/ds_twr_responder_sts.c **** /* Index in tx_dist_to_PC to where put distance */
+  52:Core/Src/ds_twr_responder_sts.c **** #define DISTANCE_IDX 11
+  53:Core/Src/ds_twr_responder_sts.c **** /* Frame sequence number, incremented after each transmission. */
+  54:Core/Src/ds_twr_responder_sts.c **** static uint8_t frame_seq_nb = 0;
+  55:Core/Src/ds_twr_responder_sts.c **** 
+  56:Core/Src/ds_twr_responder_sts.c **** /* Buffer to store received messages.
+  57:Core/Src/ds_twr_responder_sts.c ****  * Its size is adjusted to longest frame that this example code is supposed to handle. */
+  58:Core/Src/ds_twr_responder_sts.c **** #define RX_BUF_LEN 64//Must be less than FRAME_LEN_MAX_EX
+  59:Core/Src/ds_twr_responder_sts.c **** static uint8_t rx_buffer[RX_BUF_LEN];
+  60:Core/Src/ds_twr_responder_sts.c **** 
+  61:Core/Src/ds_twr_responder_sts.c **** /* Hold copy of status register state here for reference so that it can be examined at a debug brea
+  62:Core/Src/ds_twr_responder_sts.c **** static uint32_t status_reg = 0;
+  63:Core/Src/ds_twr_responder_sts.c **** 
+  64:Core/Src/ds_twr_responder_sts.c **** /* Delay between frames, in UWB microseconds. See NOTE 1 below. */
+  65:Core/Src/ds_twr_responder_sts.c **** #define POLL_RX_TO_RESP_TX_DLY_UUS (500 + CPU_COMP) //(500 + 327)
+  66:Core/Src/ds_twr_responder_sts.c **** 
+  67:Core/Src/ds_twr_responder_sts.c **** /*Delay between the response frame and final frame. */
+  68:Core/Src/ds_twr_responder_sts.c **** #define RESP_TX_TO_FINAL_RX_DLY_UUS (100 + CPU_COMP) //(100 + 290)// //290
+  69:Core/Src/ds_twr_responder_sts.c **** 
+  70:Core/Src/ds_twr_responder_sts.c **** /* Timestamps of frames transmission/reception. */
+  71:Core/Src/ds_twr_responder_sts.c **** static uint64_t poll_rx_ts;
+  72:Core/Src/ds_twr_responder_sts.c **** static uint64_t resp_tx_ts;
+  73:Core/Src/ds_twr_responder_sts.c **** 
+  74:Core/Src/ds_twr_responder_sts.c **** 
+  75:Core/Src/ds_twr_responder_sts.c **** /* Hold the amount of errors that have occurred */
+  76:Core/Src/ds_twr_responder_sts.c **** static uint32_t errors[23] = {0};
+  77:Core/Src/ds_twr_responder_sts.c **** 
+  78:Core/Src/ds_twr_responder_sts.c **** extern dwt_config_t config_options;
+  79:Core/Src/ds_twr_responder_sts.c **** extern dwt_txconfig_t txconfig_options;
+  80:Core/Src/ds_twr_responder_sts.c **** extern dwt_txconfig_t txconfig_options_ch9;
+  81:Core/Src/ds_twr_responder_sts.c **** 
+  82:Core/Src/ds_twr_responder_sts.c **** // my var
+  83:Core/Src/ds_twr_responder_sts.c **** uint32_t timtick_1;
+  84:Core/Src/ds_twr_responder_sts.c **** uint32_t timtick_2;
+  85:Core/Src/ds_twr_responder_sts.c **** uint32_t diff;
+  86:Core/Src/ds_twr_responder_sts.c **** uint8_t uCurrentTrim_val;
+  87:Core/Src/ds_twr_responder_sts.c **** // msg to PC
+ARM GAS  /tmp/cctQSOtj.s 			page 3
+
+
+  88:Core/Src/ds_twr_responder_sts.c **** char dist_str_to_PC[16] = {0};
+  89:Core/Src/ds_twr_responder_sts.c **** 
+  90:Core/Src/ds_twr_responder_sts.c **** static dwt_sts_cp_key_t cp_key =
+  91:Core/Src/ds_twr_responder_sts.c **** {
+  92:Core/Src/ds_twr_responder_sts.c ****         0x14EB220F,0xF86050A8,0xD1D336AA,0x14148674
+  93:Core/Src/ds_twr_responder_sts.c **** };
+  94:Core/Src/ds_twr_responder_sts.c **** 
+  95:Core/Src/ds_twr_responder_sts.c **** static dwt_sts_cp_iv_t cp_iv =
+  96:Core/Src/ds_twr_responder_sts.c **** {
+  97:Core/Src/ds_twr_responder_sts.c ****         0x1F9A3DE4,0xD37EC3CA,0xC44FA8FB,0x362EEB34
+  98:Core/Src/ds_twr_responder_sts.c **** };
+  99:Core/Src/ds_twr_responder_sts.c **** 
+ 100:Core/Src/ds_twr_responder_sts.c **** /*
+ 101:Core/Src/ds_twr_responder_sts.c ****  * Compute the required delay needed before transmitting the RESP message
+ 102:Core/Src/ds_twr_responder_sts.c ****  */
+ 103:Core/Src/ds_twr_responder_sts.c **** void compute_resp_tx_frame_times(void)
+ 104:Core/Src/ds_twr_responder_sts.c **** {
+  29              		.loc 1 104 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+ 105:Core/Src/ds_twr_responder_sts.c ****     /*
+ 106:Core/Src/ds_twr_responder_sts.c ****      * Different sized frames require different time delays.
+ 107:Core/Src/ds_twr_responder_sts.c ****      */
+ 108:Core/Src/ds_twr_responder_sts.c ****     uint32_t delay_time = POLL_RX_TO_RESP_TX_DLY_UUS + get_rx_delay_time_data_rate() + get_rx_delay
+  37              		.loc 1 108 5 view .LVU1
+  38              		.loc 1 108 56 is_stmt 0 view .LVU2
+  39 0002 FFF7FEFF 		bl	get_rx_delay_time_data_rate
+  40              	.LVL0:
+  41 0006 0446     		mov	r4, r0
+  42              		.loc 1 108 88 view .LVU3
+  43 0008 FFF7FEFF 		bl	get_rx_delay_time_txpreamble
+  44              	.LVL1:
+  45              		.loc 1 108 86 view .LVU4
+  46 000c 2044     		add	r0, r0, r4
+  47              		.loc 1 108 14 view .LVU5
+  48 000e 00F27764 		addw	r4, r0, #1655
+  49              	.LVL2:
+ 109:Core/Src/ds_twr_responder_sts.c **** 
+ 110:Core/Src/ds_twr_responder_sts.c ****     /* Length of the STS effects the size of the frame also.
+ 111:Core/Src/ds_twr_responder_sts.c ****      * This means the delay required is greater for larger STS lengths. */
+ 112:Core/Src/ds_twr_responder_sts.c ****     delay_time += ((1<<(config_options.stsLength+2))*8);
+  50              		.loc 1 112 5 is_stmt 1 view .LVU6
+  51              		.loc 1 112 39 is_stmt 0 view .LVU7
+  52 0012 074B     		ldr	r3, .L3
+  53 0014 587B     		ldrb	r0, [r3, #13]	@ zero_extendqisi2
+  54              		.loc 1 112 49 view .LVU8
+  55 0016 831C     		adds	r3, r0, #2
+  56              		.loc 1 112 53 view .LVU9
+  57 0018 0820     		movs	r0, #8
+  58 001a 9840     		lsls	r0, r0, r3
+  59              		.loc 1 112 16 view .LVU10
+  60 001c 2044     		add	r0, r0, r4
+ARM GAS  /tmp/cctQSOtj.s 			page 4
+
+
+  61              	.LVL3:
+ 113:Core/Src/ds_twr_responder_sts.c **** 
+ 114:Core/Src/ds_twr_responder_sts.c ****     dwt_setdelayedtrxtime((uint32_t)((delay_time * UUS_TO_DWT_TIME) >> 8));
+  62              		.loc 1 114 5 is_stmt 1 view .LVU11
+  63              		.loc 1 114 50 is_stmt 0 view .LVU12
+  64 001e 4FF69A13 		movw	r3, #63898
+  65 0022 03FB00F0 		mul	r0, r3, r0
+  66              	.LVL4:
+  67              		.loc 1 114 5 view .LVU13
+  68 0026 000A     		lsrs	r0, r0, #8
+  69 0028 FFF7FEFF 		bl	dwt_setdelayedtrxtime
+  70              	.LVL5:
+ 115:Core/Src/ds_twr_responder_sts.c **** }
+  71              		.loc 1 115 1 view .LVU14
+  72 002c 10BD     		pop	{r4, pc}
+  73              	.L4:
+  74 002e 00BF     		.align	2
+  75              	.L3:
+  76 0030 00000000 		.word	config_options
+  77              		.cfi_endproc
+  78              	.LFE133:
+  80              		.global	__aeabi_ui2d
+  81              		.global	__aeabi_dmul
+  82              		.global	__aeabi_dsub
+  83              		.global	__aeabi_dadd
+  84              		.global	__aeabi_ddiv
+  85              		.global	__aeabi_d2lz
+  86              		.global	__aeabi_l2d
+  87              		.section	.text.ds_twr_responder_sts,"ax",%progbits
+  88              		.align	1
+  89              		.global	ds_twr_responder_sts
+  90              		.syntax unified
+  91              		.thumb
+  92              		.thumb_func
+  93              		.fpu fpv4-sp-d16
+  95              	ds_twr_responder_sts:
+  96              	.LFB134:
+ 116:Core/Src/ds_twr_responder_sts.c **** 
+ 117:Core/Src/ds_twr_responder_sts.c **** /*! -----------------------------------------------------------------------------------------------
+ 118:Core/Src/ds_twr_responder_sts.c ****  * @fn ds_twr_responder_sts()
+ 119:Core/Src/ds_twr_responder_sts.c ****  *
+ 120:Core/Src/ds_twr_responder_sts.c ****  * @brief Application entry point.
+ 121:Core/Src/ds_twr_responder_sts.c ****  *
+ 122:Core/Src/ds_twr_responder_sts.c ****  * @param  none
+ 123:Core/Src/ds_twr_responder_sts.c ****  *
+ 124:Core/Src/ds_twr_responder_sts.c ****  * @return none
+ 125:Core/Src/ds_twr_responder_sts.c ****  */
+ 126:Core/Src/ds_twr_responder_sts.c **** int ds_twr_responder_sts(void)
+ 127:Core/Src/ds_twr_responder_sts.c **** {
+  97              		.loc 1 127 1 is_stmt 1 view -0
+  98              		.cfi_startproc
+  99              		@ args = 0, pretend = 0, frame = 56
+ 100              		@ frame_needed = 0, uses_anonymous_args = 0
+ 101 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 102              		.cfi_def_cfa_offset 36
+ 103              		.cfi_offset 4, -36
+ 104              		.cfi_offset 5, -32
+ARM GAS  /tmp/cctQSOtj.s 			page 5
+
+
+ 105              		.cfi_offset 6, -28
+ 106              		.cfi_offset 7, -24
+ 107              		.cfi_offset 8, -20
+ 108              		.cfi_offset 9, -16
+ 109              		.cfi_offset 10, -12
+ 110              		.cfi_offset 11, -8
+ 111              		.cfi_offset 14, -4
+ 112 0004 8FB0     		sub	sp, sp, #60
+ 113              		.cfi_def_cfa_offset 96
+ 128:Core/Src/ds_twr_responder_sts.c ****     int16_t stsQual; /* This will contain STS quality index and status */
+ 114              		.loc 1 128 5 view .LVU16
+ 129:Core/Src/ds_twr_responder_sts.c ****     int goodSts = 0; /* Used for checking STS quality in received signal */
+ 115              		.loc 1 129 5 view .LVU17
+ 116              	.LVL6:
+ 130:Core/Src/ds_twr_responder_sts.c ****     uint8_t loopCount = 0;
+ 117              		.loc 1 130 5 view .LVU18
+ 131:Core/Src/ds_twr_responder_sts.c ****     uint8_t messageFlag = 0; /* Used to track whether STS count should be reinitialised or not */
+ 118              		.loc 1 131 5 view .LVU19
+ 132:Core/Src/ds_twr_responder_sts.c ****     /* Display application name on UART. */
+ 133:Core/Src/ds_twr_responder_sts.c **** 
+ 134:Core/Src/ds_twr_responder_sts.c **** 
+ 135:Core/Src/ds_twr_responder_sts.c ****     /* Reset DW IC */
+ 136:Core/Src/ds_twr_responder_sts.c ****     my_reset_DWIC(); /* Target specific drive of RSTn line into DW IC low for a period. */
+ 119              		.loc 1 136 5 view .LVU20
+ 120 0006 FFF7FEFF 		bl	my_reset_DWIC
+ 121              	.LVL7:
+ 137:Core/Src/ds_twr_responder_sts.c **** 
+ 138:Core/Src/ds_twr_responder_sts.c **** 
+ 139:Core/Src/ds_twr_responder_sts.c ****     while (!dwt_checkidlerc()) /* Need to make sure DW IC is in IDLE_RC before proceeding */
+ 122              		.loc 1 139 5 view .LVU21
+ 123              	.L6:
+ 140:Core/Src/ds_twr_responder_sts.c ****     { };
+ 124              		.loc 1 140 7 discriminator 1 view .LVU22
+ 139:Core/Src/ds_twr_responder_sts.c ****     { };
+ 125              		.loc 1 139 11 discriminator 1 view .LVU23
+ 139:Core/Src/ds_twr_responder_sts.c ****     { };
+ 126              		.loc 1 139 13 is_stmt 0 discriminator 1 view .LVU24
+ 127 000a FFF7FEFF 		bl	dwt_checkidlerc
+ 128              	.LVL8:
+ 139:Core/Src/ds_twr_responder_sts.c ****     { };
+ 129              		.loc 1 139 11 discriminator 1 view .LVU25
+ 130 000e 0028     		cmp	r0, #0
+ 131 0010 FBD0     		beq	.L6
+ 132              		.loc 1 140 8 is_stmt 1 view .LVU26
+ 141:Core/Src/ds_twr_responder_sts.c **** 
+ 142:Core/Src/ds_twr_responder_sts.c ****     /* ====> Start timer from STM <==== */
+ 143:Core/Src/ds_twr_responder_sts.c ****     //HAL_TIM_Base_Start(&htim2);
+ 144:Core/Src/ds_twr_responder_sts.c **** 
+ 145:Core/Src/ds_twr_responder_sts.c ****     if (dwt_initialise(DWT_DW_IDLE) == DWT_ERROR)
+ 133              		.loc 1 145 5 view .LVU27
+ 134              		.loc 1 145 9 is_stmt 0 view .LVU28
+ 135 0012 0120     		movs	r0, #1
+ 136 0014 FFF7FEFF 		bl	dwt_initialise
+ 137              	.LVL9:
+ 138              		.loc 1 145 8 view .LVU29
+ 139 0018 B0F1FF3F 		cmp	r0, #-1
+ 140 001c 00D1     		bne	.L7
+ARM GAS  /tmp/cctQSOtj.s 			page 6
+
+
+ 141              	.L8:
+ 146:Core/Src/ds_twr_responder_sts.c ****     {
+ 147:Core/Src/ds_twr_responder_sts.c ****         while (1)
+ 142              		.loc 1 147 9 is_stmt 1 discriminator 1 view .LVU30
+ 148:Core/Src/ds_twr_responder_sts.c ****         { };
+ 143              		.loc 1 148 11 discriminator 1 view .LVU31
+ 147:Core/Src/ds_twr_responder_sts.c ****         { };
+ 144              		.loc 1 147 15 discriminator 1 view .LVU32
+ 145 001e FEE7     		b	.L8
+ 146              	.L7:
+ 147              		.loc 1 148 12 view .LVU33
+ 149:Core/Src/ds_twr_responder_sts.c ****     }
+ 150:Core/Src/ds_twr_responder_sts.c **** 
+ 151:Core/Src/ds_twr_responder_sts.c ****     if(dwt_configure(&config_options)) /* if the dwt_configure returns DWT_ERROR either the PLL or 
+ 148              		.loc 1 151 5 view .LVU34
+ 149              		.loc 1 151 8 is_stmt 0 view .LVU35
+ 150 0020 C348     		ldr	r0, .L34+8
+ 151 0022 FFF7FEFF 		bl	dwt_configure
+ 152              	.LVL10:
+ 153              		.loc 1 151 7 view .LVU36
+ 154 0026 00B1     		cbz	r0, .L9
+ 155              	.L10:
+ 152:Core/Src/ds_twr_responder_sts.c ****     {
+ 153:Core/Src/ds_twr_responder_sts.c ****         while (1)
+ 156              		.loc 1 153 9 is_stmt 1 discriminator 2 view .LVU37
+ 154:Core/Src/ds_twr_responder_sts.c ****         { };
+ 157              		.loc 1 154 11 discriminator 2 view .LVU38
+ 153:Core/Src/ds_twr_responder_sts.c ****         { };
+ 158              		.loc 1 153 15 discriminator 2 view .LVU39
+ 159 0028 FEE7     		b	.L10
+ 160              	.L9:
+ 161              		.loc 1 154 12 view .LVU40
+ 155:Core/Src/ds_twr_responder_sts.c ****     }
+ 156:Core/Src/ds_twr_responder_sts.c **** 
+ 157:Core/Src/ds_twr_responder_sts.c ****     /* Configure the TX spectrum parameters (power, PG delay and PG count) */
+ 158:Core/Src/ds_twr_responder_sts.c ****     if(config_options.chan == 5)
+ 162              		.loc 1 158 5 view .LVU41
+ 163              		.loc 1 158 22 is_stmt 0 view .LVU42
+ 164 002a C14B     		ldr	r3, .L34+8
+ 165 002c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 166              		.loc 1 158 7 view .LVU43
+ 167 002e 052B     		cmp	r3, #5
+ 168 0030 29D0     		beq	.L31
+ 159:Core/Src/ds_twr_responder_sts.c ****     {
+ 160:Core/Src/ds_twr_responder_sts.c ****         dwt_configuretxrf(&txconfig_options);
+ 161:Core/Src/ds_twr_responder_sts.c ****     }
+ 162:Core/Src/ds_twr_responder_sts.c ****     else
+ 163:Core/Src/ds_twr_responder_sts.c ****     {
+ 164:Core/Src/ds_twr_responder_sts.c ****         dwt_configuretxrf(&txconfig_options_ch9);
+ 169              		.loc 1 164 9 is_stmt 1 view .LVU44
+ 170 0032 C048     		ldr	r0, .L34+12
+ 171 0034 FFF7FEFF 		bl	dwt_configuretxrf
+ 172              	.LVL11:
+ 173              	.L12:
+ 165:Core/Src/ds_twr_responder_sts.c ****     }
+ 166:Core/Src/ds_twr_responder_sts.c **** 
+ 167:Core/Src/ds_twr_responder_sts.c ****     /* ====> Enable frame filtering <==== */
+ARM GAS  /tmp/cctQSOtj.s 			page 7
+
+
+ 168:Core/Src/ds_twr_responder_sts.c ****     dwt_configureframefilter(DWT_FF_ENABLE_802_15_4, DWT_FF_DATA_EN);
+ 174              		.loc 1 168 5 view .LVU45
+ 175 0038 0221     		movs	r1, #2
+ 176 003a 0846     		mov	r0, r1
+ 177 003c FFF7FEFF 		bl	dwt_configureframefilter
+ 178              	.LVL12:
+ 169:Core/Src/ds_twr_responder_sts.c ****     dwt_setpanid(0xDECA);
+ 179              		.loc 1 169 5 view .LVU46
+ 180 0040 4DF6CA60 		movw	r0, #57034
+ 181 0044 FFF7FEFF 		bl	dwt_setpanid
+ 182              	.LVL13:
+ 170:Core/Src/ds_twr_responder_sts.c ****     dwt_setaddress16(0x242);
+ 183              		.loc 1 170 5 view .LVU47
+ 184 0048 40F24220 		movw	r0, #578
+ 185 004c FFF7FEFF 		bl	dwt_setaddress16
+ 186              	.LVL14:
+ 171:Core/Src/ds_twr_responder_sts.c **** 
+ 172:Core/Src/ds_twr_responder_sts.c ****     /* Apply default antenna delay value. See NOTE 2 below. */
+ 173:Core/Src/ds_twr_responder_sts.c ****     dwt_setrxantennadelay(RX_ANT_DLY);
+ 187              		.loc 1 173 5 view .LVU48
+ 188 0050 44F26A00 		movw	r0, #16490
+ 189 0054 FFF7FEFF 		bl	dwt_setrxantennadelay
+ 190              	.LVL15:
+ 174:Core/Src/ds_twr_responder_sts.c ****     dwt_settxantennadelay(TX_ANT_DLY);
+ 191              		.loc 1 174 5 view .LVU49
+ 192 0058 44F26A00 		movw	r0, #16490
+ 193 005c FFF7FEFF 		bl	dwt_settxantennadelay
+ 194              	.LVL16:
+ 175:Core/Src/ds_twr_responder_sts.c **** 
+ 176:Core/Src/ds_twr_responder_sts.c **** 
+ 177:Core/Src/ds_twr_responder_sts.c ****     //Delay between the response frame and final frame
+ 178:Core/Src/ds_twr_responder_sts.c ****     dwt_setrxaftertxdelay(RESP_TX_TO_FINAL_RX_DLY_UUS);
+ 195              		.loc 1 178 5 view .LVU50
+ 196 0060 40F2E740 		movw	r0, #1255
+ 197 0064 FFF7FEFF 		bl	dwt_setrxaftertxdelay
+ 198              	.LVL17:
+ 131:Core/Src/ds_twr_responder_sts.c ****     /* Display application name on UART. */
+ 199              		.loc 1 131 13 is_stmt 0 view .LVU51
+ 200 0068 0024     		movs	r4, #0
+ 130:Core/Src/ds_twr_responder_sts.c ****     uint8_t messageFlag = 0; /* Used to track whether STS count should be reinitialised or not */
+ 201              		.loc 1 130 13 view .LVU52
+ 202 006a 2546     		mov	r5, r4
+ 203              	.LVL18:
+ 204              	.L20:
+ 179:Core/Src/ds_twr_responder_sts.c **** 
+ 180:Core/Src/ds_twr_responder_sts.c **** 	while(1)
+ 205              		.loc 1 180 2 is_stmt 1 view .LVU53
+ 181:Core/Src/ds_twr_responder_sts.c ****     {
+ 182:Core/Src/ds_twr_responder_sts.c ****         /*
+ 183:Core/Src/ds_twr_responder_sts.c ****          * Set CP encryption key and IV (nonce).
+ 184:Core/Src/ds_twr_responder_sts.c ****          * See Note 16 below.
+ 185:Core/Src/ds_twr_responder_sts.c ****          */
+ 186:Core/Src/ds_twr_responder_sts.c ****         if (!messageFlag)
+ 206              		.loc 1 186 9 view .LVU54
+ 207              		.loc 1 186 12 is_stmt 0 view .LVU55
+ 208 006c 002C     		cmp	r4, #0
+ 209 006e 40F0AB80 		bne	.L22
+ARM GAS  /tmp/cctQSOtj.s 			page 8
+
+
+ 210              	.LVL19:
+ 211              	.L24:
+ 187:Core/Src/ds_twr_responder_sts.c ****         {
+ 188:Core/Src/ds_twr_responder_sts.c ****             if (!loopCount)
+ 212              		.loc 1 188 13 is_stmt 1 view .LVU56
+ 213              		.loc 1 188 16 is_stmt 0 view .LVU57
+ 214 0072 65B9     		cbnz	r5, .L14
+ 189:Core/Src/ds_twr_responder_sts.c ****             {
+ 190:Core/Src/ds_twr_responder_sts.c ****                 /*
+ 191:Core/Src/ds_twr_responder_sts.c ****                  * On first loop, configure the STS key & IV, then load them.
+ 192:Core/Src/ds_twr_responder_sts.c ****                  */
+ 193:Core/Src/ds_twr_responder_sts.c ****                 dwt_configurestskey(&cp_key);
+ 215              		.loc 1 193 17 is_stmt 1 view .LVU58
+ 216 0074 B048     		ldr	r0, .L34+16
+ 217 0076 FFF7FEFF 		bl	dwt_configurestskey
+ 218              	.LVL20:
+ 194:Core/Src/ds_twr_responder_sts.c ****                 dwt_configurestsiv(&cp_iv);
+ 219              		.loc 1 194 17 view .LVU59
+ 220 007a B048     		ldr	r0, .L34+20
+ 221 007c FFF7FEFF 		bl	dwt_configurestsiv
+ 222              	.LVL21:
+ 195:Core/Src/ds_twr_responder_sts.c ****                 dwt_configurestsloadiv();
+ 223              		.loc 1 195 17 view .LVU60
+ 224 0080 FFF7FEFF 		bl	dwt_configurestsloadiv
+ 225              	.LVL22:
+ 226 0084 A0E0     		b	.L22
+ 227              	.LVL23:
+ 228              	.L31:
+ 160:Core/Src/ds_twr_responder_sts.c ****     }
+ 229              		.loc 1 160 9 view .LVU61
+ 230 0086 AE48     		ldr	r0, .L34+24
+ 231 0088 FFF7FEFF 		bl	dwt_configuretxrf
+ 232              	.LVL24:
+ 233 008c D4E7     		b	.L12
+ 234              	.LVL25:
+ 235              	.L14:
+ 196:Core/Src/ds_twr_responder_sts.c ****             }
+ 197:Core/Src/ds_twr_responder_sts.c ****             else
+ 198:Core/Src/ds_twr_responder_sts.c ****             {
+ 199:Core/Src/ds_twr_responder_sts.c ****                 /*
+ 200:Core/Src/ds_twr_responder_sts.c ****                  * On subsequent loops, we only need to reload the lower 32 bits of STS IV.
+ 201:Core/Src/ds_twr_responder_sts.c ****                  */
+ 202:Core/Src/ds_twr_responder_sts.c ****                 dwt_writetodevice(STS_IV0_ID, 0, 4, (uint8_t *)&cp_iv);
+ 236              		.loc 1 202 17 view .LVU62
+ 237 008e AB4B     		ldr	r3, .L34+20
+ 238 0090 0422     		movs	r2, #4
+ 239 0092 0021     		movs	r1, #0
+ 240 0094 AB48     		ldr	r0, .L34+28
+ 241 0096 FFF7FEFF 		bl	dwt_writetodevice
+ 242              	.LVL26:
+ 203:Core/Src/ds_twr_responder_sts.c ****                 dwt_configurestsloadiv();
+ 243              		.loc 1 203 17 view .LVU63
+ 244 009a FFF7FEFF 		bl	dwt_configurestsloadiv
+ 245              	.LVL27:
+ 246 009e 93E0     		b	.L22
+ 247              	.L16:
+ 204:Core/Src/ds_twr_responder_sts.c ****             }
+ARM GAS  /tmp/cctQSOtj.s 			page 9
+
+
+ 205:Core/Src/ds_twr_responder_sts.c ****         }
+ 206:Core/Src/ds_twr_responder_sts.c **** 
+ 207:Core/Src/ds_twr_responder_sts.c ****         if(!messageFlag)  // Responder will enable the receive when waiting for Poll message,
+ 208:Core/Src/ds_twr_responder_sts.c ****                           // the receiver will be automatically enabled (DWT_RESPONSE_EXPECTED) whe
+ 209:Core/Src/ds_twr_responder_sts.c ****         {
+ 210:Core/Src/ds_twr_responder_sts.c ****             loopCount++;  // increment the loop count only when starting ranging exchange
+ 211:Core/Src/ds_twr_responder_sts.c **** 			/* Activate reception immediately. */
+ 212:Core/Src/ds_twr_responder_sts.c **** 			dwt_rxenable(DWT_START_RX_IMMEDIATE);
+ 213:Core/Src/ds_twr_responder_sts.c ****         }
+ 214:Core/Src/ds_twr_responder_sts.c **** 
+ 215:Core/Src/ds_twr_responder_sts.c ****         /* Poll for reception of a frame or error/timeout. See NOTE 6 below. */
+ 216:Core/Src/ds_twr_responder_sts.c ****         while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_
+ 217:Core/Src/ds_twr_responder_sts.c ****         { };
+ 248              		.loc 1 217 11 discriminator 1 view .LVU64
+ 216:Core/Src/ds_twr_responder_sts.c ****         { };
+ 249              		.loc 1 216 15 discriminator 1 view .LVU65
+ 216:Core/Src/ds_twr_responder_sts.c ****         { };
+ 250              		.loc 1 216 32 is_stmt 0 discriminator 1 view .LVU66
+ 251 00a0 0021     		movs	r1, #0
+ 252 00a2 4420     		movs	r0, #68
+ 253 00a4 FFF7FEFF 		bl	dwt_read32bitoffsetreg
+ 254              	.LVL28:
+ 216:Core/Src/ds_twr_responder_sts.c ****         { };
+ 255              		.loc 1 216 30 discriminator 1 view .LVU67
+ 256 00a8 A74B     		ldr	r3, .L34+32
+ 257 00aa 1860     		str	r0, [r3]
+ 216:Core/Src/ds_twr_responder_sts.c ****         { };
+ 258              		.loc 1 216 65 discriminator 1 view .LVU68
+ 259 00ac A74B     		ldr	r3, .L34+36
+ 260 00ae 0340     		ands	r3, r3, r0
+ 216:Core/Src/ds_twr_responder_sts.c ****         { };
+ 261              		.loc 1 216 15 discriminator 1 view .LVU69
+ 262 00b0 002B     		cmp	r3, #0
+ 263 00b2 F5D0     		beq	.L16
+ 264              		.loc 1 217 12 is_stmt 1 view .LVU70
+ 218:Core/Src/ds_twr_responder_sts.c **** 
+ 219:Core/Src/ds_twr_responder_sts.c ****         goodSts = dwt_readstsquality(&stsQual);
+ 265              		.loc 1 219 9 view .LVU71
+ 266              		.loc 1 219 19 is_stmt 0 view .LVU72
+ 267 00b4 0DF13600 		add	r0, sp, #54
+ 268 00b8 FFF7FEFF 		bl	dwt_readstsquality
+ 269              	.LVL29:
+ 220:Core/Src/ds_twr_responder_sts.c **** 
+ 221:Core/Src/ds_twr_responder_sts.c ****         /*
+ 222:Core/Src/ds_twr_responder_sts.c ****          * Check for a good frame and STS count.
+ 223:Core/Src/ds_twr_responder_sts.c ****          */
+ 224:Core/Src/ds_twr_responder_sts.c ****         if ((status_reg & SYS_STATUS_RXFCG_BIT_MASK) && (goodSts >= 0))
+ 270              		.loc 1 224 9 is_stmt 1 view .LVU73
+ 271              		.loc 1 224 25 is_stmt 0 view .LVU74
+ 272 00bc A24B     		ldr	r3, .L34+32
+ 273 00be 1B68     		ldr	r3, [r3]
+ 274              		.loc 1 224 12 view .LVU75
+ 275 00c0 13F4804F 		tst	r3, #16384
+ 276 00c4 00F05681 		beq	.L17
+ 277              		.loc 1 224 54 discriminator 1 view .LVU76
+ 278 00c8 0028     		cmp	r0, #0
+ 279 00ca C0F25381 		blt	.L17
+ARM GAS  /tmp/cctQSOtj.s 			page 10
+
+
+ 280              	.LBB2:
+ 225:Core/Src/ds_twr_responder_sts.c ****         {
+ 226:Core/Src/ds_twr_responder_sts.c ****             uint32_t frame_len;
+ 281              		.loc 1 226 13 is_stmt 1 view .LVU77
+ 227:Core/Src/ds_twr_responder_sts.c **** 
+ 228:Core/Src/ds_twr_responder_sts.c ****             /* Clear good RX frame event in the DW IC status register. */
+ 229:Core/Src/ds_twr_responder_sts.c ****             dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG_BIT_MASK);
+ 282              		.loc 1 229 13 view .LVU78
+ 283 00ce 4FF48042 		mov	r2, #16384
+ 284 00d2 0021     		movs	r1, #0
+ 285 00d4 4420     		movs	r0, #68
+ 286              	.LVL30:
+ 287              		.loc 1 229 13 is_stmt 0 view .LVU79
+ 288 00d6 FFF7FEFF 		bl	dwt_write32bitoffsetreg
+ 289              	.LVL31:
+ 230:Core/Src/ds_twr_responder_sts.c **** 
+ 231:Core/Src/ds_twr_responder_sts.c ****             /* A frame has been received, read it into the local buffer. */
+ 232:Core/Src/ds_twr_responder_sts.c ****             frame_len = dwt_read32bitreg(RX_FINFO_ID) & RXFLEN_MASK;
+ 290              		.loc 1 232 13 is_stmt 1 view .LVU80
+ 291              		.loc 1 232 25 is_stmt 0 view .LVU81
+ 292 00da 0021     		movs	r1, #0
+ 293 00dc 4C20     		movs	r0, #76
+ 294 00de FFF7FEFF 		bl	dwt_read32bitoffsetreg
+ 295              	.LVL32:
+ 296              		.loc 1 232 23 view .LVU82
+ 297 00e2 00F07F01 		and	r1, r0, #127
+ 298              	.LVL33:
+ 233:Core/Src/ds_twr_responder_sts.c ****             if (frame_len <= sizeof(rx_buffer))
+ 299              		.loc 1 233 13 is_stmt 1 view .LVU83
+ 300              		.loc 1 233 16 is_stmt 0 view .LVU84
+ 301 00e6 4029     		cmp	r1, #64
+ 302 00e8 00F21581 		bhi	.L18
+ 234:Core/Src/ds_twr_responder_sts.c ****             {
+ 235:Core/Src/ds_twr_responder_sts.c ****             	//test_run_info((unsigned char *)"Jestem2");
+ 236:Core/Src/ds_twr_responder_sts.c ****             	dwt_readrxdata(rx_buffer, frame_len, 0);
+ 303              		.loc 1 236 14 is_stmt 1 view .LVU85
+ 304 00ec 984E     		ldr	r6, .L34+40
+ 305 00ee 0022     		movs	r2, #0
+ 306 00f0 3046     		mov	r0, r6
+ 307 00f2 FFF7FEFF 		bl	dwt_readrxdata
+ 308              	.LVL34:
+ 237:Core/Src/ds_twr_responder_sts.c **** 
+ 238:Core/Src/ds_twr_responder_sts.c ****                 /* Check that the frame is a poll sent by "SS TWR initiator STS" example.
+ 239:Core/Src/ds_twr_responder_sts.c ****                  * As the sequence number field of the frame is not relevant, it is cleared to simp
+ 240:Core/Src/ds_twr_responder_sts.c ****                 rx_buffer[ALL_MSG_SN_IDX] = 0;
+ 309              		.loc 1 240 17 view .LVU86
+ 310              		.loc 1 240 43 is_stmt 0 view .LVU87
+ 311 00f6 0023     		movs	r3, #0
+ 312 00f8 B370     		strb	r3, [r6, #2]
+ 241:Core/Src/ds_twr_responder_sts.c ****                 if (memcmp(rx_buffer, rx_poll_msg, ALL_MSG_COMMON_LEN) == 0)
+ 313              		.loc 1 241 17 is_stmt 1 view .LVU88
+ 314              		.loc 1 241 21 is_stmt 0 view .LVU89
+ 315 00fa 0A22     		movs	r2, #10
+ 316 00fc 9549     		ldr	r1, .L34+44
+ 317 00fe 3046     		mov	r0, r6
+ 318 0100 FFF7FEFF 		bl	memcmp
+ 319              	.LVL35:
+ARM GAS  /tmp/cctQSOtj.s 			page 11
+
+
+ 320              		.loc 1 241 20 view .LVU90
+ 321 0104 0028     		cmp	r0, #0
+ 322 0106 68D1     		bne	.L19
+ 323              	.LBB3:
+ 242:Core/Src/ds_twr_responder_sts.c ****                 {
+ 243:Core/Src/ds_twr_responder_sts.c ****                     uint32_t resp_tx_time;
+ 324              		.loc 1 243 21 is_stmt 1 view .LVU91
+ 244:Core/Src/ds_twr_responder_sts.c ****                     int ret;
+ 325              		.loc 1 244 21 view .LVU92
+ 245:Core/Src/ds_twr_responder_sts.c **** 
+ 246:Core/Src/ds_twr_responder_sts.c ****                     /* Retrieve poll reception timestamp. */
+ 247:Core/Src/ds_twr_responder_sts.c ****                     poll_rx_ts = get_rx_timestamp_u64();
+ 326              		.loc 1 247 21 view .LVU93
+ 327              		.loc 1 247 34 is_stmt 0 view .LVU94
+ 328 0108 FFF7FEFF 		bl	get_rx_timestamp_u64
+ 329              	.LVL36:
+ 330              		.loc 1 247 32 view .LVU95
+ 331 010c DFF86082 		ldr	r8, .L34+72
+ 332 0110 C8E90001 		strd	r0, [r8]
+ 248:Core/Src/ds_twr_responder_sts.c **** 
+ 249:Core/Src/ds_twr_responder_sts.c ****                     resp_tx_time = (poll_rx_ts                               /* Received timestamp 
+ 333              		.loc 1 249 21 is_stmt 1 view .LVU96
+ 250:Core/Src/ds_twr_responder_sts.c ****                             + ((POLL_RX_TO_RESP_TX_DLY_UUS                   /* Set delay time */
+ 251:Core/Src/ds_twr_responder_sts.c ****                                     + get_rx_delay_time_data_rate()          /* Added delay time fo
+ 334              		.loc 1 251 39 is_stmt 0 view .LVU97
+ 335 0114 FFF7FEFF 		bl	get_rx_delay_time_data_rate
+ 336              	.LVL37:
+ 337 0118 0646     		mov	r6, r0
+ 252:Core/Src/ds_twr_responder_sts.c ****                                     + get_rx_delay_time_txpreamble()         /* Added delay for TX 
+ 338              		.loc 1 252 39 view .LVU98
+ 339 011a FFF7FEFF 		bl	get_rx_delay_time_txpreamble
+ 340              	.LVL38:
+ 341              		.loc 1 252 37 view .LVU99
+ 342 011e 3318     		adds	r3, r6, r0
+ 253:Core/Src/ds_twr_responder_sts.c ****                                     + ((1<<(config_options.stsLength+2))*8)) /* Added delay for STS
+ 343              		.loc 1 253 59 view .LVU100
+ 344 0120 834A     		ldr	r2, .L34+8
+ 345 0122 567B     		ldrb	r6, [r2, #13]	@ zero_extendqisi2
+ 346              		.loc 1 253 69 view .LVU101
+ 347 0124 B21C     		adds	r2, r6, #2
+ 348              		.loc 1 253 73 view .LVU102
+ 349 0126 0826     		movs	r6, #8
+ 350 0128 9640     		lsls	r6, r6, r2
+ 351              		.loc 1 253 37 view .LVU103
+ 352 012a 3344     		add	r3, r3, r6
+ 254:Core/Src/ds_twr_responder_sts.c ****                                     * UUS_TO_DWT_TIME)) >> 8;                /* Converted to time u
+ 353              		.loc 1 254 37 view .LVU104
+ 354 012c 4FF69A12 		movw	r2, #63898
+ 355 0130 894E     		ldr	r6, .L34+48
+ 356 0132 02FB0366 		mla	r6, r2, r3, r6
+ 357 0136 0027     		movs	r7, #0
+ 250:Core/Src/ds_twr_responder_sts.c ****                                     + get_rx_delay_time_data_rate()          /* Added delay time fo
+ 358              		.loc 1 250 29 view .LVU105
+ 359 0138 D8F80020 		ldr	r2, [r8]
+ 360 013c D8F80430 		ldr	r3, [r8, #4]
+ 361 0140 B618     		adds	r6, r6, r2
+ 362 0142 43F10003 		adc	r3, r3, #0
+ARM GAS  /tmp/cctQSOtj.s 			page 12
+
+
+ 363              		.loc 1 254 57 view .LVU106
+ 364 0146 360A     		lsrs	r6, r6, #8
+ 365 0148 46EA0366 		orr	r6, r6, r3, lsl #24
+ 366              	.LVL39:
+ 255:Core/Src/ds_twr_responder_sts.c ****                     dwt_setdelayedtrxtime(resp_tx_time);
+ 367              		.loc 1 255 21 is_stmt 1 view .LVU107
+ 368 014c 3046     		mov	r0, r6
+ 369 014e FFF7FEFF 		bl	dwt_setdelayedtrxtime
+ 370              	.LVL40:
+ 256:Core/Src/ds_twr_responder_sts.c **** 
+ 257:Core/Src/ds_twr_responder_sts.c ****                     /* Response TX timestamp is the transmission time we programmed plus the antenn
+ 258:Core/Src/ds_twr_responder_sts.c ****                     resp_tx_ts = (((uint64_t)(resp_tx_time & 0xFFFFFFFEUL)) << 8) + TX_ANT_DLY;
+ 371              		.loc 1 258 21 view .LVU108
+ 372              		.loc 1 258 77 is_stmt 0 view .LVU109
+ 373 0152 3302     		lsls	r3, r6, #8
+ 374 0154 23F4FF73 		bic	r3, r3, #510
+ 375 0158 23F00103 		bic	r3, r3, #1
+ 376 015c 360E     		lsrs	r6, r6, #24
+ 377              	.LVL41:
+ 378              		.loc 1 258 83 view .LVU110
+ 379 015e 44F26A02 		movw	r2, #16490
+ 380 0162 9B18     		adds	r3, r3, r2
+ 381 0164 46F10006 		adc	r6, r6, #0
+ 382              		.loc 1 258 32 view .LVU111
+ 383 0168 7C4A     		ldr	r2, .L34+52
+ 384 016a 1360     		str	r3, [r2]
+ 385 016c 5660     		str	r6, [r2, #4]
+ 259:Core/Src/ds_twr_responder_sts.c **** 
+ 260:Core/Src/ds_twr_responder_sts.c ****                     /* Write and send the response message. See NOTE 9 below. */
+ 261:Core/Src/ds_twr_responder_sts.c ****                     tx_resp_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
+ 386              		.loc 1 261 21 is_stmt 1 view .LVU112
+ 387              		.loc 1 261 49 is_stmt 0 view .LVU113
+ 388 016e 7C4E     		ldr	r6, .L34+56
+ 389 0170 7C4B     		ldr	r3, .L34+60
+ 390 0172 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 391 0174 B370     		strb	r3, [r6, #2]
+ 262:Core/Src/ds_twr_responder_sts.c ****                     dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_TXFRS_BIT_MASK);
+ 392              		.loc 1 262 21 is_stmt 1 view .LVU114
+ 393 0176 8022     		movs	r2, #128
+ 394 0178 3946     		mov	r1, r7
+ 395 017a 4420     		movs	r0, #68
+ 396 017c FFF7FEFF 		bl	dwt_write32bitoffsetreg
+ 397              	.LVL42:
+ 263:Core/Src/ds_twr_responder_sts.c ****                     dwt_writetxdata(sizeof(tx_resp_msg), tx_resp_msg, 0); /* Zero offset in TX buff
+ 398              		.loc 1 263 21 view .LVU115
+ 399 0180 3A46     		mov	r2, r7
+ 400 0182 3146     		mov	r1, r6
+ 401 0184 0C20     		movs	r0, #12
+ 402 0186 FFF7FEFF 		bl	dwt_writetxdata
+ 403              	.LVL43:
+ 264:Core/Src/ds_twr_responder_sts.c ****                     dwt_writetxfctrl(sizeof(tx_resp_msg), 0, 1); /* Zero offset in TX buffer, rangi
+ 404              		.loc 1 264 21 view .LVU116
+ 405 018a 0122     		movs	r2, #1
+ 406 018c 3946     		mov	r1, r7
+ 407 018e 0C20     		movs	r0, #12
+ 408 0190 FFF7FEFF 		bl	dwt_writetxfctrl
+ 409              	.LVL44:
+ARM GAS  /tmp/cctQSOtj.s 			page 13
+
+
+ 265:Core/Src/ds_twr_responder_sts.c **** 
+ 266:Core/Src/ds_twr_responder_sts.c ****                     dwt_setrxaftertxdelay(100); // receiver can be delayed as Final message will no
+ 410              		.loc 1 266 21 view .LVU117
+ 411 0194 6420     		movs	r0, #100
+ 412 0196 FFF7FEFF 		bl	dwt_setrxaftertxdelay
+ 413              	.LVL45:
+ 267:Core/Src/ds_twr_responder_sts.c ****                     ret = dwt_starttx(DWT_START_TX_DELAYED | DWT_RESPONSE_EXPECTED);
+ 414              		.loc 1 267 21 view .LVU118
+ 415              		.loc 1 267 27 is_stmt 0 view .LVU119
+ 416 019a 0320     		movs	r0, #3
+ 417 019c FFF7FEFF 		bl	dwt_starttx
+ 418              	.LVL46:
+ 268:Core/Src/ds_twr_responder_sts.c **** 
+ 269:Core/Src/ds_twr_responder_sts.c ****                     if (ret == DWT_SUCCESS)
+ 419              		.loc 1 269 21 is_stmt 1 view .LVU120
+ 420              		.loc 1 269 24 is_stmt 0 view .LVU121
+ 421 01a0 0028     		cmp	r0, #0
+ 422 01a2 7FF463AF 		bne	.L20
+ 423              	.LVL47:
+ 424              	.L21:
+ 270:Core/Src/ds_twr_responder_sts.c ****                     {
+ 271:Core/Src/ds_twr_responder_sts.c ****                         /* Poll DW IC until TX frame sent event set. See NOTE 6 below. */
+ 272:Core/Src/ds_twr_responder_sts.c ****                         while (!(dwt_read32bitreg(SYS_STATUS_ID) & SYS_STATUS_TXFRS_BIT_MASK))
+ 273:Core/Src/ds_twr_responder_sts.c ****                         { };
+ 425              		.loc 1 273 27 is_stmt 1 discriminator 1 view .LVU122
+ 272:Core/Src/ds_twr_responder_sts.c ****                         { };
+ 426              		.loc 1 272 31 discriminator 1 view .LVU123
+ 272:Core/Src/ds_twr_responder_sts.c ****                         { };
+ 427              		.loc 1 272 34 is_stmt 0 discriminator 1 view .LVU124
+ 428 01a6 0021     		movs	r1, #0
+ 429 01a8 4420     		movs	r0, #68
+ 430 01aa FFF7FEFF 		bl	dwt_read32bitoffsetreg
+ 431              	.LVL48:
+ 272:Core/Src/ds_twr_responder_sts.c ****                         { };
+ 432              		.loc 1 272 31 discriminator 1 view .LVU125
+ 433 01ae 10F0800F 		tst	r0, #128
+ 434 01b2 F8D0     		beq	.L21
+ 435              		.loc 1 273 28 is_stmt 1 view .LVU126
+ 274:Core/Src/ds_twr_responder_sts.c **** 
+ 275:Core/Src/ds_twr_responder_sts.c ****                         /* Clear TXFRS event. */
+ 276:Core/Src/ds_twr_responder_sts.c ****                         dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_TXFRS_BIT_MASK);
+ 436              		.loc 1 276 25 view .LVU127
+ 437 01b4 8022     		movs	r2, #128
+ 438 01b6 0021     		movs	r1, #0
+ 439 01b8 4420     		movs	r0, #68
+ 440 01ba FFF7FEFF 		bl	dwt_write32bitoffsetreg
+ 441              	.LVL49:
+ 277:Core/Src/ds_twr_responder_sts.c **** 
+ 278:Core/Src/ds_twr_responder_sts.c ****                         /* Increment frame sequence number after transmission of the poll message (
+ 279:Core/Src/ds_twr_responder_sts.c ****                         frame_seq_nb++;
+ 442              		.loc 1 279 25 view .LVU128
+ 443              		.loc 1 279 37 is_stmt 0 view .LVU129
+ 444 01be 694A     		ldr	r2, .L34+60
+ 445 01c0 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 446 01c2 0133     		adds	r3, r3, #1
+ 447 01c4 1370     		strb	r3, [r2]
+ 280:Core/Src/ds_twr_responder_sts.c **** 
+ARM GAS  /tmp/cctQSOtj.s 			page 14
+
+
+ 281:Core/Src/ds_twr_responder_sts.c ****                         messageFlag = 1;
+ 448              		.loc 1 281 25 is_stmt 1 view .LVU130
+ 449              	.LVL50:
+ 450              		.loc 1 281 25 is_stmt 0 view .LVU131
+ 451              	.LBE3:
+ 452              	.LBE2:
+ 180:Core/Src/ds_twr_responder_sts.c ****     {
+ 453              		.loc 1 180 2 is_stmt 1 view .LVU132
+ 186:Core/Src/ds_twr_responder_sts.c ****         {
+ 454              		.loc 1 186 9 view .LVU133
+ 455              	.LBB6:
+ 456              	.LBB4:
+ 457              		.loc 1 281 37 is_stmt 0 view .LVU134
+ 458 01c6 0124     		movs	r4, #1
+ 459              	.LVL51:
+ 460              	.L22:
+ 461              		.loc 1 281 37 view .LVU135
+ 462              	.LBE4:
+ 463              	.LBE6:
+ 207:Core/Src/ds_twr_responder_sts.c ****                           // the receiver will be automatically enabled (DWT_RESPONSE_EXPECTED) whe
+ 464              		.loc 1 207 9 is_stmt 1 view .LVU136
+ 207:Core/Src/ds_twr_responder_sts.c ****                           // the receiver will be automatically enabled (DWT_RESPONSE_EXPECTED) whe
+ 465              		.loc 1 207 11 is_stmt 0 view .LVU137
+ 466 01c8 002C     		cmp	r4, #0
+ 467 01ca 7FF469AF 		bne	.L16
+ 210:Core/Src/ds_twr_responder_sts.c **** 			/* Activate reception immediately. */
+ 468              		.loc 1 210 13 is_stmt 1 view .LVU138
+ 210:Core/Src/ds_twr_responder_sts.c **** 			/* Activate reception immediately. */
+ 469              		.loc 1 210 22 is_stmt 0 view .LVU139
+ 470 01ce 0135     		adds	r5, r5, #1
+ 471              	.LVL52:
+ 210:Core/Src/ds_twr_responder_sts.c **** 			/* Activate reception immediately. */
+ 472              		.loc 1 210 22 view .LVU140
+ 473 01d0 EDB2     		uxtb	r5, r5
+ 474              	.LVL53:
+ 212:Core/Src/ds_twr_responder_sts.c ****         }
+ 475              		.loc 1 212 4 is_stmt 1 view .LVU141
+ 476 01d2 0020     		movs	r0, #0
+ 477 01d4 FFF7FEFF 		bl	dwt_rxenable
+ 478              	.LVL54:
+ 479 01d8 62E7     		b	.L16
+ 480              	.L19:
+ 481              	.LBB7:
+ 282:Core/Src/ds_twr_responder_sts.c ****                     }
+ 283:Core/Src/ds_twr_responder_sts.c ****                 }
+ 284:Core/Src/ds_twr_responder_sts.c ****                 else if (memcmp(rx_buffer, rx_final_msg, ALL_MSG_COMMON_LEN) == 0)
+ 482              		.loc 1 284 22 view .LVU142
+ 483              		.loc 1 284 26 is_stmt 0 view .LVU143
+ 484 01da 0A22     		movs	r2, #10
+ 485 01dc 6249     		ldr	r1, .L34+64
+ 486 01de 5C48     		ldr	r0, .L34+40
+ 487 01e0 FFF7FEFF 		bl	memcmp
+ 488              	.LVL55:
+ 489              		.loc 1 284 25 view .LVU144
+ 490 01e4 28B1     		cbz	r0, .L32
+ 285:Core/Src/ds_twr_responder_sts.c ****                 {
+ 286:Core/Src/ds_twr_responder_sts.c ****                     uint64_t final_rx_ts;
+ARM GAS  /tmp/cctQSOtj.s 			page 15
+
+
+ 287:Core/Src/ds_twr_responder_sts.c ****                     uint32_t poll_tx_ts, resp_rx_ts, final_tx_ts;
+ 288:Core/Src/ds_twr_responder_sts.c ****                     uint32_t poll_rx_ts_32, resp_tx_ts_32, final_rx_ts_32;
+ 289:Core/Src/ds_twr_responder_sts.c ****                     double Ra, Rb, Da, Db, tof;
+ 290:Core/Src/ds_twr_responder_sts.c ****                     int64_t tof_dtu;
+ 291:Core/Src/ds_twr_responder_sts.c ****                     //int ret; // return value from starttx
+ 292:Core/Src/ds_twr_responder_sts.c **** 
+ 293:Core/Src/ds_twr_responder_sts.c ****                     uint8_t payload_buf[24];
+ 294:Core/Src/ds_twr_responder_sts.c ****                     memcpy(payload_buf, &rx_buffer[22], 24);
+ 295:Core/Src/ds_twr_responder_sts.c ****                     float *received_floats = (float *)payload_buf;
+ 296:Core/Src/ds_twr_responder_sts.c **** 
+ 297:Core/Src/ds_twr_responder_sts.c **** 
+ 298:Core/Src/ds_twr_responder_sts.c ****                     memset(&rx_buffer[22], 0, 24);
+ 299:Core/Src/ds_twr_responder_sts.c ****                     /* Retrieve response transmission and final reception timestamps. */
+ 300:Core/Src/ds_twr_responder_sts.c ****                     resp_tx_ts = get_tx_timestamp_u64();
+ 301:Core/Src/ds_twr_responder_sts.c ****                     final_rx_ts = get_rx_timestamp_u64();
+ 302:Core/Src/ds_twr_responder_sts.c **** 
+ 303:Core/Src/ds_twr_responder_sts.c ****                     /* Get timestamps embedded in the final message. */
+ 304:Core/Src/ds_twr_responder_sts.c ****                     final_msg_get_ts(&rx_buffer[FINAL_MSG_POLL_TX_TS_IDX], &poll_tx_ts);
+ 305:Core/Src/ds_twr_responder_sts.c ****                     final_msg_get_ts(&rx_buffer[FINAL_MSG_RESP_RX_TS_IDX], &resp_rx_ts);
+ 306:Core/Src/ds_twr_responder_sts.c ****                     final_msg_get_ts(&rx_buffer[FINAL_MSG_FINAL_TX_TS_IDX], &final_tx_ts);
+ 307:Core/Src/ds_twr_responder_sts.c **** 
+ 308:Core/Src/ds_twr_responder_sts.c ****                     /* Compute time of flight. 32-bit subtractions give correct answers even if clo
+ 309:Core/Src/ds_twr_responder_sts.c ****                     poll_rx_ts_32 = (uint32_t)poll_rx_ts;
+ 310:Core/Src/ds_twr_responder_sts.c ****                     resp_tx_ts_32 = (uint32_t)resp_tx_ts;
+ 311:Core/Src/ds_twr_responder_sts.c ****                     final_rx_ts_32 = (uint32_t)final_rx_ts;
+ 312:Core/Src/ds_twr_responder_sts.c ****                     Ra = (double)(resp_rx_ts - poll_tx_ts);
+ 313:Core/Src/ds_twr_responder_sts.c ****                     Rb = (double)(final_rx_ts_32 - resp_tx_ts_32);
+ 314:Core/Src/ds_twr_responder_sts.c ****                     Da = (double)(final_tx_ts - resp_rx_ts);
+ 315:Core/Src/ds_twr_responder_sts.c ****                     Db = (double)(resp_tx_ts_32 - poll_rx_ts_32);
+ 316:Core/Src/ds_twr_responder_sts.c ****                     tof_dtu = (int64_t)((Ra * Rb - Da * Db) / (Ra + Rb + Da + Db));
+ 317:Core/Src/ds_twr_responder_sts.c **** 
+ 318:Core/Src/ds_twr_responder_sts.c ****                     tof = tof_dtu * DWT_TIME_UNITS;
+ 319:Core/Src/ds_twr_responder_sts.c **** 
+ 320:Core/Src/ds_twr_responder_sts.c ****                     Send_Distance_Over_UART(tof, received_floats);
+ 321:Core/Src/ds_twr_responder_sts.c ****                     //Send_Distance_Over_UART(tof);
+ 322:Core/Src/ds_twr_responder_sts.c ****                     //distance = tof * SPEED_OF_LIGHT;
+ 323:Core/Src/ds_twr_responder_sts.c ****                     //char debug_buf[32];
+ 324:Core/Src/ds_twr_responder_sts.c **** 
+ 325:Core/Src/ds_twr_responder_sts.c ****                     //sprintf(dist_str, "C: %3.2fm" ,distance);
+ 326:Core/Src/ds_twr_responder_sts.c ****                     //test_run_info((unsigned char *)dist_str);
+ 327:Core/Src/ds_twr_responder_sts.c **** 
+ 328:Core/Src/ds_twr_responder_sts.c ****                     Sleep(RNG_DELAY_MS - 10);  //start couple of ms earlier
+ 329:Core/Src/ds_twr_responder_sts.c ****                     messageFlag = 0;
+ 330:Core/Src/ds_twr_responder_sts.c ****                 }
+ 331:Core/Src/ds_twr_responder_sts.c ****                 else
+ 332:Core/Src/ds_twr_responder_sts.c ****                 {
+ 333:Core/Src/ds_twr_responder_sts.c ****                     errors[BAD_FRAME_ERR_IDX] += 1;
+ 491              		.loc 1 333 21 is_stmt 1 view .LVU145
+ 492              		.loc 1 333 47 is_stmt 0 view .LVU146
+ 493 01e6 614A     		ldr	r2, .L34+68
+ 494 01e8 936A     		ldr	r3, [r2, #40]
+ 495 01ea 0133     		adds	r3, r3, #1
+ 496 01ec 9362     		str	r3, [r2, #40]
+ 334:Core/Src/ds_twr_responder_sts.c ****                     /*
+ 335:Core/Src/ds_twr_responder_sts.c ****                      * If any error occurs, we can reset the STS count back to default value.
+ 336:Core/Src/ds_twr_responder_sts.c ****                      */
+ 337:Core/Src/ds_twr_responder_sts.c ****                     messageFlag = 0;
+ARM GAS  /tmp/cctQSOtj.s 			page 16
+
+
+ 497              		.loc 1 337 21 is_stmt 1 view .LVU147
+ 498              	.LVL56:
+ 499              		.loc 1 337 21 is_stmt 0 view .LVU148
+ 500              	.LBE7:
+ 180:Core/Src/ds_twr_responder_sts.c ****     {
+ 501              		.loc 1 180 2 is_stmt 1 view .LVU149
+ 186:Core/Src/ds_twr_responder_sts.c ****         {
+ 502              		.loc 1 186 9 view .LVU150
+ 503              	.LBB8:
+ 504              		.loc 1 337 33 is_stmt 0 view .LVU151
+ 505 01ee 0024     		movs	r4, #0
+ 506 01f0 3FE7     		b	.L24
+ 507              	.LVL57:
+ 508              	.L32:
+ 509              	.LBB5:
+ 286:Core/Src/ds_twr_responder_sts.c ****                     uint32_t poll_tx_ts, resp_rx_ts, final_tx_ts;
+ 510              		.loc 1 286 21 is_stmt 1 discriminator 4 view .LVU152
+ 287:Core/Src/ds_twr_responder_sts.c ****                     uint32_t poll_rx_ts_32, resp_tx_ts_32, final_rx_ts_32;
+ 511              		.loc 1 287 21 discriminator 4 view .LVU153
+ 288:Core/Src/ds_twr_responder_sts.c ****                     double Ra, Rb, Da, Db, tof;
+ 512              		.loc 1 288 21 discriminator 4 view .LVU154
+ 289:Core/Src/ds_twr_responder_sts.c ****                     int64_t tof_dtu;
+ 513              		.loc 1 289 21 discriminator 4 view .LVU155
+ 290:Core/Src/ds_twr_responder_sts.c ****                     //int ret; // return value from starttx
+ 514              		.loc 1 290 21 discriminator 4 view .LVU156
+ 293:Core/Src/ds_twr_responder_sts.c ****                     memcpy(payload_buf, &rx_buffer[22], 24);
+ 515              		.loc 1 293 21 discriminator 4 view .LVU157
+ 294:Core/Src/ds_twr_responder_sts.c ****                     float *received_floats = (float *)payload_buf;
+ 516              		.loc 1 294 21 discriminator 4 view .LVU158
+ 517 01f2 574F     		ldr	r7, .L34+40
+ 518 01f4 07AC     		add	r4, sp, #28
+ 519 01f6 D7F81600 		ldr	r0, [r7, #22]	@ unaligned
+ 520 01fa D7F81A10 		ldr	r1, [r7, #26]	@ unaligned
+ 521 01fe D7F81E20 		ldr	r2, [r7, #30]	@ unaligned
+ 522 0202 D7F82230 		ldr	r3, [r7, #34]	@ unaligned
+ 523 0206 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 524 0208 D7F82600 		ldr	r0, [r7, #38]	@ unaligned
+ 525 020c D7F82A10 		ldr	r1, [r7, #42]	@ unaligned
+ 526 0210 03C4     		stmia	r4!, {r0, r1}
+ 295:Core/Src/ds_twr_responder_sts.c **** 
+ 527              		.loc 1 295 21 discriminator 4 view .LVU159
+ 528              	.LVL58:
+ 298:Core/Src/ds_twr_responder_sts.c ****                     /* Retrieve response transmission and final reception timestamps. */
+ 529              		.loc 1 298 21 discriminator 4 view .LVU160
+ 530 0212 0024     		movs	r4, #0
+ 531              	.LVL59:
+ 298:Core/Src/ds_twr_responder_sts.c ****                     /* Retrieve response transmission and final reception timestamps. */
+ 532              		.loc 1 298 21 is_stmt 0 discriminator 4 view .LVU161
+ 533 0214 C7F81640 		str	r4, [r7, #22]	@ unaligned
+ 534 0218 C7F81A40 		str	r4, [r7, #26]	@ unaligned
+ 535 021c C7F81E40 		str	r4, [r7, #30]	@ unaligned
+ 536 0220 C7F82240 		str	r4, [r7, #34]	@ unaligned
+ 537 0224 C7F82640 		str	r4, [r7, #38]	@ unaligned
+ 538 0228 C7F82A40 		str	r4, [r7, #42]	@ unaligned
+ 300:Core/Src/ds_twr_responder_sts.c ****                     final_rx_ts = get_rx_timestamp_u64();
+ 539              		.loc 1 300 21 is_stmt 1 discriminator 4 view .LVU162
+ 300:Core/Src/ds_twr_responder_sts.c ****                     final_rx_ts = get_rx_timestamp_u64();
+ARM GAS  /tmp/cctQSOtj.s 			page 17
+
+
+ 540              		.loc 1 300 34 is_stmt 0 discriminator 4 view .LVU163
+ 541 022c FFF7FEFF 		bl	get_tx_timestamp_u64
+ 542              	.LVL60:
+ 300:Core/Src/ds_twr_responder_sts.c ****                     final_rx_ts = get_rx_timestamp_u64();
+ 543              		.loc 1 300 32 discriminator 4 view .LVU164
+ 544 0230 DFF82881 		ldr	r8, .L34+52
+ 545 0234 C8E90001 		strd	r0, [r8]
+ 301:Core/Src/ds_twr_responder_sts.c **** 
+ 546              		.loc 1 301 21 is_stmt 1 discriminator 4 view .LVU165
+ 301:Core/Src/ds_twr_responder_sts.c **** 
+ 547              		.loc 1 301 35 is_stmt 0 discriminator 4 view .LVU166
+ 548 0238 FFF7FEFF 		bl	get_rx_timestamp_u64
+ 549              	.LVL61:
+ 550 023c 0646     		mov	r6, r0
+ 551              	.LVL62:
+ 304:Core/Src/ds_twr_responder_sts.c ****                     final_msg_get_ts(&rx_buffer[FINAL_MSG_RESP_RX_TS_IDX], &resp_rx_ts);
+ 552              		.loc 1 304 21 is_stmt 1 discriminator 4 view .LVU167
+ 553 023e 04A9     		add	r1, sp, #16
+ 554              	.LVL63:
+ 304:Core/Src/ds_twr_responder_sts.c ****                     final_msg_get_ts(&rx_buffer[FINAL_MSG_RESP_RX_TS_IDX], &resp_rx_ts);
+ 555              		.loc 1 304 21 is_stmt 0 discriminator 4 view .LVU168
+ 556 0240 07F10A00 		add	r0, r7, #10
+ 304:Core/Src/ds_twr_responder_sts.c ****                     final_msg_get_ts(&rx_buffer[FINAL_MSG_RESP_RX_TS_IDX], &resp_rx_ts);
+ 557              		.loc 1 304 21 discriminator 4 view .LVU169
+ 558 0244 FFF7FEFF 		bl	final_msg_get_ts
+ 559              	.LVL64:
+ 305:Core/Src/ds_twr_responder_sts.c ****                     final_msg_get_ts(&rx_buffer[FINAL_MSG_FINAL_TX_TS_IDX], &final_tx_ts);
+ 560              		.loc 1 305 21 is_stmt 1 discriminator 4 view .LVU170
+ 561 0248 05A9     		add	r1, sp, #20
+ 562 024a 07F10E00 		add	r0, r7, #14
+ 563 024e FFF7FEFF 		bl	final_msg_get_ts
+ 564              	.LVL65:
+ 306:Core/Src/ds_twr_responder_sts.c **** 
+ 565              		.loc 1 306 21 discriminator 4 view .LVU171
+ 566 0252 06A9     		add	r1, sp, #24
+ 567 0254 07F11200 		add	r0, r7, #18
+ 568 0258 FFF7FEFF 		bl	final_msg_get_ts
+ 569              	.LVL66:
+ 309:Core/Src/ds_twr_responder_sts.c ****                     resp_tx_ts_32 = (uint32_t)resp_tx_ts;
+ 570              		.loc 1 309 21 discriminator 4 view .LVU172
+ 309:Core/Src/ds_twr_responder_sts.c ****                     resp_tx_ts_32 = (uint32_t)resp_tx_ts;
+ 571              		.loc 1 309 37 is_stmt 0 discriminator 4 view .LVU173
+ 572 025c 444B     		ldr	r3, .L34+72
+ 573 025e D3F800A0 		ldr	r10, [r3]
+ 574              	.LVL67:
+ 310:Core/Src/ds_twr_responder_sts.c ****                     final_rx_ts_32 = (uint32_t)final_rx_ts;
+ 575              		.loc 1 310 21 is_stmt 1 discriminator 4 view .LVU174
+ 310:Core/Src/ds_twr_responder_sts.c ****                     final_rx_ts_32 = (uint32_t)final_rx_ts;
+ 576              		.loc 1 310 37 is_stmt 0 discriminator 4 view .LVU175
+ 577 0262 D8F80080 		ldr	r8, [r8]
+ 578              	.LVL68:
+ 311:Core/Src/ds_twr_responder_sts.c ****                     Ra = (double)(resp_rx_ts - poll_tx_ts);
+ 579              		.loc 1 311 21 is_stmt 1 discriminator 4 view .LVU176
+ 312:Core/Src/ds_twr_responder_sts.c ****                     Rb = (double)(final_rx_ts_32 - resp_tx_ts_32);
+ 580              		.loc 1 312 21 discriminator 4 view .LVU177
+ 312:Core/Src/ds_twr_responder_sts.c ****                     Rb = (double)(final_rx_ts_32 - resp_tx_ts_32);
+ 581              		.loc 1 312 46 is_stmt 0 discriminator 4 view .LVU178
+ARM GAS  /tmp/cctQSOtj.s 			page 18
+
+
+ 582 0266 DDF81490 		ldr	r9, [sp, #20]
+ 312:Core/Src/ds_twr_responder_sts.c ****                     Rb = (double)(final_rx_ts_32 - resp_tx_ts_32);
+ 583              		.loc 1 312 24 discriminator 4 view .LVU179
+ 584 026a 0498     		ldr	r0, [sp, #16]
+ 585 026c A9EB0000 		sub	r0, r9, r0
+ 586 0270 FFF7FEFF 		bl	__aeabi_ui2d
+ 587              	.LVL69:
+ 588 0274 CDE90001 		strd	r0, [sp]
+ 589              	.LVL70:
+ 313:Core/Src/ds_twr_responder_sts.c ****                     Da = (double)(final_tx_ts - resp_rx_ts);
+ 590              		.loc 1 313 21 is_stmt 1 discriminator 4 view .LVU180
+ 313:Core/Src/ds_twr_responder_sts.c ****                     Da = (double)(final_tx_ts - resp_rx_ts);
+ 591              		.loc 1 313 24 is_stmt 0 discriminator 4 view .LVU181
+ 592 0278 A6EB0800 		sub	r0, r6, r8
+ 593              	.LVL71:
+ 313:Core/Src/ds_twr_responder_sts.c ****                     Da = (double)(final_tx_ts - resp_rx_ts);
+ 594              		.loc 1 313 24 discriminator 4 view .LVU182
+ 595 027c FFF7FEFF 		bl	__aeabi_ui2d
+ 596              	.LVL72:
+ 597 0280 0646     		mov	r6, r0
+ 598              	.LVL73:
+ 313:Core/Src/ds_twr_responder_sts.c ****                     Da = (double)(final_tx_ts - resp_rx_ts);
+ 599              		.loc 1 313 24 discriminator 4 view .LVU183
+ 600 0282 0F46     		mov	r7, r1
+ 601              	.LVL74:
+ 314:Core/Src/ds_twr_responder_sts.c ****                     Db = (double)(resp_tx_ts_32 - poll_rx_ts_32);
+ 602              		.loc 1 314 21 is_stmt 1 discriminator 4 view .LVU184
+ 314:Core/Src/ds_twr_responder_sts.c ****                     Db = (double)(resp_tx_ts_32 - poll_rx_ts_32);
+ 603              		.loc 1 314 24 is_stmt 0 discriminator 4 view .LVU185
+ 604 0284 0698     		ldr	r0, [sp, #24]
+ 605 0286 A0EB0900 		sub	r0, r0, r9
+ 606 028a FFF7FEFF 		bl	__aeabi_ui2d
+ 607              	.LVL75:
+ 608 028e CDE90201 		strd	r0, [sp, #8]
+ 609              	.LVL76:
+ 315:Core/Src/ds_twr_responder_sts.c ****                     tof_dtu = (int64_t)((Ra * Rb - Da * Db) / (Ra + Rb + Da + Db));
+ 610              		.loc 1 315 21 is_stmt 1 discriminator 4 view .LVU186
+ 315:Core/Src/ds_twr_responder_sts.c ****                     tof_dtu = (int64_t)((Ra * Rb - Da * Db) / (Ra + Rb + Da + Db));
+ 611              		.loc 1 315 24 is_stmt 0 discriminator 4 view .LVU187
+ 612 0292 A8EB0A00 		sub	r0, r8, r10
+ 613              	.LVL77:
+ 315:Core/Src/ds_twr_responder_sts.c ****                     tof_dtu = (int64_t)((Ra * Rb - Da * Db) / (Ra + Rb + Da + Db));
+ 614              		.loc 1 315 24 discriminator 4 view .LVU188
+ 615 0296 FFF7FEFF 		bl	__aeabi_ui2d
+ 616              	.LVL78:
+ 617 029a 8246     		mov	r10, r0
+ 618              	.LVL79:
+ 315:Core/Src/ds_twr_responder_sts.c ****                     tof_dtu = (int64_t)((Ra * Rb - Da * Db) / (Ra + Rb + Da + Db));
+ 619              		.loc 1 315 24 discriminator 4 view .LVU189
+ 620 029c 8B46     		mov	fp, r1
+ 621              	.LVL80:
+ 316:Core/Src/ds_twr_responder_sts.c **** 
+ 622              		.loc 1 316 21 is_stmt 1 discriminator 4 view .LVU190
+ 316:Core/Src/ds_twr_responder_sts.c **** 
+ 623              		.loc 1 316 45 is_stmt 0 discriminator 4 view .LVU191
+ 624 029e 3246     		mov	r2, r6
+ 625 02a0 3B46     		mov	r3, r7
+ARM GAS  /tmp/cctQSOtj.s 			page 19
+
+
+ 626 02a2 DDE90001 		ldrd	r0, [sp]
+ 627 02a6 FFF7FEFF 		bl	__aeabi_dmul
+ 628              	.LVL81:
+ 629 02aa 8046     		mov	r8, r0
+ 630              	.LVL82:
+ 316:Core/Src/ds_twr_responder_sts.c **** 
+ 631              		.loc 1 316 45 discriminator 4 view .LVU192
+ 632 02ac 8946     		mov	r9, r1
+ 316:Core/Src/ds_twr_responder_sts.c **** 
+ 633              		.loc 1 316 55 discriminator 4 view .LVU193
+ 634 02ae 5246     		mov	r2, r10
+ 635 02b0 5B46     		mov	r3, fp
+ 636 02b2 DDE90201 		ldrd	r0, [sp, #8]
+ 637 02b6 FFF7FEFF 		bl	__aeabi_dmul
+ 638              	.LVL83:
+ 639 02ba 0246     		mov	r2, r0
+ 640 02bc 0B46     		mov	r3, r1
+ 316:Core/Src/ds_twr_responder_sts.c **** 
+ 641              		.loc 1 316 50 discriminator 4 view .LVU194
+ 642 02be 4046     		mov	r0, r8
+ 643 02c0 4946     		mov	r1, r9
+ 644 02c2 FFF7FEFF 		bl	__aeabi_dsub
+ 645              	.LVL84:
+ 646 02c6 8046     		mov	r8, r0
+ 647 02c8 8946     		mov	r9, r1
+ 316:Core/Src/ds_twr_responder_sts.c **** 
+ 648              		.loc 1 316 67 discriminator 4 view .LVU195
+ 649 02ca 3246     		mov	r2, r6
+ 650 02cc 3B46     		mov	r3, r7
+ 651 02ce DDE90001 		ldrd	r0, [sp]
+ 652 02d2 FFF7FEFF 		bl	__aeabi_dadd
+ 653              	.LVL85:
+ 316:Core/Src/ds_twr_responder_sts.c **** 
+ 654              		.loc 1 316 72 discriminator 4 view .LVU196
+ 655 02d6 DDE90223 		ldrd	r2, [sp, #8]
+ 656 02da FFF7FEFF 		bl	__aeabi_dadd
+ 657              	.LVL86:
+ 316:Core/Src/ds_twr_responder_sts.c **** 
+ 658              		.loc 1 316 77 discriminator 4 view .LVU197
+ 659 02de 5246     		mov	r2, r10
+ 660 02e0 5B46     		mov	r3, fp
+ 661 02e2 FFF7FEFF 		bl	__aeabi_dadd
+ 662              	.LVL87:
+ 663 02e6 0246     		mov	r2, r0
+ 664 02e8 0B46     		mov	r3, r1
+ 316:Core/Src/ds_twr_responder_sts.c **** 
+ 665              		.loc 1 316 61 discriminator 4 view .LVU198
+ 666 02ea 4046     		mov	r0, r8
+ 667 02ec 4946     		mov	r1, r9
+ 668 02ee FFF7FEFF 		bl	__aeabi_ddiv
+ 669              	.LVL88:
+ 316:Core/Src/ds_twr_responder_sts.c **** 
+ 670              		.loc 1 316 29 discriminator 4 view .LVU199
+ 671 02f2 FFF7FEFF 		bl	__aeabi_d2lz
+ 672              	.LVL89:
+ 318:Core/Src/ds_twr_responder_sts.c **** 
+ 673              		.loc 1 318 21 is_stmt 1 discriminator 4 view .LVU200
+ARM GAS  /tmp/cctQSOtj.s 			page 20
+
+
+ 318:Core/Src/ds_twr_responder_sts.c **** 
+ 674              		.loc 1 318 35 is_stmt 0 discriminator 4 view .LVU201
+ 675 02f6 FFF7FEFF 		bl	__aeabi_l2d
+ 676              	.LVL90:
+ 318:Core/Src/ds_twr_responder_sts.c **** 
+ 677              		.loc 1 318 25 discriminator 4 view .LVU202
+ 678 02fa 0BA3     		adr	r3, .L34
+ 679 02fc D3E90023 		ldrd	r2, [r3]
+ 680 0300 FFF7FEFF 		bl	__aeabi_dmul
+ 681              	.LVL91:
+ 682 0304 41EC100B 		vmov	d0, r0, r1
+ 683              	.LVL92:
+ 320:Core/Src/ds_twr_responder_sts.c ****                     //Send_Distance_Over_UART(tof);
+ 684              		.loc 1 320 21 is_stmt 1 discriminator 4 view .LVU203
+ 685 0308 07A8     		add	r0, sp, #28
+ 686              	.LVL93:
+ 320:Core/Src/ds_twr_responder_sts.c ****                     //Send_Distance_Over_UART(tof);
+ 687              		.loc 1 320 21 is_stmt 0 discriminator 4 view .LVU204
+ 688 030a FFF7FEFF 		bl	Send_Distance_Over_UART
+ 689              	.LVL94:
+ 328:Core/Src/ds_twr_responder_sts.c ****                     messageFlag = 0;
+ 690              		.loc 1 328 21 is_stmt 1 discriminator 4 view .LVU205
+ 691 030e 1420     		movs	r0, #20
+ 692 0310 FFF7FEFF 		bl	Sleep
+ 693              	.LVL95:
+ 329:Core/Src/ds_twr_responder_sts.c ****                 }
+ 694              		.loc 1 329 21 discriminator 4 view .LVU206
+ 329:Core/Src/ds_twr_responder_sts.c ****                 }
+ 695              		.loc 1 329 21 is_stmt 0 discriminator 4 view .LVU207
+ 696              	.LBE5:
+ 697              	.LBE8:
+ 180:Core/Src/ds_twr_responder_sts.c ****     {
+ 698              		.loc 1 180 2 is_stmt 1 discriminator 4 view .LVU208
+ 186:Core/Src/ds_twr_responder_sts.c ****         {
+ 699              		.loc 1 186 9 discriminator 4 view .LVU209
+ 700 0314 ADE6     		b	.L24
+ 701              	.LVL96:
+ 702              	.L18:
+ 703              	.LBB9:
+ 338:Core/Src/ds_twr_responder_sts.c ****                 }
+ 339:Core/Src/ds_twr_responder_sts.c ****             }
+ 340:Core/Src/ds_twr_responder_sts.c ****             else
+ 341:Core/Src/ds_twr_responder_sts.c ****             {
+ 342:Core/Src/ds_twr_responder_sts.c ****             	//test_run_info((unsigned char *)"Jestem_6");
+ 343:Core/Src/ds_twr_responder_sts.c ****                 errors[RTO_ERR_IDX] += 1;
+ 704              		.loc 1 343 17 view .LVU210
+ 705              		.loc 1 343 37 is_stmt 0 view .LVU211
+ 706 0316 154A     		ldr	r2, .L34+68
+ 707 0318 5369     		ldr	r3, [r2, #20]
+ 708 031a 0133     		adds	r3, r3, #1
+ 709 031c 5361     		str	r3, [r2, #20]
+ 344:Core/Src/ds_twr_responder_sts.c ****                 /*
+ 345:Core/Src/ds_twr_responder_sts.c ****                  * If any error occurs, we can reset the STS count back to default value.
+ 346:Core/Src/ds_twr_responder_sts.c ****                  */
+ 347:Core/Src/ds_twr_responder_sts.c ****                 messageFlag = 0;
+ 710              		.loc 1 347 17 is_stmt 1 view .LVU212
+ 711              	.LVL97:
+ARM GAS  /tmp/cctQSOtj.s 			page 21
+
+
+ 712              		.loc 1 347 17 is_stmt 0 view .LVU213
+ 713              	.LBE9:
+ 180:Core/Src/ds_twr_responder_sts.c ****     {
+ 714              		.loc 1 180 2 is_stmt 1 view .LVU214
+ 186:Core/Src/ds_twr_responder_sts.c ****         {
+ 715              		.loc 1 186 9 view .LVU215
+ 716              	.LBB10:
+ 717              		.loc 1 347 29 is_stmt 0 view .LVU216
+ 718 031e 0024     		movs	r4, #0
+ 719 0320 A7E6     		b	.L24
+ 720              	.L35:
+ 721 0322 00BFAFF3 		.align	3
+ 721      0080
+ 722              	.L34:
+ 723 0328 FA48CE3B 		.word	1003374842
+ 724 032c 1835B13D 		.word	1035023640
+ 725 0330 00000000 		.word	config_options
+ 726 0334 00000000 		.word	txconfig_options_ch9
+ 727 0338 00000000 		.word	.LANCHOR0
+ 728 033c 00000000 		.word	.LANCHOR1
+ 729 0340 00000000 		.word	txconfig_options
+ 730 0344 1C000200 		.word	131100
+ 731 0348 00000000 		.word	.LANCHOR2
+ 732 034c 00D02724 		.word	606588928
+ 733 0350 00000000 		.word	.LANCHOR3
+ 734 0354 00000000 		.word	.LANCHOR4
+ 735 0358 96A24D06 		.word	105751190
+ 736 035c 00000000 		.word	.LANCHOR6
+ 737 0360 00000000 		.word	.LANCHOR7
+ 738 0364 00000000 		.word	.LANCHOR8
+ 739 0368 00000000 		.word	.LANCHOR9
+ 740 036c 00000000 		.word	.LANCHOR10
+ 741 0370 00000000 		.word	.LANCHOR5
+ 742              	.LVL98:
+ 743              	.L17:
+ 744              		.loc 1 347 29 view .LVU217
+ 745              	.LBE10:
+ 348:Core/Src/ds_twr_responder_sts.c ****             }
+ 349:Core/Src/ds_twr_responder_sts.c ****         }
+ 350:Core/Src/ds_twr_responder_sts.c ****         else
+ 351:Core/Src/ds_twr_responder_sts.c ****         {
+ 352:Core/Src/ds_twr_responder_sts.c ****         	//test_run_info((unsigned char *)"Jestem7");
+ 353:Core/Src/ds_twr_responder_sts.c ****             check_for_status_errors(status_reg, errors);
+ 746              		.loc 1 353 13 view .LVU218
+ 747 0374 0646     		mov	r6, r0
+ 748 0376 1846     		mov	r0, r3
+ 749              	.LVL99:
+ 750              		.loc 1 353 13 is_stmt 1 view .LVU219
+ 751 0378 1049     		ldr	r1, .L36
+ 752 037a FFF7FEFF 		bl	check_for_status_errors
+ 753              	.LVL100:
+ 354:Core/Src/ds_twr_responder_sts.c **** 
+ 355:Core/Src/ds_twr_responder_sts.c ****             if (!(status_reg & SYS_STATUS_RXFCG_BIT_MASK))
+ 754              		.loc 1 355 13 view .LVU220
+ 755              		.loc 1 355 30 is_stmt 0 view .LVU221
+ 756 037e 104B     		ldr	r3, .L36+4
+ 757 0380 1B68     		ldr	r3, [r3]
+ARM GAS  /tmp/cctQSOtj.s 			page 22
+
+
+ 758              		.loc 1 355 16 view .LVU222
+ 759 0382 13F4804F 		tst	r3, #16384
+ 760 0386 03D1     		bne	.L25
+ 356:Core/Src/ds_twr_responder_sts.c ****             {
+ 357:Core/Src/ds_twr_responder_sts.c ****                 errors[BAD_FRAME_ERR_IDX] += 1;
+ 761              		.loc 1 357 17 is_stmt 1 view .LVU223
+ 762              		.loc 1 357 43 is_stmt 0 view .LVU224
+ 763 0388 0C4A     		ldr	r2, .L36
+ 764 038a 936A     		ldr	r3, [r2, #40]
+ 765 038c 0133     		adds	r3, r3, #1
+ 766 038e 9362     		str	r3, [r2, #40]
+ 767              	.L25:
+ 358:Core/Src/ds_twr_responder_sts.c ****             }
+ 359:Core/Src/ds_twr_responder_sts.c ****             if (goodSts < 0)
+ 768              		.loc 1 359 13 is_stmt 1 view .LVU225
+ 769              		.loc 1 359 16 is_stmt 0 view .LVU226
+ 770 0390 002E     		cmp	r6, #0
+ 771 0392 0EDB     		blt	.L33
+ 772              	.L26:
+ 360:Core/Src/ds_twr_responder_sts.c ****             {
+ 361:Core/Src/ds_twr_responder_sts.c ****                 errors[PREAMBLE_COUNT_ERR_IDX] += 1;
+ 362:Core/Src/ds_twr_responder_sts.c ****             }
+ 363:Core/Src/ds_twr_responder_sts.c ****             if (stsQual <= 0)
+ 773              		.loc 1 363 13 is_stmt 1 view .LVU227
+ 774              		.loc 1 363 25 is_stmt 0 view .LVU228
+ 775 0394 BDF93630 		ldrsh	r3, [sp, #54]
+ 776              		.loc 1 363 16 view .LVU229
+ 777 0398 002B     		cmp	r3, #0
+ 778 039a 03DC     		bgt	.L27
+ 364:Core/Src/ds_twr_responder_sts.c ****             {
+ 365:Core/Src/ds_twr_responder_sts.c ****                 errors[CP_QUAL_ERR_IDX] += 1;
+ 779              		.loc 1 365 17 is_stmt 1 view .LVU230
+ 780              		.loc 1 365 41 is_stmt 0 view .LVU231
+ 781 039c 074A     		ldr	r2, .L36
+ 782 039e 136B     		ldr	r3, [r2, #48]
+ 783 03a0 0133     		adds	r3, r3, #1
+ 784 03a2 1363     		str	r3, [r2, #48]
+ 785              	.L27:
+ 366:Core/Src/ds_twr_responder_sts.c ****             }
+ 367:Core/Src/ds_twr_responder_sts.c ****             /* Clear RX error events in the DW IC status register. */
+ 368:Core/Src/ds_twr_responder_sts.c ****             dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
+ 786              		.loc 1 368 13 is_stmt 1 view .LVU232
+ 787 03a4 074A     		ldr	r2, .L36+8
+ 788 03a6 0021     		movs	r1, #0
+ 789 03a8 4420     		movs	r0, #68
+ 790 03aa FFF7FEFF 		bl	dwt_write32bitoffsetreg
+ 791              	.LVL101:
+ 369:Core/Src/ds_twr_responder_sts.c **** 
+ 370:Core/Src/ds_twr_responder_sts.c ****             /*
+ 371:Core/Src/ds_twr_responder_sts.c ****              * If any error occurs, we can reset the STS count back to default value.
+ 372:Core/Src/ds_twr_responder_sts.c ****              */
+ 373:Core/Src/ds_twr_responder_sts.c ****             messageFlag = 0;
+ 792              		.loc 1 373 13 view .LVU233
+ 180:Core/Src/ds_twr_responder_sts.c ****     {
+ 793              		.loc 1 180 2 view .LVU234
+ 186:Core/Src/ds_twr_responder_sts.c ****         {
+ 794              		.loc 1 186 9 view .LVU235
+ARM GAS  /tmp/cctQSOtj.s 			page 23
+
+
+ 795              		.loc 1 373 25 is_stmt 0 view .LVU236
+ 796 03ae 0024     		movs	r4, #0
+ 797 03b0 5FE6     		b	.L24
+ 798              	.LVL102:
+ 799              	.L33:
+ 361:Core/Src/ds_twr_responder_sts.c ****             }
+ 800              		.loc 1 361 17 is_stmt 1 view .LVU237
+ 361:Core/Src/ds_twr_responder_sts.c ****             }
+ 801              		.loc 1 361 48 is_stmt 0 view .LVU238
+ 802 03b2 024A     		ldr	r2, .L36
+ 803 03b4 D36A     		ldr	r3, [r2, #44]
+ 804 03b6 0133     		adds	r3, r3, #1
+ 805 03b8 D362     		str	r3, [r2, #44]
+ 806 03ba EBE7     		b	.L26
+ 807              	.L37:
+ 808              		.align	2
+ 809              	.L36:
+ 810 03bc 00000000 		.word	.LANCHOR10
+ 811 03c0 00000000 		.word	.LANCHOR2
+ 812 03c4 00900524 		.word	604344320
+ 813              		.cfi_endproc
+ 814              	.LFE134:
+ 816              		.global	dist_str_to_PC
+ 817              		.global	uCurrentTrim_val
+ 818              		.global	diff
+ 819              		.global	timtick_2
+ 820              		.global	timtick_1
+ 821              		.section	.bss.diff,"aw",%nobits
+ 822              		.align	2
+ 825              	diff:
+ 826 0000 00000000 		.space	4
+ 827              		.section	.bss.dist_str_to_PC,"aw",%nobits
+ 828              		.align	2
+ 831              	dist_str_to_PC:
+ 832 0000 00000000 		.space	16
+ 832      00000000 
+ 832      00000000 
+ 832      00000000 
+ 833              		.section	.bss.errors,"aw",%nobits
+ 834              		.align	2
+ 835              		.set	.LANCHOR10,. + 0
+ 838              	errors:
+ 839 0000 00000000 		.space	92
+ 839      00000000 
+ 839      00000000 
+ 839      00000000 
+ 839      00000000 
+ 840              		.section	.bss.frame_seq_nb,"aw",%nobits
+ 841              		.set	.LANCHOR8,. + 0
+ 844              	frame_seq_nb:
+ 845 0000 00       		.space	1
+ 846              		.section	.bss.poll_rx_ts,"aw",%nobits
+ 847              		.align	3
+ 848              		.set	.LANCHOR5,. + 0
+ 851              	poll_rx_ts:
+ 852 0000 00000000 		.space	8
+ 852      00000000 
+ARM GAS  /tmp/cctQSOtj.s 			page 24
+
+
+ 853              		.section	.bss.resp_tx_ts,"aw",%nobits
+ 854              		.align	3
+ 855              		.set	.LANCHOR6,. + 0
+ 858              	resp_tx_ts:
+ 859 0000 00000000 		.space	8
+ 859      00000000 
+ 860              		.section	.bss.rx_buffer,"aw",%nobits
+ 861              		.align	2
+ 862              		.set	.LANCHOR3,. + 0
+ 865              	rx_buffer:
+ 866 0000 00000000 		.space	64
+ 866      00000000 
+ 866      00000000 
+ 866      00000000 
+ 866      00000000 
+ 867              		.section	.bss.status_reg,"aw",%nobits
+ 868              		.align	2
+ 869              		.set	.LANCHOR2,. + 0
+ 872              	status_reg:
+ 873 0000 00000000 		.space	4
+ 874              		.section	.bss.timtick_1,"aw",%nobits
+ 875              		.align	2
+ 878              	timtick_1:
+ 879 0000 00000000 		.space	4
+ 880              		.section	.bss.timtick_2,"aw",%nobits
+ 881              		.align	2
+ 884              	timtick_2:
+ 885 0000 00000000 		.space	4
+ 886              		.section	.bss.uCurrentTrim_val,"aw",%nobits
+ 889              	uCurrentTrim_val:
+ 890 0000 00       		.space	1
+ 891              		.section	.data.cp_iv,"aw"
+ 892              		.align	2
+ 893              		.set	.LANCHOR1,. + 0
+ 896              	cp_iv:
+ 897 0000 E43D9A1F 		.word	530202084
+ 898 0004 CAC37ED3 		.word	-746667062
+ 899 0008 FBA84FC4 		.word	-1001412357
+ 900 000c 34EB2E36 		.word	909044532
+ 901              		.section	.data.cp_key,"aw"
+ 902              		.align	2
+ 903              		.set	.LANCHOR0,. + 0
+ 906              	cp_key:
+ 907 0000 0F22EB14 		.word	350953999
+ 908 0004 A85060F8 		.word	-127905624
+ 909 0008 AA36D3D1 		.word	-774687062
+ 910 000c 74861414 		.word	336889460
+ 911              		.section	.data.rx_final_msg,"aw"
+ 912              		.align	2
+ 913              		.set	.LANCHOR9,. + 0
+ 916              	rx_final_msg:
+ 917 0000 418800CA 		.ascii	"A\210\000\312\336B\002VF\342\000\000\000\000\000\000"
+ 917      DE420256 
+ 917      46E20000 
+ 917      00000000 
+ 918 0010 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 918      00000000 
+ARM GAS  /tmp/cctQSOtj.s 			page 25
+
+
+ 918      00000000 
+ 918      00
+ 919 001d 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 919      00000000 
+ 919      00000000 
+ 919      00
+ 920 002a 00000000 		.ascii	"\000\000\000\000\000\000"
+ 920      0000
+ 921              		.section	.data.rx_poll_msg,"aw"
+ 922              		.align	2
+ 923              		.set	.LANCHOR4,. + 0
+ 926              	rx_poll_msg:
+ 927 0000 418800CA 		.ascii	"A\210\000\312\336B\002VF\340\000\000"
+ 927      DE420256 
+ 927      46E00000 
+ 928              		.section	.data.tx_resp_msg,"aw"
+ 929              		.align	2
+ 930              		.set	.LANCHOR7,. + 0
+ 933              	tx_resp_msg:
+ 934 0000 418800CA 		.ascii	"A\210\000\312\336VFB\002\341\000\000"
+ 934      DE564642 
+ 934      02E10000 
+ 935              		.text
+ 936              	.Letext0:
+ 937              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 938              		.file 3 "Core/Inc/deca_device_api.h"
+ 939              		.file 4 "Core/Inc/shared_functions.h"
+ 940              		.file 5 "Core/Inc/port.h"
+ 941              		.file 6 "/usr/include/newlib/string.h"
+ARM GAS  /tmp/cctQSOtj.s 			page 26
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 ds_twr_responder_sts.c
+     /tmp/cctQSOtj.s:18     .text.compute_resp_tx_frame_times:0000000000000000 $t
+     /tmp/cctQSOtj.s:26     .text.compute_resp_tx_frame_times:0000000000000000 compute_resp_tx_frame_times
+     /tmp/cctQSOtj.s:76     .text.compute_resp_tx_frame_times:0000000000000030 $d
+     /tmp/cctQSOtj.s:88     .text.ds_twr_responder_sts:0000000000000000 $t
+     /tmp/cctQSOtj.s:95     .text.ds_twr_responder_sts:0000000000000000 ds_twr_responder_sts
+     /tmp/cctQSOtj.s:723    .text.ds_twr_responder_sts:0000000000000328 $d
+     /tmp/cctQSOtj.s:747    .text.ds_twr_responder_sts:0000000000000374 $t
+     /tmp/cctQSOtj.s:810    .text.ds_twr_responder_sts:00000000000003bc $d
+     /tmp/cctQSOtj.s:831    .bss.dist_str_to_PC:0000000000000000 dist_str_to_PC
+     /tmp/cctQSOtj.s:889    .bss.uCurrentTrim_val:0000000000000000 uCurrentTrim_val
+     /tmp/cctQSOtj.s:825    .bss.diff:0000000000000000 diff
+     /tmp/cctQSOtj.s:884    .bss.timtick_2:0000000000000000 timtick_2
+     /tmp/cctQSOtj.s:878    .bss.timtick_1:0000000000000000 timtick_1
+     /tmp/cctQSOtj.s:822    .bss.diff:0000000000000000 $d
+     /tmp/cctQSOtj.s:828    .bss.dist_str_to_PC:0000000000000000 $d
+     /tmp/cctQSOtj.s:834    .bss.errors:0000000000000000 $d
+     /tmp/cctQSOtj.s:838    .bss.errors:0000000000000000 errors
+     /tmp/cctQSOtj.s:844    .bss.frame_seq_nb:0000000000000000 frame_seq_nb
+     /tmp/cctQSOtj.s:845    .bss.frame_seq_nb:0000000000000000 $d
+     /tmp/cctQSOtj.s:847    .bss.poll_rx_ts:0000000000000000 $d
+     /tmp/cctQSOtj.s:851    .bss.poll_rx_ts:0000000000000000 poll_rx_ts
+     /tmp/cctQSOtj.s:854    .bss.resp_tx_ts:0000000000000000 $d
+     /tmp/cctQSOtj.s:858    .bss.resp_tx_ts:0000000000000000 resp_tx_ts
+     /tmp/cctQSOtj.s:861    .bss.rx_buffer:0000000000000000 $d
+     /tmp/cctQSOtj.s:865    .bss.rx_buffer:0000000000000000 rx_buffer
+     /tmp/cctQSOtj.s:868    .bss.status_reg:0000000000000000 $d
+     /tmp/cctQSOtj.s:872    .bss.status_reg:0000000000000000 status_reg
+     /tmp/cctQSOtj.s:875    .bss.timtick_1:0000000000000000 $d
+     /tmp/cctQSOtj.s:881    .bss.timtick_2:0000000000000000 $d
+     /tmp/cctQSOtj.s:890    .bss.uCurrentTrim_val:0000000000000000 $d
+     /tmp/cctQSOtj.s:892    .data.cp_iv:0000000000000000 $d
+     /tmp/cctQSOtj.s:896    .data.cp_iv:0000000000000000 cp_iv
+     /tmp/cctQSOtj.s:902    .data.cp_key:0000000000000000 $d
+     /tmp/cctQSOtj.s:906    .data.cp_key:0000000000000000 cp_key
+     /tmp/cctQSOtj.s:912    .data.rx_final_msg:0000000000000000 $d
+     /tmp/cctQSOtj.s:916    .data.rx_final_msg:0000000000000000 rx_final_msg
+     /tmp/cctQSOtj.s:922    .data.rx_poll_msg:0000000000000000 $d
+     /tmp/cctQSOtj.s:926    .data.rx_poll_msg:0000000000000000 rx_poll_msg
+     /tmp/cctQSOtj.s:929    .data.tx_resp_msg:0000000000000000 $d
+     /tmp/cctQSOtj.s:933    .data.tx_resp_msg:0000000000000000 tx_resp_msg
+
+UNDEFINED SYMBOLS
+get_rx_delay_time_data_rate
+get_rx_delay_time_txpreamble
+dwt_setdelayedtrxtime
+config_options
+__aeabi_ui2d
+__aeabi_dmul
+__aeabi_dsub
+__aeabi_dadd
+__aeabi_ddiv
+__aeabi_d2lz
+__aeabi_l2d
+my_reset_DWIC
+dwt_checkidlerc
+ARM GAS  /tmp/cctQSOtj.s 			page 27
+
+
+dwt_initialise
+dwt_configure
+dwt_configuretxrf
+dwt_configureframefilter
+dwt_setpanid
+dwt_setaddress16
+dwt_setrxantennadelay
+dwt_settxantennadelay
+dwt_setrxaftertxdelay
+dwt_configurestskey
+dwt_configurestsiv
+dwt_configurestsloadiv
+dwt_writetodevice
+dwt_read32bitoffsetreg
+dwt_readstsquality
+dwt_write32bitoffsetreg
+dwt_readrxdata
+memcmp
+get_rx_timestamp_u64
+dwt_writetxdata
+dwt_writetxfctrl
+dwt_starttx
+dwt_rxenable
+get_tx_timestamp_u64
+final_msg_get_ts
+Send_Distance_Over_UART
+Sleep
+txconfig_options_ch9
+txconfig_options
+check_for_status_errors

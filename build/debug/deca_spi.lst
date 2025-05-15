@@ -1,0 +1,704 @@
+ARM GAS  /tmp/ccWizxuF.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"deca_spi.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.openspi,"ax",%progbits
+  18              		.align	1
+  19              		.global	openspi
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	openspi:
+  27              	.LFB130:
+  28              		.file 1 "Core/Src/deca_spi.c"
+   1:Core/Src/deca_spi.c **** #include "deca_spi.h"
+   2:Core/Src/deca_spi.c **** #include "port.h"
+   3:Core/Src/deca_spi.c **** //#include <stm32l4xx_hal_def.h>
+   4:Core/Src/deca_spi.c **** #include "main.h"
+   5:Core/Src/deca_spi.c **** #include "deca_device_api.h"
+   6:Core/Src/deca_spi.c **** 
+   7:Core/Src/deca_spi.c **** extern  SPI_HandleTypeDef hspi1;    /*clocked from 72MHz*/
+   8:Core/Src/deca_spi.c **** 
+   9:Core/Src/deca_spi.c **** 
+  10:Core/Src/deca_spi.c **** /****************************************************************************//**
+  11:Core/Src/deca_spi.c ****  *
+  12:Core/Src/deca_spi.c ****  *                              DW1000 SPI section
+  13:Core/Src/deca_spi.c ****  *
+  14:Core/Src/deca_spi.c ****  *******************************************************************************/
+  15:Core/Src/deca_spi.c **** /*! -----------------------------------------------------------------------------------------------
+  16:Core/Src/deca_spi.c ****  * Function: openspi()
+  17:Core/Src/deca_spi.c ****  *
+  18:Core/Src/deca_spi.c ****  * Low level abstract function to open and initialise access to the SPI device.
+  19:Core/Src/deca_spi.c ****  * returns 0 for success, or -1 for error
+  20:Core/Src/deca_spi.c ****  */
+  21:Core/Src/deca_spi.c **** int openspi(/*SPI_TypeDef* SPIx*/)
+  22:Core/Src/deca_spi.c **** {
+  29              		.loc 1 22 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  23:Core/Src/deca_spi.c ****     return 0;
+  34              		.loc 1 23 5 view .LVU1
+  24:Core/Src/deca_spi.c **** } // end openspi()
+ARM GAS  /tmp/ccWizxuF.s 			page 2
+
+
+  35              		.loc 1 24 1 is_stmt 0 view .LVU2
+  36 0000 0020     		movs	r0, #0
+  37 0002 7047     		bx	lr
+  38              		.cfi_endproc
+  39              	.LFE130:
+  41              		.section	.text.closespi,"ax",%progbits
+  42              		.align	1
+  43              		.global	closespi
+  44              		.syntax unified
+  45              		.thumb
+  46              		.thumb_func
+  47              		.fpu fpv4-sp-d16
+  49              	closespi:
+  50              	.LFB131:
+  25:Core/Src/deca_spi.c **** 
+  26:Core/Src/deca_spi.c **** /*! -----------------------------------------------------------------------------------------------
+  27:Core/Src/deca_spi.c ****  * Function: closespi()
+  28:Core/Src/deca_spi.c ****  *
+  29:Core/Src/deca_spi.c ****  * Low level abstract function to close the the SPI device.
+  30:Core/Src/deca_spi.c ****  * returns 0 for success, or -1 for error
+  31:Core/Src/deca_spi.c ****  */
+  32:Core/Src/deca_spi.c **** int closespi(void)
+  33:Core/Src/deca_spi.c **** {
+  51              		.loc 1 33 1 is_stmt 1 view -0
+  52              		.cfi_startproc
+  53              		@ args = 0, pretend = 0, frame = 0
+  54              		@ frame_needed = 0, uses_anonymous_args = 0
+  55              		@ link register save eliminated.
+  34:Core/Src/deca_spi.c ****     return 0;
+  56              		.loc 1 34 5 view .LVU4
+  35:Core/Src/deca_spi.c **** } // end closespi()
+  57              		.loc 1 35 1 is_stmt 0 view .LVU5
+  58 0000 0020     		movs	r0, #0
+  59 0002 7047     		bx	lr
+  60              		.cfi_endproc
+  61              	.LFE131:
+  63              		.section	.text.writetospiwithcrc,"ax",%progbits
+  64              		.align	1
+  65              		.global	writetospiwithcrc
+  66              		.syntax unified
+  67              		.thumb
+  68              		.thumb_func
+  69              		.fpu fpv4-sp-d16
+  71              	writetospiwithcrc:
+  72              	.LVL0:
+  73              	.LFB132:
+  36:Core/Src/deca_spi.c **** 
+  37:Core/Src/deca_spi.c **** 
+  38:Core/Src/deca_spi.c **** 
+  39:Core/Src/deca_spi.c **** 
+  40:Core/Src/deca_spi.c **** /*! -----------------------------------------------------------------------------------------------
+  41:Core/Src/deca_spi.c ****  * Function: writetospiwithcrc()
+  42:Core/Src/deca_spi.c ****  *
+  43:Core/Src/deca_spi.c ****  * Low level abstract function to write to the SPI when SPI CRC mode is used
+  44:Core/Src/deca_spi.c ****  * Takes two separate byte buffers for write header and write data, and a CRC8 byte which is writte
+  45:Core/Src/deca_spi.c ****  * returns 0 for success, or -1 for error
+  46:Core/Src/deca_spi.c ****  */
+ARM GAS  /tmp/ccWizxuF.s 			page 3
+
+
+  47:Core/Src/deca_spi.c **** int writetospiwithcrc(
+  48:Core/Src/deca_spi.c ****                 uint16_t      headerLength,
+  49:Core/Src/deca_spi.c ****                 const uint8_t *headerBuffer,
+  50:Core/Src/deca_spi.c ****                 uint16_t      bodyLength,
+  51:Core/Src/deca_spi.c ****                 const uint8_t *bodyBuffer,
+  52:Core/Src/deca_spi.c ****                 uint8_t       crc8)
+  53:Core/Src/deca_spi.c **** {
+  74              		.loc 1 53 1 is_stmt 1 view -0
+  75              		.cfi_startproc
+  76              		@ args = 4, pretend = 0, frame = 0
+  77              		@ frame_needed = 0, uses_anonymous_args = 0
+  78              		.loc 1 53 1 is_stmt 0 view .LVU7
+  79 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+  80              		.cfi_def_cfa_offset 32
+  81              		.cfi_offset 3, -32
+  82              		.cfi_offset 4, -28
+  83              		.cfi_offset 5, -24
+  84              		.cfi_offset 6, -20
+  85              		.cfi_offset 7, -16
+  86              		.cfi_offset 8, -12
+  87              		.cfi_offset 9, -8
+  88              		.cfi_offset 14, -4
+  89 0004 8146     		mov	r9, r0
+  90 0006 8846     		mov	r8, r1
+  91 0008 1746     		mov	r7, r2
+  92 000a 1E46     		mov	r6, r3
+  54:Core/Src/deca_spi.c ****     decaIrqStatus_t  stat ;
+  93              		.loc 1 54 5 is_stmt 1 view .LVU8
+  55:Core/Src/deca_spi.c ****     stat = decamutexon() ;
+  94              		.loc 1 55 5 view .LVU9
+  95              		.loc 1 55 12 is_stmt 0 view .LVU10
+  96 000c FFF7FEFF 		bl	decamutexon
+  97              	.LVL1:
+  98              		.loc 1 55 12 view .LVU11
+  99 0010 0446     		mov	r4, r0
+ 100              	.LVL2:
+  56:Core/Src/deca_spi.c ****     while (HAL_SPI_GetState(&hspi1) != HAL_SPI_STATE_READY);
+ 101              		.loc 1 56 5 is_stmt 1 view .LVU12
+ 102              	.L4:
+ 103              		.loc 1 56 60 discriminator 1 view .LVU13
+ 104              		.loc 1 56 11 discriminator 1 view .LVU14
+ 105              		.loc 1 56 12 is_stmt 0 discriminator 1 view .LVU15
+ 106 0012 1548     		ldr	r0, .L6
+ 107 0014 FFF7FEFF 		bl	HAL_SPI_GetState
+ 108              	.LVL3:
+ 109              		.loc 1 56 11 discriminator 1 view .LVU16
+ 110 0018 0128     		cmp	r0, #1
+ 111 001a FAD1     		bne	.L4
+  57:Core/Src/deca_spi.c **** 
+  58:Core/Src/deca_spi.c ****     HAL_GPIO_WritePin(DW_NSS_GPIO_Port, DW_NSS_Pin, GPIO_PIN_RESET); /**< Put chip select line low 
+ 112              		.loc 1 58 5 is_stmt 1 view .LVU17
+ 113 001c 0022     		movs	r2, #0
+ 114 001e 1021     		movs	r1, #16
+ 115 0020 4FF09040 		mov	r0, #1207959552
+ 116 0024 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 117              	.LVL4:
+  59:Core/Src/deca_spi.c **** 
+ARM GAS  /tmp/ccWizxuF.s 			page 4
+
+
+  60:Core/Src/deca_spi.c ****     HAL_SPI_Transmit(&hspi1, (uint8_t *)headerBuffer, headerLength, 10);    /* Send header in polli
+ 118              		.loc 1 60 5 view .LVU18
+ 119 0028 0F4D     		ldr	r5, .L6
+ 120 002a 0A23     		movs	r3, #10
+ 121 002c 4A46     		mov	r2, r9
+ 122 002e 4146     		mov	r1, r8
+ 123 0030 2846     		mov	r0, r5
+ 124 0032 FFF7FEFF 		bl	HAL_SPI_Transmit
+ 125              	.LVL5:
+  61:Core/Src/deca_spi.c ****     HAL_SPI_Transmit(&hspi1, (uint8_t *)bodyBuffer, bodyLength, 10);        /* Send data in polling
+ 126              		.loc 1 61 5 view .LVU19
+ 127 0036 0A23     		movs	r3, #10
+ 128 0038 3A46     		mov	r2, r7
+ 129 003a 3146     		mov	r1, r6
+ 130 003c 2846     		mov	r0, r5
+ 131 003e FFF7FEFF 		bl	HAL_SPI_Transmit
+ 132              	.LVL6:
+  62:Core/Src/deca_spi.c ****     HAL_SPI_Transmit(&hspi1, (uint8_t *)&crc8, 1, 10);      /* Send data in polling mode */
+ 133              		.loc 1 62 5 view .LVU20
+ 134 0042 0A23     		movs	r3, #10
+ 135 0044 0122     		movs	r2, #1
+ 136 0046 08A9     		add	r1, sp, #32
+ 137 0048 2846     		mov	r0, r5
+ 138 004a FFF7FEFF 		bl	HAL_SPI_Transmit
+ 139              	.LVL7:
+  63:Core/Src/deca_spi.c **** 
+  64:Core/Src/deca_spi.c ****     HAL_GPIO_WritePin(DW_NSS_GPIO_Port, DW_NSS_Pin, GPIO_PIN_SET); /**< Put chip select line high *
+ 140              		.loc 1 64 5 view .LVU21
+ 141 004e 0122     		movs	r2, #1
+ 142 0050 1021     		movs	r1, #16
+ 143 0052 4FF09040 		mov	r0, #1207959552
+ 144 0056 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 145              	.LVL8:
+  65:Core/Src/deca_spi.c ****     decamutexoff(stat);
+ 146              		.loc 1 65 5 view .LVU22
+ 147 005a 2046     		mov	r0, r4
+ 148 005c FFF7FEFF 		bl	decamutexoff
+ 149              	.LVL9:
+  66:Core/Src/deca_spi.c ****     return 0;
+ 150              		.loc 1 66 5 view .LVU23
+  67:Core/Src/deca_spi.c **** } // end writetospiwithcrc()
+ 151              		.loc 1 67 1 is_stmt 0 view .LVU24
+ 152 0060 0020     		movs	r0, #0
+ 153 0062 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 154              	.LVL10:
+ 155              	.L7:
+ 156              		.loc 1 67 1 view .LVU25
+ 157 0066 00BF     		.align	2
+ 158              	.L6:
+ 159 0068 00000000 		.word	hspi1
+ 160              		.cfi_endproc
+ 161              	.LFE132:
+ 163              		.section	.text.writetospi,"ax",%progbits
+ 164              		.align	1
+ 165              		.global	writetospi
+ 166              		.syntax unified
+ 167              		.thumb
+ARM GAS  /tmp/ccWizxuF.s 			page 5
+
+
+ 168              		.thumb_func
+ 169              		.fpu fpv4-sp-d16
+ 171              	writetospi:
+ 172              	.LVL11:
+ 173              	.LFB133:
+  68:Core/Src/deca_spi.c **** 
+  69:Core/Src/deca_spi.c **** 
+  70:Core/Src/deca_spi.c **** /*! -----------------------------------------------------------------------------------------------
+  71:Core/Src/deca_spi.c ****  * Function: writetospi()
+  72:Core/Src/deca_spi.c ****  *
+  73:Core/Src/deca_spi.c ****  * Low level abstract function to write to the SPI
+  74:Core/Src/deca_spi.c ****  * Takes two separate byte buffers for write header and write data
+  75:Core/Src/deca_spi.c ****  * returns 0 for success, or -1 for error
+  76:Core/Src/deca_spi.c ****  */
+  77:Core/Src/deca_spi.c **** int writetospi(uint16_t       headerLength,
+  78:Core/Src/deca_spi.c ****                const uint8_t  *headerBuffer,
+  79:Core/Src/deca_spi.c ****                uint16_t       bodyLength,
+  80:Core/Src/deca_spi.c ****                const uint8_t  *bodyBuffer)
+  81:Core/Src/deca_spi.c **** {
+ 174              		.loc 1 81 1 is_stmt 1 view -0
+ 175              		.cfi_startproc
+ 176              		@ args = 0, pretend = 0, frame = 0
+ 177              		@ frame_needed = 0, uses_anonymous_args = 0
+ 178              		.loc 1 81 1 is_stmt 0 view .LVU27
+ 179 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 180              		.cfi_def_cfa_offset 24
+ 181              		.cfi_offset 4, -24
+ 182              		.cfi_offset 5, -20
+ 183              		.cfi_offset 6, -16
+ 184              		.cfi_offset 7, -12
+ 185              		.cfi_offset 8, -8
+ 186              		.cfi_offset 14, -4
+ 187 0004 0746     		mov	r7, r0
+ 188 0006 0E46     		mov	r6, r1
+ 189 0008 1446     		mov	r4, r2
+ 190 000a 9846     		mov	r8, r3
+  82:Core/Src/deca_spi.c ****     decaIrqStatus_t  stat ;
+ 191              		.loc 1 82 5 is_stmt 1 view .LVU28
+  83:Core/Src/deca_spi.c ****     stat = decamutexon() ;
+ 192              		.loc 1 83 5 view .LVU29
+ 193              		.loc 1 83 12 is_stmt 0 view .LVU30
+ 194 000c FFF7FEFF 		bl	decamutexon
+ 195              	.LVL12:
+ 196              		.loc 1 83 12 view .LVU31
+ 197 0010 0546     		mov	r5, r0
+ 198              	.LVL13:
+  84:Core/Src/deca_spi.c **** 
+  85:Core/Src/deca_spi.c ****     while (HAL_SPI_GetState(&hspi1) != HAL_SPI_STATE_READY);
+ 199              		.loc 1 85 5 is_stmt 1 view .LVU32
+ 200              	.L9:
+ 201              		.loc 1 85 60 discriminator 1 view .LVU33
+ 202              		.loc 1 85 11 discriminator 1 view .LVU34
+ 203              		.loc 1 85 12 is_stmt 0 discriminator 1 view .LVU35
+ 204 0012 1348     		ldr	r0, .L13
+ 205 0014 FFF7FEFF 		bl	HAL_SPI_GetState
+ 206              	.LVL14:
+ 207              		.loc 1 85 11 discriminator 1 view .LVU36
+ARM GAS  /tmp/ccWizxuF.s 			page 6
+
+
+ 208 0018 0128     		cmp	r0, #1
+ 209 001a FAD1     		bne	.L9
+  86:Core/Src/deca_spi.c **** 
+  87:Core/Src/deca_spi.c ****     HAL_GPIO_WritePin(DW_NSS_GPIO_Port, DW_NSS_Pin, GPIO_PIN_RESET); /**< Put chip select line low 
+ 210              		.loc 1 87 5 is_stmt 1 view .LVU37
+ 211 001c 0022     		movs	r2, #0
+ 212 001e 1021     		movs	r1, #16
+ 213 0020 4FF09040 		mov	r0, #1207959552
+ 214 0024 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 215              	.LVL15:
+  88:Core/Src/deca_spi.c **** 
+  89:Core/Src/deca_spi.c ****     HAL_SPI_Transmit(&hspi1, (uint8_t *)headerBuffer, headerLength, HAL_MAX_DELAY); /* Send header 
+ 216              		.loc 1 89 5 view .LVU38
+ 217 0028 4FF0FF33 		mov	r3, #-1
+ 218 002c 3A46     		mov	r2, r7
+ 219 002e 3146     		mov	r1, r6
+ 220 0030 0B48     		ldr	r0, .L13
+ 221 0032 FFF7FEFF 		bl	HAL_SPI_Transmit
+ 222              	.LVL16:
+  90:Core/Src/deca_spi.c **** 
+  91:Core/Src/deca_spi.c ****     if(bodyLength != 0)
+ 223              		.loc 1 91 5 view .LVU39
+ 224              		.loc 1 91 7 is_stmt 0 view .LVU40
+ 225 0036 5CB9     		cbnz	r4, .L12
+ 226              	.L10:
+  92:Core/Src/deca_spi.c ****         HAL_SPI_Transmit(&hspi1, (uint8_t *)bodyBuffer,   bodyLength, HAL_MAX_DELAY);     /* Send d
+  93:Core/Src/deca_spi.c **** 
+  94:Core/Src/deca_spi.c ****     HAL_GPIO_WritePin(DW_NSS_GPIO_Port, DW_NSS_Pin, GPIO_PIN_SET); /**< Put chip select line high *
+ 227              		.loc 1 94 5 is_stmt 1 view .LVU41
+ 228 0038 0122     		movs	r2, #1
+ 229 003a 1021     		movs	r1, #16
+ 230 003c 4FF09040 		mov	r0, #1207959552
+ 231 0040 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 232              	.LVL17:
+  95:Core/Src/deca_spi.c ****     decamutexoff(stat);
+ 233              		.loc 1 95 5 view .LVU42
+ 234 0044 2846     		mov	r0, r5
+ 235 0046 FFF7FEFF 		bl	decamutexoff
+ 236              	.LVL18:
+  96:Core/Src/deca_spi.c ****     return 0;
+ 237              		.loc 1 96 5 view .LVU43
+  97:Core/Src/deca_spi.c **** } // end writetospi()
+ 238              		.loc 1 97 1 is_stmt 0 view .LVU44
+ 239 004a 0020     		movs	r0, #0
+ 240 004c BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 241              	.LVL19:
+ 242              	.L12:
+  92:Core/Src/deca_spi.c **** 
+ 243              		.loc 1 92 9 is_stmt 1 view .LVU45
+ 244 0050 4FF0FF33 		mov	r3, #-1
+ 245 0054 2246     		mov	r2, r4
+ 246 0056 4146     		mov	r1, r8
+ 247 0058 0148     		ldr	r0, .L13
+ 248 005a FFF7FEFF 		bl	HAL_SPI_Transmit
+ 249              	.LVL20:
+ 250 005e EBE7     		b	.L10
+ 251              	.L14:
+ARM GAS  /tmp/ccWizxuF.s 			page 7
+
+
+ 252              		.align	2
+ 253              	.L13:
+ 254 0060 00000000 		.word	hspi1
+ 255              		.cfi_endproc
+ 256              	.LFE133:
+ 258              		.section	.text.spi_cs_low_delay,"ax",%progbits
+ 259              		.align	1
+ 260              		.global	spi_cs_low_delay
+ 261              		.syntax unified
+ 262              		.thumb
+ 263              		.thumb_func
+ 264              		.fpu fpv4-sp-d16
+ 266              	spi_cs_low_delay:
+ 267              	.LVL21:
+ 268              	.LFB134:
+  98:Core/Src/deca_spi.c **** 
+  99:Core/Src/deca_spi.c **** 
+ 100:Core/Src/deca_spi.c **** 
+ 101:Core/Src/deca_spi.c **** /*! -----------------------------------------------------------------------------------------------
+ 102:Core/Src/deca_spi.c **** * @fn spi_cs_low_delay()
+ 103:Core/Src/deca_spi.c **** *
+ 104:Core/Src/deca_spi.c **** * @brief This function sets the CS to '0' for ms delay and than raises it up
+ 105:Core/Src/deca_spi.c **** *
+ 106:Core/Src/deca_spi.c **** * input parameters:
+ 107:Core/Src/deca_spi.c **** * @param ms_delay - The delay for CS to be in '0' state
+ 108:Core/Src/deca_spi.c **** *
+ 109:Core/Src/deca_spi.c **** * no return value
+ 110:Core/Src/deca_spi.c **** */
+ 111:Core/Src/deca_spi.c **** uint16_t spi_cs_low_delay(uint16_t delay_ms)
+ 112:Core/Src/deca_spi.c **** {
+ 269              		.loc 1 112 1 view -0
+ 270              		.cfi_startproc
+ 271              		@ args = 0, pretend = 0, frame = 0
+ 272              		@ frame_needed = 0, uses_anonymous_args = 0
+ 273              		.loc 1 112 1 is_stmt 0 view .LVU47
+ 274 0000 70B5     		push	{r4, r5, r6, lr}
+ 275              		.cfi_def_cfa_offset 16
+ 276              		.cfi_offset 4, -16
+ 277              		.cfi_offset 5, -12
+ 278              		.cfi_offset 6, -8
+ 279              		.cfi_offset 14, -4
+ 280 0002 0446     		mov	r4, r0
+ 113:Core/Src/deca_spi.c **** 	/* Blocking: Check whether previous transfer has been finished */
+ 114:Core/Src/deca_spi.c **** 	while (HAL_SPI_GetState(&hspi1) != HAL_SPI_STATE_READY);
+ 281              		.loc 1 114 2 is_stmt 1 view .LVU48
+ 282              	.LVL22:
+ 283              	.L16:
+ 284              		.loc 1 114 57 discriminator 1 view .LVU49
+ 285              		.loc 1 114 8 discriminator 1 view .LVU50
+ 286              		.loc 1 114 9 is_stmt 0 discriminator 1 view .LVU51
+ 287 0004 1148     		ldr	r0, .L20
+ 288 0006 FFF7FEFF 		bl	HAL_SPI_GetState
+ 289              	.LVL23:
+ 290              		.loc 1 114 8 discriminator 1 view .LVU52
+ 291 000a 0128     		cmp	r0, #1
+ 292 000c FAD1     		bne	.L16
+ 115:Core/Src/deca_spi.c **** 	/* Process Locked */
+ARM GAS  /tmp/ccWizxuF.s 			page 8
+
+
+ 116:Core/Src/deca_spi.c **** 	__HAL_LOCK(&hspi1);
+ 293              		.loc 1 116 2 is_stmt 1 view .LVU53
+ 294              		.loc 1 116 2 view .LVU54
+ 295 000e 0F4B     		ldr	r3, .L20
+ 296 0010 93F85C30 		ldrb	r3, [r3, #92]	@ zero_extendqisi2
+ 297 0014 012B     		cmp	r3, #1
+ 298 0016 16D0     		beq	.L18
+ 299              		.loc 1 116 2 discriminator 2 view .LVU55
+ 300 0018 0C4D     		ldr	r5, .L20
+ 301 001a 0126     		movs	r6, #1
+ 302 001c 85F85C60 		strb	r6, [r5, #92]
+ 303              		.loc 1 116 2 discriminator 2 view .LVU56
+ 117:Core/Src/deca_spi.c **** 	HAL_GPIO_WritePin(DW_NSS_GPIO_Port, DW_NSS_Pin, GPIO_PIN_RESET); /**< Put chip select line low */
+ 304              		.loc 1 117 2 discriminator 2 view .LVU57
+ 305 0020 0022     		movs	r2, #0
+ 306 0022 1021     		movs	r1, #16
+ 307 0024 4FF09040 		mov	r0, #1207959552
+ 308 0028 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 309              	.LVL24:
+ 118:Core/Src/deca_spi.c **** 	Sleep(delay_ms);
+ 310              		.loc 1 118 2 discriminator 2 view .LVU58
+ 311 002c 2046     		mov	r0, r4
+ 312 002e FFF7FEFF 		bl	Sleep
+ 313              	.LVL25:
+ 119:Core/Src/deca_spi.c **** 	HAL_GPIO_WritePin(DW_NSS_GPIO_Port, DW_NSS_Pin, GPIO_PIN_SET); /**< Put chip select line high */
+ 314              		.loc 1 119 2 discriminator 2 view .LVU59
+ 315 0032 3246     		mov	r2, r6
+ 316 0034 1021     		movs	r1, #16
+ 317 0036 4FF09040 		mov	r0, #1207959552
+ 318 003a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 319              	.LVL26:
+ 120:Core/Src/deca_spi.c **** 	/* Process Unlocked */
+ 121:Core/Src/deca_spi.c **** 	__HAL_UNLOCK(&hspi1);
+ 320              		.loc 1 121 2 discriminator 2 view .LVU60
+ 321              		.loc 1 121 2 discriminator 2 view .LVU61
+ 322 003e 0020     		movs	r0, #0
+ 323 0040 85F85C00 		strb	r0, [r5, #92]
+ 324              		.loc 1 121 2 discriminator 2 view .LVU62
+ 122:Core/Src/deca_spi.c **** 
+ 123:Core/Src/deca_spi.c **** 	return 0;
+ 325              		.loc 1 123 2 discriminator 2 view .LVU63
+ 326              	.L17:
+ 124:Core/Src/deca_spi.c **** }
+ 327              		.loc 1 124 1 is_stmt 0 view .LVU64
+ 328 0044 70BD     		pop	{r4, r5, r6, pc}
+ 329              	.L18:
+ 116:Core/Src/deca_spi.c **** 	HAL_GPIO_WritePin(DW_NSS_GPIO_Port, DW_NSS_Pin, GPIO_PIN_RESET); /**< Put chip select line low */
+ 330              		.loc 1 116 2 view .LVU65
+ 331 0046 0220     		movs	r0, #2
+ 332 0048 FCE7     		b	.L17
+ 333              	.L21:
+ 334 004a 00BF     		.align	2
+ 335              	.L20:
+ 336 004c 00000000 		.word	hspi1
+ 337              		.cfi_endproc
+ 338              	.LFE134:
+ 340              		.section	.text.readfromspi,"ax",%progbits
+ARM GAS  /tmp/ccWizxuF.s 			page 9
+
+
+ 341              		.align	1
+ 342              		.global	readfromspi
+ 343              		.syntax unified
+ 344              		.thumb
+ 345              		.thumb_func
+ 346              		.fpu fpv4-sp-d16
+ 348              	readfromspi:
+ 349              	.LVL27:
+ 350              	.LFB135:
+ 125:Core/Src/deca_spi.c **** 
+ 126:Core/Src/deca_spi.c **** /*! -----------------------------------------------------------------------------------------------
+ 127:Core/Src/deca_spi.c ****  * Function: readfromspi()
+ 128:Core/Src/deca_spi.c ****  *
+ 129:Core/Src/deca_spi.c ****  * Low level abstract function to read from the SPI
+ 130:Core/Src/deca_spi.c ****  * Takes two separate byte buffers for write header and read data
+ 131:Core/Src/deca_spi.c ****  * returns the offset into read buffer where first byte of read data may be found,
+ 132:Core/Src/deca_spi.c ****  * or returns -1 if there was an error
+ 133:Core/Src/deca_spi.c ****  */
+ 134:Core/Src/deca_spi.c **** //#pragma GCC optimize ("O3")
+ 135:Core/Src/deca_spi.c **** int readfromspi(uint16_t  headerLength,
+ 136:Core/Src/deca_spi.c ****                 uint8_t   *headerBuffer,
+ 137:Core/Src/deca_spi.c ****                 uint16_t  readlength,
+ 138:Core/Src/deca_spi.c ****                 uint8_t   *readBuffer)
+ 139:Core/Src/deca_spi.c **** {
+ 351              		.loc 1 139 1 is_stmt 1 view -0
+ 352              		.cfi_startproc
+ 353              		@ args = 0, pretend = 0, frame = 0
+ 354              		@ frame_needed = 0, uses_anonymous_args = 0
+ 355              		.loc 1 139 1 is_stmt 0 view .LVU67
+ 356 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ 357              		.cfi_def_cfa_offset 32
+ 358              		.cfi_offset 3, -32
+ 359              		.cfi_offset 4, -28
+ 360              		.cfi_offset 5, -24
+ 361              		.cfi_offset 6, -20
+ 362              		.cfi_offset 7, -16
+ 363              		.cfi_offset 8, -12
+ 364              		.cfi_offset 9, -8
+ 365              		.cfi_offset 14, -4
+ 366 0004 0546     		mov	r5, r0
+ 367 0006 0E46     		mov	r6, r1
+ 368 0008 9146     		mov	r9, r2
+ 369 000a 9846     		mov	r8, r3
+ 140:Core/Src/deca_spi.c ****     int i;
+ 370              		.loc 1 140 5 is_stmt 1 view .LVU68
+ 141:Core/Src/deca_spi.c **** 
+ 142:Core/Src/deca_spi.c ****     decaIrqStatus_t  stat ;
+ 371              		.loc 1 142 5 view .LVU69
+ 143:Core/Src/deca_spi.c ****     stat = decamutexon() ;
+ 372              		.loc 1 143 5 view .LVU70
+ 373              		.loc 1 143 12 is_stmt 0 view .LVU71
+ 374 000c FFF7FEFF 		bl	decamutexon
+ 375              	.LVL28:
+ 376              		.loc 1 143 12 view .LVU72
+ 377 0010 0746     		mov	r7, r0
+ 378              	.LVL29:
+ 144:Core/Src/deca_spi.c **** 
+ARM GAS  /tmp/ccWizxuF.s 			page 10
+
+
+ 145:Core/Src/deca_spi.c ****     /* Blocking: Check whether previous transfer has been finished */
+ 146:Core/Src/deca_spi.c ****     while (HAL_SPI_GetState(&hspi1) != HAL_SPI_STATE_READY);
+ 379              		.loc 1 146 5 is_stmt 1 view .LVU73
+ 380              	.L23:
+ 381              		.loc 1 146 60 discriminator 1 view .LVU74
+ 382              		.loc 1 146 11 discriminator 1 view .LVU75
+ 383              		.loc 1 146 12 is_stmt 0 discriminator 1 view .LVU76
+ 384 0012 1448     		ldr	r0, .L27
+ 385 0014 FFF7FEFF 		bl	HAL_SPI_GetState
+ 386              	.LVL30:
+ 387              		.loc 1 146 11 discriminator 1 view .LVU77
+ 388 0018 0128     		cmp	r0, #1
+ 389 001a FAD1     		bne	.L23
+ 147:Core/Src/deca_spi.c **** 
+ 148:Core/Src/deca_spi.c ****     HAL_GPIO_WritePin(DW_NSS_GPIO_Port, DW_NSS_Pin, GPIO_PIN_RESET); /**< Put chip select line low 
+ 390              		.loc 1 148 5 is_stmt 1 view .LVU78
+ 391 001c 0022     		movs	r2, #0
+ 392 001e 1021     		movs	r1, #16
+ 393 0020 4FF09040 		mov	r0, #1207959552
+ 394 0024 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 395              	.LVL31:
+ 149:Core/Src/deca_spi.c **** 
+ 150:Core/Src/deca_spi.c ****     /* Send header */
+ 151:Core/Src/deca_spi.c ****     for(i=0; i<headerLength; i++)
+ 396              		.loc 1 151 5 view .LVU79
+ 397              		.loc 1 151 10 is_stmt 0 view .LVU80
+ 398 0028 0024     		movs	r4, #0
+ 399              		.loc 1 151 5 view .LVU81
+ 400 002a 07E0     		b	.L24
+ 401              	.LVL32:
+ 402              	.L25:
+ 152:Core/Src/deca_spi.c ****     {
+ 153:Core/Src/deca_spi.c ****         HAL_SPI_Transmit(&hspi1, (uint8_t*)&headerBuffer[i], 1, HAL_MAX_DELAY); //No timeout
+ 403              		.loc 1 153 9 is_stmt 1 discriminator 3 view .LVU82
+ 404 002c 4FF0FF33 		mov	r3, #-1
+ 405 0030 0122     		movs	r2, #1
+ 406 0032 3119     		adds	r1, r6, r4
+ 407 0034 0B48     		ldr	r0, .L27
+ 408 0036 FFF7FEFF 		bl	HAL_SPI_Transmit
+ 409              	.LVL33:
+ 151:Core/Src/deca_spi.c ****     {
+ 410              		.loc 1 151 30 discriminator 3 view .LVU83
+ 151:Core/Src/deca_spi.c ****     {
+ 411              		.loc 1 151 31 is_stmt 0 discriminator 3 view .LVU84
+ 412 003a 0134     		adds	r4, r4, #1
+ 413              	.LVL34:
+ 414              	.L24:
+ 151:Core/Src/deca_spi.c ****     {
+ 415              		.loc 1 151 14 is_stmt 1 discriminator 1 view .LVU85
+ 151:Core/Src/deca_spi.c ****     {
+ 416              		.loc 1 151 5 is_stmt 0 discriminator 1 view .LVU86
+ 417 003c A542     		cmp	r5, r4
+ 418 003e F5DC     		bgt	.L25
+ 154:Core/Src/deca_spi.c ****     }
+ 155:Core/Src/deca_spi.c **** 
+ 156:Core/Src/deca_spi.c ****     /* for the data buffer use LL functions directly as the HAL SPI read function
+ 157:Core/Src/deca_spi.c ****      * has issue reading single bytes */
+ARM GAS  /tmp/ccWizxuF.s 			page 11
+
+
+ 158:Core/Src/deca_spi.c **** 
+ 159:Core/Src/deca_spi.c **** //    while(readlength-- > 0)
+ 160:Core/Src/deca_spi.c **** //    {
+ 161:Core/Src/deca_spi.c **** //        /* Wait until TXE flag is set to send data */
+ 162:Core/Src/deca_spi.c **** //        while(__HAL_SPI_GET_FLAG(&hspi3, SPI_FLAG_TXE) == RESET)
+ 163:Core/Src/deca_spi.c **** //        {
+ 164:Core/Src/deca_spi.c **** //        }
+ 165:Core/Src/deca_spi.c **** //
+ 166:Core/Src/deca_spi.c **** //        hspi3.Instance->DR = 0; /* set output to 0 (MOSI), this is necessary for
+ 167:Core/Src/deca_spi.c **** //        e.g. when waking up DW3000 from DEEPSLEEP via dwt_spicswakeup() function.
+ 168:Core/Src/deca_spi.c **** //        */
+ 169:Core/Src/deca_spi.c **** //
+ 170:Core/Src/deca_spi.c **** //        /* Wait until RXNE flag is set to read data */
+ 171:Core/Src/deca_spi.c **** //        while(__HAL_SPI_GET_FLAG(&hspi3, SPI_FLAG_RXNE) == RESET)
+ 172:Core/Src/deca_spi.c **** //        {
+ 173:Core/Src/deca_spi.c **** //        }
+ 174:Core/Src/deca_spi.c **** //
+ 175:Core/Src/deca_spi.c **** //        (*readBuffer++) = hspi3.Instance->DR;  //copy data read form (MISO)
+ 176:Core/Src/deca_spi.c **** //    }
+ 177:Core/Src/deca_spi.c **** 
+ 178:Core/Src/deca_spi.c ****     HAL_SPI_Receive(&hspi1, readBuffer, readlength, 100);
+ 419              		.loc 1 178 5 is_stmt 1 view .LVU87
+ 420 0040 6423     		movs	r3, #100
+ 421 0042 4A46     		mov	r2, r9
+ 422 0044 4146     		mov	r1, r8
+ 423 0046 0748     		ldr	r0, .L27
+ 424 0048 FFF7FEFF 		bl	HAL_SPI_Receive
+ 425              	.LVL35:
+ 179:Core/Src/deca_spi.c **** 
+ 180:Core/Src/deca_spi.c ****     HAL_GPIO_WritePin(DW_NSS_GPIO_Port, DW_NSS_Pin, GPIO_PIN_SET); /**< Put chip select line high *
+ 426              		.loc 1 180 5 view .LVU88
+ 427 004c 0122     		movs	r2, #1
+ 428 004e 1021     		movs	r1, #16
+ 429 0050 4FF09040 		mov	r0, #1207959552
+ 430 0054 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 431              	.LVL36:
+ 181:Core/Src/deca_spi.c **** 
+ 182:Core/Src/deca_spi.c ****     decamutexoff(stat);
+ 432              		.loc 1 182 5 view .LVU89
+ 433 0058 3846     		mov	r0, r7
+ 434 005a FFF7FEFF 		bl	decamutexoff
+ 435              	.LVL37:
+ 183:Core/Src/deca_spi.c **** 
+ 184:Core/Src/deca_spi.c ****     return 0;
+ 436              		.loc 1 184 5 view .LVU90
+ 185:Core/Src/deca_spi.c **** } // end readfromspi()
+ 437              		.loc 1 185 1 is_stmt 0 view .LVU91
+ 438 005e 0020     		movs	r0, #0
+ 439 0060 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 440              	.LVL38:
+ 441              	.L28:
+ 442              		.loc 1 185 1 view .LVU92
+ 443              		.align	2
+ 444              	.L27:
+ 445 0064 00000000 		.word	hspi1
+ 446              		.cfi_endproc
+ 447              	.LFE135:
+ARM GAS  /tmp/ccWizxuF.s 			page 12
+
+
+ 449              		.text
+ 450              	.Letext0:
+ 451              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+ 452              		.file 3 "Drivers/CMSIS/Device/ST/STM32F3xx/Include/stm32f303xc.h"
+ 453              		.file 4 "Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_def.h"
+ 454              		.file 5 "Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_gpio.h"
+ 455              		.file 6 "Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_dma.h"
+ 456              		.file 7 "Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_spi.h"
+ 457              		.file 8 "Core/Inc/deca_device_api.h"
+ 458              		.file 9 "Core/Inc/port.h"
+ARM GAS  /tmp/ccWizxuF.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 deca_spi.c
+     /tmp/ccWizxuF.s:18     .text.openspi:0000000000000000 $t
+     /tmp/ccWizxuF.s:26     .text.openspi:0000000000000000 openspi
+     /tmp/ccWizxuF.s:42     .text.closespi:0000000000000000 $t
+     /tmp/ccWizxuF.s:49     .text.closespi:0000000000000000 closespi
+     /tmp/ccWizxuF.s:64     .text.writetospiwithcrc:0000000000000000 $t
+     /tmp/ccWizxuF.s:71     .text.writetospiwithcrc:0000000000000000 writetospiwithcrc
+     /tmp/ccWizxuF.s:159    .text.writetospiwithcrc:0000000000000068 $d
+     /tmp/ccWizxuF.s:164    .text.writetospi:0000000000000000 $t
+     /tmp/ccWizxuF.s:171    .text.writetospi:0000000000000000 writetospi
+     /tmp/ccWizxuF.s:254    .text.writetospi:0000000000000060 $d
+     /tmp/ccWizxuF.s:259    .text.spi_cs_low_delay:0000000000000000 $t
+     /tmp/ccWizxuF.s:266    .text.spi_cs_low_delay:0000000000000000 spi_cs_low_delay
+     /tmp/ccWizxuF.s:336    .text.spi_cs_low_delay:000000000000004c $d
+     /tmp/ccWizxuF.s:341    .text.readfromspi:0000000000000000 $t
+     /tmp/ccWizxuF.s:348    .text.readfromspi:0000000000000000 readfromspi
+     /tmp/ccWizxuF.s:445    .text.readfromspi:0000000000000064 $d
+
+UNDEFINED SYMBOLS
+decamutexon
+HAL_SPI_GetState
+HAL_GPIO_WritePin
+HAL_SPI_Transmit
+decamutexoff
+hspi1
+Sleep
+HAL_SPI_Receive

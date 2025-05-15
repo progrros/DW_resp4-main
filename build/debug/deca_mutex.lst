@@ -1,0 +1,189 @@
+ARM GAS  /tmp/cc7zBr6R.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"deca_mutex.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.decamutexon,"ax",%progbits
+  18              		.align	1
+  19              		.global	decamutexon
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	decamutexon:
+  27              	.LFB0:
+  28              		.file 1 "Core/Src/deca_mutex.c"
+   1:Core/Src/deca_mutex.c **** #include "port.h"
+   2:Core/Src/deca_mutex.c **** #include "deca_device_api.h"
+   3:Core/Src/deca_mutex.c **** // ---------------------------------------------------------------------------
+   4:Core/Src/deca_mutex.c **** //
+   5:Core/Src/deca_mutex.c **** // NB: The purpose of this file is to provide for microprocessor interrupt enable/disable, this is 
+   6:Core/Src/deca_mutex.c **** //     controlling mutual exclusion from critical sections in the code where interrupts and backgro
+   7:Core/Src/deca_mutex.c **** //     processing may interact.  The code using this is kept to a minimum and the disabling time is
+   8:Core/Src/deca_mutex.c **** //     kept to a minimum, so blanket interrupt disable may be the easiest way to provide this.  But
+   9:Core/Src/deca_mutex.c **** //     minimum those interrupts coming from the decawave device should be disabled/re-enabled by th
+  10:Core/Src/deca_mutex.c **** //
+  11:Core/Src/deca_mutex.c **** //     In porting this to a particular microprocessor, the implementer may choose to use #defines i
+  12:Core/Src/deca_mutex.c **** //     deca_irq.h include file to map these calls transparently to the target system.  Alternativel
+  13:Core/Src/deca_mutex.c **** //     appropriate code may be embedded in the functions provided below.
+  14:Core/Src/deca_mutex.c **** //
+  15:Core/Src/deca_mutex.c **** //     This mutex dependent on HW port.
+  16:Core/Src/deca_mutex.c **** //	   If HW port uses EXT_IRQ line to receive ready/busy status from DW1000 then mutex should use t
+  17:Core/Src/deca_mutex.c **** //     If HW port not use EXT_IRQ line (i.e. SW polling) then no necessary for decamutex(on/off)
+  18:Core/Src/deca_mutex.c **** //
+  19:Core/Src/deca_mutex.c **** //	   For critical section use this mutex instead
+  20:Core/Src/deca_mutex.c **** //	   __save_intstate()
+  21:Core/Src/deca_mutex.c **** //     __restore_intstate()
+  22:Core/Src/deca_mutex.c **** // ---------------------------------------------------------------------------
+  23:Core/Src/deca_mutex.c **** 
+  24:Core/Src/deca_mutex.c **** 
+  25:Core/Src/deca_mutex.c **** /*! -----------------------------------------------------------------------------------------------
+  26:Core/Src/deca_mutex.c ****  * Function: decamutexon()
+  27:Core/Src/deca_mutex.c ****  *
+  28:Core/Src/deca_mutex.c ****  * Description: This function should disable interrupts. This is called at the start of a critical 
+  29:Core/Src/deca_mutex.c ****  * It returns the irq state before disable, this value is used to re-enable in decamutexoff call
+  30:Core/Src/deca_mutex.c ****  *
+ARM GAS  /tmp/cc7zBr6R.s 			page 2
+
+
+  31:Core/Src/deca_mutex.c ****  * Note: The body of this function is defined in deca_mutex.c and is platform specific
+  32:Core/Src/deca_mutex.c ****  *
+  33:Core/Src/deca_mutex.c ****  * input parameters:	
+  34:Core/Src/deca_mutex.c ****  *
+  35:Core/Src/deca_mutex.c ****  * output parameters
+  36:Core/Src/deca_mutex.c ****  *
+  37:Core/Src/deca_mutex.c ****  * returns the state of the DW1000 interrupt
+  38:Core/Src/deca_mutex.c ****  */
+  39:Core/Src/deca_mutex.c **** decaIrqStatus_t decamutexon(void)           
+  40:Core/Src/deca_mutex.c **** {
+  29              		.loc 1 40 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  41:Core/Src/deca_mutex.c **** 	decaIrqStatus_t s = port_GetEXT_IRQStatus();
+  37              		.loc 1 41 2 view .LVU1
+  38              		.loc 1 41 22 is_stmt 0 view .LVU2
+  39 0002 FFF7FEFF 		bl	port_GetEXT_IRQStatus
+  40              	.LVL0:
+  42:Core/Src/deca_mutex.c **** 
+  43:Core/Src/deca_mutex.c **** 	if(s) {
+  41              		.loc 1 43 2 is_stmt 1 view .LVU3
+  42              		.loc 1 43 4 is_stmt 0 view .LVU4
+  43 0006 0446     		mov	r4, r0
+  44 0008 08B9     		cbnz	r0, .L4
+  45              	.LVL1:
+  46              	.L1:
+  44:Core/Src/deca_mutex.c **** 		port_DisableEXT_IRQ(); //disable the external interrupt line
+  45:Core/Src/deca_mutex.c **** 	}
+  46:Core/Src/deca_mutex.c **** 	return s ;   // return state before disable, value is used to re-enable in decamutexoff call
+  47:Core/Src/deca_mutex.c **** }
+  47              		.loc 1 47 1 view .LVU5
+  48 000a 2046     		mov	r0, r4
+  49 000c 10BD     		pop	{r4, pc}
+  50              	.LVL2:
+  51              	.L4:
+  44:Core/Src/deca_mutex.c **** 		port_DisableEXT_IRQ(); //disable the external interrupt line
+  52              		.loc 1 44 3 is_stmt 1 view .LVU6
+  53 000e FFF7FEFF 		bl	port_DisableEXT_IRQ
+  54              	.LVL3:
+  46:Core/Src/deca_mutex.c **** }
+  55              		.loc 1 46 2 view .LVU7
+  46:Core/Src/deca_mutex.c **** }
+  56              		.loc 1 46 9 is_stmt 0 view .LVU8
+  57 0012 FAE7     		b	.L1
+  58              		.cfi_endproc
+  59              	.LFE0:
+  61              		.section	.text.decamutexoff,"ax",%progbits
+  62              		.align	1
+  63              		.global	decamutexoff
+  64              		.syntax unified
+  65              		.thumb
+  66              		.thumb_func
+ARM GAS  /tmp/cc7zBr6R.s 			page 3
+
+
+  67              		.fpu fpv4-sp-d16
+  69              	decamutexoff:
+  70              	.LVL4:
+  71              	.LFB1:
+  48:Core/Src/deca_mutex.c **** 
+  49:Core/Src/deca_mutex.c **** /*! -----------------------------------------------------------------------------------------------
+  50:Core/Src/deca_mutex.c ****  * Function: decamutexoff()
+  51:Core/Src/deca_mutex.c ****  *
+  52:Core/Src/deca_mutex.c ****  * Description: This function should re-enable interrupts, or at least restore their state as retur
+  53:Core/Src/deca_mutex.c ****  * This is called at the end of a critical section
+  54:Core/Src/deca_mutex.c ****  *
+  55:Core/Src/deca_mutex.c ****  * Note: The body of this function is defined in deca_mutex.c and is platform specific
+  56:Core/Src/deca_mutex.c ****  *
+  57:Core/Src/deca_mutex.c ****  * input parameters:	
+  58:Core/Src/deca_mutex.c ****  * @param s - the state of the DW1000 interrupt as returned by decamutexon
+  59:Core/Src/deca_mutex.c ****  *
+  60:Core/Src/deca_mutex.c ****  * output parameters
+  61:Core/Src/deca_mutex.c ****  *
+  62:Core/Src/deca_mutex.c ****  * returns the state of the DW1000 interrupt
+  63:Core/Src/deca_mutex.c ****  */
+  64:Core/Src/deca_mutex.c **** void decamutexoff(decaIrqStatus_t s)        // put a function here that re-enables the interrupt at
+  65:Core/Src/deca_mutex.c **** {
+  72              		.loc 1 65 1 is_stmt 1 view -0
+  73              		.cfi_startproc
+  74              		@ args = 0, pretend = 0, frame = 0
+  75              		@ frame_needed = 0, uses_anonymous_args = 0
+  66:Core/Src/deca_mutex.c **** 	if(s) { //need to check the port state as we can't use level sensitive interrupt on the STM ARM
+  76              		.loc 1 66 2 view .LVU10
+  77              		.loc 1 66 4 is_stmt 0 view .LVU11
+  78 0000 00B9     		cbnz	r0, .L11
+  79 0002 7047     		bx	lr
+  80              	.L11:
+  65:Core/Src/deca_mutex.c **** 	if(s) { //need to check the port state as we can't use level sensitive interrupt on the STM ARM
+  81              		.loc 1 65 1 view .LVU12
+  82 0004 08B5     		push	{r3, lr}
+  83              		.cfi_def_cfa_offset 8
+  84              		.cfi_offset 3, -8
+  85              		.cfi_offset 14, -4
+  67:Core/Src/deca_mutex.c **** 		port_EnableEXT_IRQ();
+  86              		.loc 1 67 3 is_stmt 1 view .LVU13
+  87 0006 FFF7FEFF 		bl	port_EnableEXT_IRQ
+  88              	.LVL5:
+  68:Core/Src/deca_mutex.c **** 	}
+  69:Core/Src/deca_mutex.c **** }
+  89              		.loc 1 69 1 is_stmt 0 view .LVU14
+  90 000a 08BD     		pop	{r3, pc}
+  91              		.cfi_endproc
+  92              	.LFE1:
+  94              		.text
+  95              	.Letext0:
+  96              		.file 2 "Core/Inc/port.h"
+  97              		.file 3 "Core/Inc/deca_device_api.h"
+ARM GAS  /tmp/cc7zBr6R.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 deca_mutex.c
+     /tmp/cc7zBr6R.s:18     .text.decamutexon:0000000000000000 $t
+     /tmp/cc7zBr6R.s:26     .text.decamutexon:0000000000000000 decamutexon
+     /tmp/cc7zBr6R.s:62     .text.decamutexoff:0000000000000000 $t
+     /tmp/cc7zBr6R.s:69     .text.decamutexoff:0000000000000000 decamutexoff
+
+UNDEFINED SYMBOLS
+port_GetEXT_IRQStatus
+port_DisableEXT_IRQ
+port_EnableEXT_IRQ
