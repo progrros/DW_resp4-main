@@ -708,7 +708,7 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 128
  */
 dwt_config_t config_options = {
-    9,                  /* Channel number. */
+    5,                  /* Channel number. */
     DWT_PLEN_1024,      /* Preamble length. Used in TX only. */
     DWT_PAC32,           /* Preamble acquisition chunk size. Used in RX only. */
     9,                  /* TX preamble code. Used in TX only. */

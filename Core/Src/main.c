@@ -180,7 +180,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
     }
 }
 
-void Send_Distance_Over_UART(double tof, float *received_floats)
+void Send_Distance_Over_UART(double tof, int_fast32_t *received_floats)
 {
     if (!uart_tx_ready) return;  // Prevent collision if previous transfer not done
 
@@ -190,7 +190,7 @@ void Send_Distance_Over_UART(double tof, float *received_floats)
     uart_tx_packet[0] = 0xAA;
 
     memcpy(&uart_tx_packet[1], &distance, sizeof(float));
-    memcpy(&uart_tx_packet[1 + sizeof(float)], received_floats, 6 * sizeof(float));
+    memcpy(&uart_tx_packet[1 + sizeof(float)], received_floats, 6 * sizeof(int32_t));
 
     HAL_UART_Transmit_DMA(&huart1, uart_tx_packet, TX_PACKET_SIZE);
 }

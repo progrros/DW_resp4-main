@@ -17,7 +17,7 @@
 
 #if defined(TEST_DS_TWR_RESPONDER_STS)
 
-extern void Send_Distance_Over_UART(double tof, float *received_floats);
+extern void Send_Distance_Over_UART(double tof, int32_t *received_floats);
 
 extern UART_HandleTypeDef huart1;
 
@@ -33,9 +33,9 @@ extern UART_HandleTypeDef huart1;
 #define RX_ANT_DLY  ANT_DELAY //16535//16525
 
 /* Frames used in the ranging process. See NOTE 3 below. */
-static uint8_t rx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'B', 2, 'V', 'F', 0xE0, 0, 0};
-static uint8_t tx_resp_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'V', 'F', 'B', 2, 0xE1, 0, 0};
-static uint8_t rx_final_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'B', 2, 'V', 'F', 0xE2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+static uint8_t rx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'B', 2, 'V', 'E', 0xE0, 0, 0};
+static uint8_t tx_resp_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'V', 'E', 'B', 2, 0xE1, 0, 0};
+static uint8_t rx_final_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'B', 2, 'V', 'E', 0xE2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             // Extra 24 bytes initialized to zero
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -291,7 +291,7 @@ int ds_twr_responder_sts(void)
 
                     uint8_t payload_buf[24];
                     memcpy(payload_buf, &rx_buffer[22], 24);
-                    float *received_floats = (float *)payload_buf;
+                    int32_t *received_floats = (int32_t *)payload_buf;
 
 
                     memset(&rx_buffer[22], 0, 24);
